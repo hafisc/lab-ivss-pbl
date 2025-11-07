@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Redirect to public folder
+RewriteCond %{REQUEST_URI} !^/Lab%20ivss/public/
+RewriteRule ^(.*)$ /Lab%20ivss/public/$1 [L]
