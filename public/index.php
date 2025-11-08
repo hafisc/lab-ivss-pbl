@@ -45,6 +45,38 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->dashboard();
         break;
+    case 'admin-users':
+        require __DIR__ . '/../app/controllers/UserController.php';
+        $controller = new UserController();
+        $controller->index();
+        break;
+    
+    // User AJAX Actions
+    case 'user-store':
+        require __DIR__ . '/../app/controllers/UserController.php';
+        $controller = new UserController();
+        $controller->store();
+        break;
+    case 'user-show':
+        require __DIR__ . '/../app/controllers/UserController.php';
+        $controller = new UserController();
+        $controller->show();
+        break;
+    case 'user-update':
+        require __DIR__ . '/../app/controllers/UserController.php';
+        $controller = new UserController();
+        $controller->update();
+        break;
+    case 'user-delete':
+        require __DIR__ . '/../app/controllers/UserController.php';
+        $controller = new UserController();
+        $controller->delete();
+        break;
+    case 'user-reset-password':
+        require __DIR__ . '/../app/controllers/UserController.php';
+        $controller = new UserController();
+        $controller->resetPassword();
+        break;
     case 'admin-registrations':
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->registrations();

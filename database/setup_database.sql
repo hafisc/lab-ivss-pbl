@@ -3,6 +3,19 @@
 -- Run this script in your SQL Editor
 -- ========================================
 
+-- Drop existing tables (OPTIONAL - uncomment untuk reset database)
+-- DROP TABLE IF EXISTS member_publications CASCADE;
+-- DROP TABLE IF EXISTS research_documents CASCADE;
+-- DROP TABLE IF EXISTS research_members CASCADE;
+-- DROP TABLE IF EXISTS notifications CASCADE;
+-- DROP TABLE IF EXISTS system_settings CASCADE;
+-- DROP TABLE IF EXISTS equipment CASCADE;
+-- DROP TABLE IF EXISTS publications CASCADE;
+-- DROP TABLE IF EXISTS news CASCADE;
+-- DROP TABLE IF EXISTS member_registrations CASCADE;
+-- DROP TABLE IF EXISTS research CASCADE;
+-- DROP TABLE IF EXISTS users CASCADE;
+
 -- 1. TABEL USERS
 -- Untuk menyimpan data user (admin, ketua_lab, dosen, member)
 CREATE TABLE IF NOT EXISTS users (
@@ -17,6 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(20),
     angkatan VARCHAR(10),
     photo VARCHAR(255),
+    bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP
@@ -25,26 +39,29 @@ CREATE TABLE IF NOT EXISTS users (
 -- Index untuk performa
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_status ON users(status);
+CREATE INDEX idx_users_nim ON users(nim) WHERE nim IS NOT NULL;
+CREATE INDEX idx_users_nip ON users(nip) WHERE nip IS NOT NULL;
 
 -- Insert data user default (admin, ketua lab, dosen, member)
 -- Password untuk semua user: admin123
-INSERT INTO users (name, email, password, role, status, nim, angkatan) VALUES
+INSERT INTO users (name, email, password, role, status, nim, nip, phone, angkatan, last_login) VALUES
 -- Admin
-('Admin IVSS', 'admin@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'admin', 'active', NULL, NULL),
+('Admin IVSS', 'admin@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'admin', 'active', NULL, NULL, '081234567890', NULL, CURRENT_TIMESTAMP),
 
 -- Ketua Lab
-('Dr. Muhammad Hasan', 'ketualab@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'ketua_lab', 'active', NULL, NULL),
+('Dr. Muhammad Hasan', 'ketualab@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'ketua_lab', 'active', NULL, '197001011995031001', '081234567891', NULL, CURRENT_TIMESTAMP),
 
 -- Dosen
-('Dr. Budi Santoso', 'budi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, NULL),
-('Dr. Andi Wijaya', 'andi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, NULL),
-('Dr. Siti Nurhaliza', 'siti.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, NULL),
+('Dr. Budi Santoso', 'budi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, '197505152000031001', '081234567892', NULL, CURRENT_TIMESTAMP),
+('Dr. Andi Wijaya', 'andi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, '198003102005011002', '081234567893', NULL, CURRENT_TIMESTAMP),
+('Dr. Siti Nurhaliza', 'siti.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, '198206182008012003', '081234567894', NULL, CURRENT_TIMESTAMP),
 
 -- Member (sudah approved, bisa langsung login)
-('Ahmad Fauzi', 'ahmad@student.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'member', 'active', '2141720010', '2024'),
+('Ahmad Fauzi', 'ahmad@student.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'member', 'active', '2141720010', NULL, '081234567895', '2024', CURRENT_TIMESTAMP),
 
 -- Member Alumni (inactive)
-('Agus Prasetyo', 'agus@alumni.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'member', 'inactive', '2131720001', '2021');
+('Agus Prasetyo', 'agus@alumni.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'member', 'inactive', '2131720001', NULL, '081234567896', '2021', '2024-10-15 10:00:00');
 
 -- ========================================
 
@@ -623,3 +640,84 @@ NULL,
 -- 11. Research Documents: 5 dokumen sample (proposal, laporan, dataset)
 -- 12. Member Publications: 3 publikasi personal Ahmad Fauzi (2 published, 1 draft)
 --
+-- ========================================
+
+-- UTILITY QUERIES & MAINTENANCE
+-- Gunakan script di bawah ini untuk maintenance dan update database
+
+-- ========================================
+-- 1. UPDATE EXISTING DATABASE (Jika upgrade dari versi lama)
+-- ========================================
+
+-- Tambah kolom bio jika belum ada (untuk database lama)
+-- DO $$ 
+-- BEGIN
+--     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+--                    WHERE table_name='users' AND column_name='bio') THEN
+--         ALTER TABLE users ADD COLUMN bio TEXT;
+--     END IF;
+-- END $$;
+
+-- Update last_login untuk user yang NULL (uncomment jika perlu)
+-- UPDATE users SET last_login = created_at WHERE last_login IS NULL;
+
+-- ========================================
+-- 2. RESET PASSWORD USER (Development Only)
+-- ========================================
+
+-- Reset password semua user ke admin123
+-- UPDATE users SET password = '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq';
+
+-- Reset password user tertentu
+-- UPDATE users SET password = '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq' WHERE email = 'user@email.com';
+
+-- ========================================
+-- 3. CLEANUP & MAINTENANCE
+-- ========================================
+
+-- Hapus user yang tidak pernah login dalam 6 bulan (member only)
+-- DELETE FROM users WHERE role = 'member' AND last_login < NOW() - INTERVAL '6 months';
+
+-- Set member jadi alumni (inactive)
+-- UPDATE users SET status = 'inactive' WHERE role = 'member' AND angkatan <= '2021';
+
+-- Vacuum database untuk optimize
+-- VACUUM ANALYZE;
+
+-- ========================================
+-- 4. STATISTICS QUERIES
+-- ========================================
+
+-- Count users by role
+-- SELECT role, COUNT(*) as total FROM users GROUP BY role ORDER BY total DESC;
+
+-- Count users by status
+-- SELECT status, COUNT(*) as total FROM users GROUP BY status;
+
+-- Active research count
+-- SELECT COUNT(*) as active_research FROM research WHERE status = 'active';
+
+-- Member dengan publikasi terbanyak
+-- SELECT u.name, COUNT(mp.id) as total_publications 
+-- FROM users u 
+-- LEFT JOIN member_publications mp ON u.id = mp.user_id 
+-- WHERE u.role = 'member' 
+-- GROUP BY u.id, u.name 
+-- ORDER BY total_publications DESC;
+
+-- ========================================
+-- 5. BACKUP & RESTORE COMMANDS
+-- ========================================
+
+-- Export database (via terminal/cmd)
+-- pg_dump -h 127.0.0.1 -p 5433 -U USER -d lab_ivss -F c -b -v -f "backup_lab_ivss_$(date +%Y%m%d).backup"
+
+-- Import database
+-- pg_restore -h 127.0.0.1 -p 5433 -U USER -d lab_ivss -v "backup_lab_ivss_20241108.backup"
+
+-- Export to SQL file
+-- pg_dump -h 127.0.0.1 -p 5433 -U USER -d lab_ivss > "backup_lab_ivss_$(date +%Y%m%d).sql"
+
+-- ========================================
+-- END OF SETUP SCRIPT
+-- ========================================
