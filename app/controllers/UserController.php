@@ -40,10 +40,16 @@ class UserController {
             $password = $_POST['password'] ?? '';
             $role = $_POST['role'] ?? 'member';
             $status = $_POST['status'] ?? 'active';
-            $phone = $_POST['phone'] ?? null;
-            $nim = $_POST['nim'] ?? null;
-            $nip = $_POST['nip'] ?? null;
-            $angkatan = $_POST['angkatan'] ?? null;
+            $phone = !empty($_POST['phone']) ? $_POST['phone'] : null;
+            $nim = !empty($_POST['nim']) ? $_POST['nim'] : null;
+            $nip = !empty($_POST['nip']) ? $_POST['nip'] : null;
+            $angkatan = !empty($_POST['angkatan']) ? $_POST['angkatan'] : null;
+            
+            // Member specific fields
+            $origin = !empty($_POST['origin']) ? $_POST['origin'] : null;
+            $research_title = !empty($_POST['research_title']) ? $_POST['research_title'] : null;
+            $supervisor_id = !empty($_POST['supervisor_id']) ? intval($_POST['supervisor_id']) : null;
+            $motivation = !empty($_POST['motivation']) ? $_POST['motivation'] : null;
             
             // Validation
             if (empty($name) || empty($email) || empty($password)) {
@@ -54,7 +60,7 @@ class UserController {
                 throw new Exception('Password minimal 8 karakter');
             }
             
-            // Check email unique
+            // Check email unique di users
             $checkQuery = "SELECT id FROM users WHERE email = :email";
             $checkStmt = $this->conn->prepare($checkQuery);
             $checkStmt->bindParam(':email', $email);
@@ -64,28 +70,73 @@ class UserController {
                 throw new Exception('Email sudah terdaftar');
             }
             
+            // Check email unique di member_registrations
+            $checkRegQuery = "SELECT id FROM member_registrations WHERE email = :email";
+            $checkRegStmt = $this->conn->prepare($checkRegQuery);
+            $checkRegStmt->bindParam(':email', $email);
+            $checkRegStmt->execute();
+            
+            if ($checkRegStmt->rowCount() > 0) {
+                throw new Exception('Email sudah terdaftar sebagai pendaftar');
+            }
+            
             // Hash password
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
             
-            // Insert user
-            $query = "INSERT INTO users (name, email, password, role, status, phone, nim, nip, angkatan) 
-                      VALUES (:name, :email, :password, :role, :status, :phone, :nim, :nip, :angkatan)";
-            $stmt = $this->conn->prepare($query);
-            
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':password', $hashedPassword);
-            $stmt->bindParam(':role', $role);
-            $stmt->bindParam(':status', $status);
-            $stmt->bindParam(':phone', $phone);
-            $stmt->bindParam(':nim', $nim);
-            $stmt->bindParam(':nip', $nip);
-            $stmt->bindParam(':angkatan', $angkatan);
-            
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'User berhasil ditambahkan']);
-            } else {
-                throw new Exception('Gagal menambahkan user');
+            // SPECIAL HANDLING FOR MEMBER: Masuk ke approval workflow
+            if ($role === 'member') {
+                // Validation member fields
+                if (empty($nim) || empty($angkatan) || empty($research_title) || empty($supervisor_id)) {
+                    throw new Exception('NIM, Angkatan, Judul Riset, dan Dosen Pembimbing wajib diisi untuk Member');
+                }
+                
+                // Insert ke member_registrations untuk approval workflow
+                $query = "INSERT INTO member_registrations 
+                          (name, email, password, nim, phone, angkatan, origin, research_title, supervisor_id, motivation, role_wanted, status, created_at) 
+                          VALUES (:name, :email, :password, :nim, :phone, :angkatan, :origin, :research_title, :supervisor_id, :motivation, 'member', 'pending_supervisor', NOW())";
+                $stmt = $this->conn->prepare($query);
+                
+                $stmt->bindParam(':name', $name);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':password', $hashedPassword);
+                $stmt->bindParam(':nim', $nim);
+                $stmt->bindParam(':phone', $phone);
+                $stmt->bindParam(':angkatan', $angkatan);
+                $stmt->bindParam(':origin', $origin);
+                $stmt->bindParam(':research_title', $research_title);
+                $stmt->bindParam(':supervisor_id', $supervisor_id, PDO::PARAM_INT);
+                $stmt->bindParam(':motivation', $motivation);
+                
+                if ($stmt->execute()) {
+                    echo json_encode([
+                        'success' => true, 
+                        'message' => 'Member berhasil ditambahkan ke daftar pendaftar. Menunggu approval dari Dosen Pembimbing.'
+                    ]);
+                } else {
+                    throw new Exception('Gagal menambahkan member ke daftar pendaftar');
+                }
+            } 
+            // Admin, Dosen, Ketua Lab: Langsung insert ke users (tidak perlu approval)
+            else {
+                $query = "INSERT INTO users (name, email, password, role, status, phone, nim, nip, angkatan, created_at) 
+                          VALUES (:name, :email, :password, :role, :status, :phone, :nim, :nip, :angkatan, NOW())";
+                $stmt = $this->conn->prepare($query);
+                
+                $stmt->bindParam(':name', $name);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':password', $hashedPassword);
+                $stmt->bindParam(':role', $role);
+                $stmt->bindParam(':status', $status);
+                $stmt->bindParam(':phone', $phone);
+                $stmt->bindParam(':nim', $nim);
+                $stmt->bindParam(':nip', $nip);
+                $stmt->bindParam(':angkatan', $angkatan);
+                
+                if ($stmt->execute()) {
+                    echo json_encode(['success' => true, 'message' => 'User berhasil ditambahkan']);
+                } else {
+                    throw new Exception('Gagal menambahkan user');
+                }
             }
             
         } catch (Exception $e) {
@@ -100,7 +151,7 @@ class UserController {
         try {
             $id = $_GET['id'] ?? 0;
             
-            $query = "SELECT id, name, email, role, status, phone, nim, nip, angkatan FROM users WHERE id = :id";
+            $query = "SELECT id, name, email, role, status, phone, nim, nip, angkatan, origin, research_title, supervisor_id, motivation FROM users WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();
@@ -129,10 +180,16 @@ class UserController {
             $password = $_POST['password'] ?? '';
             $role = $_POST['role'] ?? 'member';
             $status = $_POST['status'] ?? 'active';
-            $phone = $_POST['phone'] ?? null;
-            $nim = $_POST['nim'] ?? null;
-            $nip = $_POST['nip'] ?? null;
-            $angkatan = $_POST['angkatan'] ?? null;
+            $phone = !empty($_POST['phone']) ? $_POST['phone'] : null;
+            $nim = !empty($_POST['nim']) ? $_POST['nim'] : null;
+            $nip = !empty($_POST['nip']) ? $_POST['nip'] : null;
+            $angkatan = !empty($_POST['angkatan']) ? $_POST['angkatan'] : null;
+            
+            // Member specific fields
+            $origin = !empty($_POST['origin']) ? $_POST['origin'] : null;
+            $research_title = !empty($_POST['research_title']) ? $_POST['research_title'] : null;
+            $supervisor_id = !empty($_POST['supervisor_id']) ? intval($_POST['supervisor_id']) : null;
+            $motivation = !empty($_POST['motivation']) ? $_POST['motivation'] : null;
             
             // Validation
             if (empty($name) || empty($email)) {
@@ -159,14 +216,16 @@ class UserController {
                 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
                 
                 $query = "UPDATE users SET name=:name, email=:email, password=:password, role=:role, 
-                          status=:status, phone=:phone, nim=:nim, nip=:nip, angkatan=:angkatan, 
+                          status=:status, phone=:phone, nim=:nim, nip=:nip, angkatan=:angkatan,
+                          origin=:origin, research_title=:research_title, supervisor_id=:supervisor_id, motivation=:motivation, 
                           updated_at=CURRENT_TIMESTAMP WHERE id=:id";
                 $stmt = $this->conn->prepare($query);
                 $stmt->bindParam(':password', $hashedPassword);
             } else {
                 // Update without password
                 $query = "UPDATE users SET name=:name, email=:email, role=:role, status=:status, 
-                          phone=:phone, nim=:nim, nip=:nip, angkatan=:angkatan, 
+                          phone=:phone, nim=:nim, nip=:nip, angkatan=:angkatan,
+                          origin=:origin, research_title=:research_title, supervisor_id=:supervisor_id, motivation=:motivation, 
                           updated_at=CURRENT_TIMESTAMP WHERE id=:id";
                 $stmt = $this->conn->prepare($query);
             }
@@ -180,6 +239,10 @@ class UserController {
             $stmt->bindParam(':nim', $nim);
             $stmt->bindParam(':nip', $nip);
             $stmt->bindParam(':angkatan', $angkatan);
+            $stmt->bindParam(':origin', $origin);
+            $stmt->bindParam(':research_title', $research_title);
+            $stmt->bindParam(':supervisor_id', $supervisor_id, PDO::PARAM_INT);
+            $stmt->bindParam(':motivation', $motivation);
             
             if ($stmt->execute()) {
                 echo json_encode(['success' => true, 'message' => 'User berhasil diupdate']);

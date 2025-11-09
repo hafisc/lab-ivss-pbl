@@ -51,15 +51,7 @@
             </div>
         </a>
         
-        <!-- Profil -->
-        <a href="index.php?page=member-profile" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'member-profile' ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-            <div class="flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-                <span>Profil Saya</span>
-            </div>
-        </a>
+       
         
         <!-- Dokumentasi / Berita Lab -->
         <a href="index.php?page=member-news" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'member-news' ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
@@ -68,6 +60,16 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                 </svg>
                 <span>Berita & Event</span>
+            </div>
+        </a>
+
+         <!-- Profil -->
+        <a href="index.php?page=member-profile" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'member-profile' ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span>Profil</span>
             </div>
         </a>
         

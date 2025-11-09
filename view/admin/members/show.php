@@ -1,4 +1,10 @@
-<?php ob_start(); ?>
+<?php 
+ob_start(); 
+
+// Get user role
+$userRole = $_SESSION['user']['role'] ?? 'member';
+$canApprove = ($userRole === 'dosen' || $userRole === 'ketua_lab');
+?>
 
 <!-- Back Button -->
 <div class="mb-4">
@@ -23,6 +29,24 @@
     <p class="text-xs text-red-700"><?= $_SESSION['error'] ?></p>
 </div>
 <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
+
+<!-- Info Box for Admin -->
+<?php if ($userRole === 'admin'): ?>
+<div class="mb-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+    <div class="flex items-start">
+        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <div class="flex-1">
+            <h4 class="text-sm font-semibold text-blue-900 mb-1">ℹ️ Mode View-Only</h4>
+            <p class="text-xs text-blue-800">
+                Sebagai Admin, Anda <strong>hanya dapat melihat detail</strong> pendaftar. 
+                Approval dilakukan oleh <strong>Dosen Pembimbing</strong> dan <strong>Ketua Lab</strong>.
+            </p>
+        </div>
+    </div>
+</div>
 <?php endif; ?>
 
 <!-- Detail Pendaftar -->
@@ -58,8 +82,8 @@
                     </span>
                 </div>
                 
-                <!-- Action Buttons -->
-                <?php if ($status === 'pending_supervisor' || $status === 'pending_lab_head'): ?>
+                <!-- Action Buttons (Dosen & Ketua Lab only) -->
+                <?php if (($status === 'pending_supervisor' || $status === 'pending_lab_head') && $canApprove): ?>
                 <div class="mt-6 flex gap-2">
                     <a href="index.php?page=admin-registrations&action=approve&id=<?= $registration['id'] ?>" 
                        onclick="return confirm('Approve pendaftar ini?')"
@@ -71,6 +95,14 @@
                        class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
                         ✗ Tolak
                     </a>
+                </div>
+                <?php elseif (($status === 'pending_supervisor' || $status === 'pending_lab_head') && $userRole === 'admin'): ?>
+                <!-- Admin View-Only Message -->
+                <div class="mt-6 p-3 bg-slate-100 rounded-lg text-center">
+                    <p class="text-xs text-slate-600">
+                        👁️ <strong>View-Only Mode</strong><br>
+                        Approval dilakukan oleh Dosen & Ketua Lab
+                    </p>
                 </div>
                 <?php endif; ?>
             </div>

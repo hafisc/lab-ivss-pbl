@@ -31,6 +31,13 @@ CREATE TABLE IF NOT EXISTS users (
     angkatan VARCHAR(10),
     photo VARCHAR(255),
     bio TEXT,
+    
+    -- Member specific fields
+    origin VARCHAR(255),
+    research_title VARCHAR(255),
+    supervisor_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    motivation TEXT,
+    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP
@@ -222,12 +229,11 @@ CREATE TABLE IF NOT EXISTS equipment (
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL,
     brand VARCHAR(100),
-    model VARCHAR(100),
     quantity INTEGER DEFAULT 1,
     condition VARCHAR(50) DEFAULT 'baik',
+    purchase_year INTEGER,
     location VARCHAR(255),
-    purchase_date DATE,
-    price DECIMAL(15,2),
+    specifications TEXT,
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -238,29 +244,21 @@ CREATE INDEX idx_equipment_category ON equipment(category);
 CREATE INDEX idx_equipment_condition ON equipment(condition);
 
 -- Insert sample data peralatan
-INSERT INTO equipment (name, category, brand, model, quantity, condition, location, purchase_date, price, notes) VALUES
-('Camera Logitech C920', 'Hardware', 'Logitech', 'C920 HD Pro', 5, 'baik', 'Rak A1', '2023-08-15', 1500000, 'Untuk riset face recognition'),
-('Raspberry Pi 4 Model B', 'Hardware', 'Raspberry Pi', '4B 8GB RAM', 10, 'baik', 'Rak A2', '2023-09-20', 1200000, 'IoT dan edge computing'),
-('Arduino Uno R3', 'Hardware', 'Arduino', 'Uno R3', 15, 'baik', 'Rak A3', '2023-07-10', 250000, 'Prototyping IoT'),
-('Laptop Dell Precision', 'Hardware', 'Dell', 'Precision 5540', 3, 'baik', 'Meja Lab', '2024-01-05', 25000000, 'Deep learning workstation'),
-('GPU NVIDIA RTX 3080', 'Hardware', 'NVIDIA', 'RTX 3080 10GB', 2, 'baik', 'Server Room', '2024-02-10', 15000000, 'Training model AI'),
-('Sensor HC-SR04', 'Hardware', 'Generic', 'HC-SR04', 20, 'baik', 'Laci B1', '2023-06-15', 25000, 'Sensor ultrasonik'),
-('ESP32 DevKit', 'Hardware', 'Espressif', 'ESP32-WROOM', 12, 'baik', 'Rak A3', '2023-10-01', 85000, 'WiFi & Bluetooth module'),
-('Webcam 4K Logitech BRIO', 'Hardware', 'Logitech', 'BRIO 4K', 3, 'baik', 'Rak A1', '2024-03-20', 3500000, 'High resolution capture'),
-('Tripod Manfrotto', 'Aksesoris', 'Manfrotto', 'MT190X', 4, 'baik', 'Lemari Storage', '2023-08-25', 2000000, 'Camera mounting'),
-('LED Ring Light', 'Aksesoris', 'Godox', 'LR180', 3, 'baik', 'Lemari Storage', '2023-09-10', 800000, 'Lighting untuk capture'),
-
-('Python Deep Learning', 'Software', 'PyTorch', 'v2.0', 1, 'baik', 'Server', '2024-01-15', 0, 'Framework deep learning'),
-('MATLAB R2023', 'Software', 'MathWorks', 'R2023b', 5, 'baik', 'Komputer Lab', '2023-11-01', 50000000, 'License untuk 5 user'),
-('OpenCV Library', 'Software', 'OpenCV', '4.8.0', 1, 'baik', 'Server', '2023-12-01', 0, 'Computer vision library'),
-
-('Camera Canon EOS M50', 'Hardware', 'Canon', 'EOS M50', 1, 'maintenance', 'Service Center', '2023-05-10', 9000000, 'Sedang maintenance'),
-('Laptop Asus ROG', 'Hardware', 'Asus', 'ROG Strix G15', 1, 'rusak', 'Gudang', '2023-03-15', 18000000, 'LCD rusak, perlu perbaikan');
-
--- ========================================
-
--- 6. UPDATE USERS TABLE - Tambah kolom bio untuk settings profile
-ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT;
+INSERT INTO equipment (name, category, brand, quantity, condition, purchase_year, location, specifications, notes) VALUES
+('Arduino Uno R3 Rak A3', 'Hardware', 'Arduino', 15, 'baik', 2023, 'Rak A3', 'Microcontroller ATmega328P, 14 Digital I/O, 6 Analog Input', 'Untuk prototyping IoT'),
+('Camera Canon EOS M50 Service Center', 'Hardware', 'Canon', 1, 'maintenance', 2024, 'Service Center', 'Mirrorless 24.1MP, DIGIC 8, 4K Video', 'Service rutin sensor cleaning'),
+('Camera Logitech C920 Rak A1', 'Hardware', 'Logitech', 5, 'baik', 2023, 'Rak A1', 'HD Pro Webcam 1080p, Autofocus, Dual Stereo Mics', 'Untuk riset face recognition'),
+('ESP32 DevKit Rak A3', 'Hardware', 'Espressif', 12, 'baik', 2024, 'Rak A3', 'WiFi + Bluetooth, Dual-core 240MHz, 520KB SRAM', 'IoT development'),
+('GPU NVIDIA RTX 3080 Server Room', 'Hardware', 'NVIDIA', 2, 'baik', 2024, 'Server Room', 'RTX 3080 10GB GDDR6X, 8704 CUDA Cores, 320-bit', 'Training model AI dan deep learning'),
+('Laptop Dell Precision Meja Lab', 'Hardware', 'Dell', 3, 'baik', 2024, 'Meja Lab', 'Precision 5540, i7-9850H, 32GB RAM, Quadro T2000', 'Deep learning workstation'),
+('LED Ring Light', 'Aksesoris', 'Godox', 3, 'baik', 2023, 'Lemari Storage', 'LR180 18" Ring Light, Dimmable 3200K-5600K', 'Lighting untuk capture'),
+('MATLAB R2023', 'Software', 'MathWorks', 5, 'baik', 2023, 'Komputer Lab', 'R2023b License untuk 5 concurrent users', 'Signal & image processing'),
+('OpenCV Library', 'Software', 'OpenCV', 1, 'baik', 2023, 'Server', 'Version 4.8.0 Computer Vision Library', 'Open source CV framework'),
+('Python Deep Learning', 'Software', 'PyTorch', 1, 'baik', 2024, 'Server', 'PyTorch v2.0 with CUDA Support', 'Framework deep learning'),
+('Raspberry Pi 4 Model B Rak A2', 'Hardware', 'Raspberry Pi', 10, 'baik', 2023, 'Rak A2', '4B 8GB RAM, Quad-core ARM Cortex-A72, WiFi & Bluetooth', 'IoT dan edge computing'),
+('Sensor HC-SR04', 'Hardware', 'Generic', 20, 'baik', 2023, 'Laci B1', 'Ultrasonic Sensor, Range 2cm-400cm', 'Sensor jarak ultrasonik'),
+('Tripod Manfrotto', 'Aksesoris', 'Manfrotto', 4, 'baik', 2023, 'Lemari Storage', 'MT190X Professional Tripod, Max Height 146cm', 'Camera mounting'),
+('Webcam 4K Logitech BRIO', 'Hardware', 'Logitech', 3, 'baik', 2024, 'Rak A1', 'BRIO 4K Ultra HD, HDR, Auto Light Correction', 'High resolution capture');
 
 -- ========================================
 

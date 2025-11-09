@@ -8,11 +8,21 @@ class AdminController {
     }
     
     public function dashboard() {
-        // Ambil statistik
-        $totalMemberAktif = $this->getTotalMemberAktif();
-        $totalAlumni = $this->getTotalAlumni();
-        $totalRiset = $this->getTotalRiset();
-        $totalNews = $this->getTotalNews();
+        // Ambil statistik berdasarkan role
+        $userRole = $_SESSION['user']['role'] ?? 'member';
+        
+        if ($userRole === 'admin') {
+            // Admin: System Overview
+            $totalUsers = $this->getTotalUsers();
+            $totalMemberAktif = $this->getTotalMemberAktif();
+            $totalEquipment = $this->getTotalEquipment();
+        } else {
+            // Dosen & Ketua Lab: Member & Research focused
+            $totalMemberAktif = $this->getTotalMemberAktif();
+            $totalAlumni = $this->getTotalAlumni();
+            $totalRiset = $this->getTotalRiset();
+            $totalNews = $this->getTotalNews();
+        }
         
         // Ambil pendaftaran pending (5 terbaru)
         $pendingRegistrations = $this->getPendingRegistrations(5);
@@ -63,9 +73,29 @@ class AdminController {
     }
     
     // Method pembantu
+    private function getTotalUsers() {
+        $query = "SELECT COUNT(*) as total FROM users WHERE status = 'active'";
+        $result = @pg_query($this->db, $query);
+        if ($result) {
+            $row = pg_fetch_assoc($result);
+            return $row['total'] ?? 0;
+        }
+        return 0;
+    }
+    
     private function getTotalMemberAktif() {
         $query = "SELECT COUNT(*) as total FROM users WHERE role = 'member' AND status = 'active'";
-        $result = pg_query($this->db, $query);
+        $result = @pg_query($this->db, $query);
+        if ($result) {
+            $row = pg_fetch_assoc($result);
+            return $row['total'] ?? 0;
+        }
+        return 0;
+    }
+    
+    private function getTotalEquipment() {
+        $query = "SELECT COUNT(*) as total FROM equipment";
+        $result = @pg_query($this->db, $query);
         if ($result) {
             $row = pg_fetch_assoc($result);
             return $row['total'] ?? 0;
@@ -264,38 +294,9 @@ class AdminController {
                 }
                 
             } else {
-                // Admin bisa approve di level manapun
-                if ($currentStatus === 'pending_supervisor') {
-                    $updateQuery = "UPDATE member_registrations 
-                                   SET status = 'pending_lab_head', 
-                                       supervisor_approved_at = CURRENT_TIMESTAMP 
-                                   WHERE id = $1";
-                    @pg_query_params($this->db, $updateQuery, [$id]);
-                    $_SESSION['success'] = 'Pendaftar di-approve ke tahap Ketua Lab!';
-                    
-                } elseif ($currentStatus === 'pending_lab_head') {
-                    // Create user account
-                    $password = $registration['password'] ?? password_hash('member123', PASSWORD_BCRYPT);
-                    $insertQuery = "INSERT INTO users (name, email, password, role, status, nim, phone, angkatan) 
-                                   VALUES ($1, $2, $3, 'member', 'active', $4, $5, $6)";
-                    $insertResult = @pg_query_params($this->db, $insertQuery, [
-                        $registration['name'],
-                        $registration['email'],
-                        $password,
-                        $registration['nim'] ?? null,
-                        $registration['phone'] ?? null,
-                        $registration['angkatan'] ?? null
-                    ]);
-                    
-                    if ($insertResult) {
-                        $updateQuery = "UPDATE member_registrations 
-                                       SET status = 'approved', 
-                                           lab_head_approved_at = CURRENT_TIMESTAMP 
-                                       WHERE id = $1";
-                        @pg_query_params($this->db, $updateQuery, [$id]);
-                        $_SESSION['success'] = 'Pendaftar berhasil di-approve! Akun member aktif.';
-                    }
-                }
+                // Admin TIDAK bisa approve - hanya Dosen dan Ketua Lab
+                $_SESSION['error'] = 'Admin tidak memiliki akses untuk approve pendaftar. Silakan hubungi Dosen atau Ketua Lab.';
+                return;
             }
         } else {
             $_SESSION['error'] = 'Pendaftar tidak ditemukan!';
@@ -334,9 +335,9 @@ class AdminController {
                 $message = 'Pendaftar berhasil ditolak. Email notifikasi akan dikirim.';
                 
             } else {
-                // Admin bisa tolak di tahap manapun
-                $newStatus = ($currentStatus === 'pending_supervisor') ? 'rejected_supervisor' : 'rejected_lab_head';
-                $message = 'Pendaftar berhasil ditolak.';
+                // Admin TIDAK bisa reject - hanya Dosen dan Ketua Lab
+                $_SESSION['error'] = 'Admin tidak memiliki akses untuk reject pendaftar. Silakan hubungi Dosen atau Ketua Lab.';
+                return;
             }
             
             // Update status ke rejected
@@ -652,11 +653,15 @@ class AdminController {
         $description = $_POST['description'] ?? '';
         $category = $_POST['category'] ?? '';
         $status = $_POST['status'] ?? 'active';
-        $start_date = $_POST['start_date'] ?? null;
-        $end_date = $_POST['end_date'] ?? null;
-        $funding = $_POST['funding'] ?? '';
-        $team_members = $_POST['team_members'] ?? '';
-        $publications = $_POST['publications'] ?? '';
+        
+        // Convert empty string to null for date fields
+        $start_date = !empty($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end_date = !empty($_POST['end_date']) ? $_POST['end_date'] : null;
+        
+        // Convert empty string to null for optional text fields
+        $funding = !empty($_POST['funding']) ? $_POST['funding'] : null;
+        $team_members = !empty($_POST['team_members']) ? $_POST['team_members'] : null;
+        $publications = !empty($_POST['publications']) ? $_POST['publications'] : null;
         
         // Handle image upload
         $image = null;
@@ -691,11 +696,15 @@ class AdminController {
         $description = $_POST['description'] ?? '';
         $category = $_POST['category'] ?? '';
         $status = $_POST['status'] ?? 'active';
-        $start_date = $_POST['start_date'] ?? null;
-        $end_date = $_POST['end_date'] ?? null;
-        $funding = $_POST['funding'] ?? '';
-        $team_members = $_POST['team_members'] ?? '';
-        $publications = $_POST['publications'] ?? '';
+        
+        // Convert empty string to null for date fields
+        $start_date = !empty($_POST['start_date']) ? $_POST['start_date'] : null;
+        $end_date = !empty($_POST['end_date']) ? $_POST['end_date'] : null;
+        
+        // Convert empty string to null for optional text fields
+        $funding = !empty($_POST['funding']) ? $_POST['funding'] : null;
+        $team_members = !empty($_POST['team_members']) ? $_POST['team_members'] : null;
+        $publications = !empty($_POST['publications']) ? $_POST['publications'] : null;
         
         // Get existing research
         $existing = $this->getResearchById($id);
@@ -914,13 +923,15 @@ class AdminController {
     private function storeEquipment() {
         $name = $_POST['name'] ?? '';
         $category = $_POST['category'] ?? '';
-        $brand = $_POST['brand'] ?? '';
         $quantity = intval($_POST['quantity'] ?? 1);
         $condition = $_POST['condition'] ?? 'baik';
-        $purchase_year = $_POST['purchase_year'] ?? null;
-        $location = $_POST['location'] ?? '';
-        $specifications = $_POST['specifications'] ?? '';
-        $notes = $_POST['notes'] ?? '';
+        
+        // Convert empty string to null for optional fields
+        $brand = !empty($_POST['brand']) ? $_POST['brand'] : null;
+        $purchase_year = !empty($_POST['purchase_year']) ? intval($_POST['purchase_year']) : null;
+        $location = !empty($_POST['location']) ? $_POST['location'] : null;
+        $specifications = !empty($_POST['specifications']) ? $_POST['specifications'] : null;
+        $notes = !empty($_POST['notes']) ? $_POST['notes'] : null;
         
         $query = "INSERT INTO equipment (name, category, brand, quantity, condition, 
                   purchase_year, location, specifications, notes, created_at) 
@@ -933,7 +944,7 @@ class AdminController {
         if ($result) {
             $_SESSION['success'] = 'Peralatan berhasil ditambahkan!';
         } else {
-            $_SESSION['error'] = 'Gagal menambahkan peralatan!';
+            $_SESSION['error'] = 'Gagal menambahkan peralatan: ' . pg_last_error($this->db);
         }
         
         header('Location: index.php?page=admin-equip');
@@ -944,13 +955,15 @@ class AdminController {
         $id = intval($_GET['id'] ?? 0);
         $name = $_POST['name'] ?? '';
         $category = $_POST['category'] ?? '';
-        $brand = $_POST['brand'] ?? '';
         $quantity = intval($_POST['quantity'] ?? 1);
         $condition = $_POST['condition'] ?? 'baik';
-        $purchase_year = $_POST['purchase_year'] ?? null;
-        $location = $_POST['location'] ?? '';
-        $specifications = $_POST['specifications'] ?? '';
-        $notes = $_POST['notes'] ?? '';
+        
+        // Convert empty string to null for optional fields
+        $brand = !empty($_POST['brand']) ? $_POST['brand'] : null;
+        $purchase_year = !empty($_POST['purchase_year']) ? intval($_POST['purchase_year']) : null;
+        $location = !empty($_POST['location']) ? $_POST['location'] : null;
+        $specifications = !empty($_POST['specifications']) ? $_POST['specifications'] : null;
+        $notes = !empty($_POST['notes']) ? $_POST['notes'] : null;
         
         $query = "UPDATE equipment SET name = $1, category = $2, brand = $3, quantity = $4, 
                   condition = $5, purchase_year = $6, location = $7, specifications = $8, 

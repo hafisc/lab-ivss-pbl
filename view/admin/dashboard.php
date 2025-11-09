@@ -34,62 +34,66 @@ $userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'User';
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
     
     <?php if ($userRole === 'admin'): ?>
-        <!-- ADMIN: Semua Statistik -->
+        <!-- ADMIN: System Management Overview -->
         
-        <!-- Total Member Aktif -->
+        <!-- Total Users -->
         <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
             <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                </div>
-                <span class="text-xs font-semibold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">+12%</span>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalMemberAktif ?? 0 ?></h3>
-            <p class="text-xs text-slate-600 font-medium">Total Member Aktif</p>
-        </div>
-        
-        <!-- Alumni / Mantan -->
-        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
-            <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">All Time</span>
+                <span class="text-xs font-semibold text-purple-700 bg-purple-100 px-2.5 py-1 rounded-full">System</span>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalAlumni ?? 0 ?></h3>
-            <p class="text-xs text-slate-600 font-medium">Alumni / Mantan</p>
+            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalUsers ?? 0 ?></h3>
+            <p class="text-xs text-slate-600 font-medium">Total Users</p>
+            <p class="text-xs text-slate-400 mt-1">Admin, Dosen, Ketua Lab, Member</p>
         </div>
         
-        <!-- Riset Berjalan -->
+        <!-- Pending Registrations -->
         <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
             <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-blue-800 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Active</span>
+                <span class="text-xs font-semibold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">Action</span>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalRiset ?? 0 ?></h3>
-            <p class="text-xs text-slate-600 font-medium">Riset Berjalan</p>
+            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= count($pendingRegistrations ?? []) ?></h3>
+            <p class="text-xs text-slate-600 font-medium">Pending Registrations</p>
+            <p class="text-xs text-slate-400 mt-1">Menunggu approval</p>
         </div>
         
-        <!-- Berita Dipublikasikan -->
+        <!-- Active Members -->
         <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
             <div class="flex items-center justify-between mb-3">
-                <div class="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
-                <span class="text-xs font-semibold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">Live</span>
+                <span class="text-xs font-semibold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">Active</span>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalNews ?? 0 ?></h3>
-            <p class="text-xs text-slate-600 font-medium">Berita Dipublikasikan</p>
+            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalMemberAktif ?? 0 ?></h3>
+            <p class="text-xs text-slate-600 font-medium">Active Members</p>
+            <p class="text-xs text-slate-400 mt-1">Member aktif lab</p>
+        </div>
+        
+        <!-- Lab Equipment -->
+        <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                    </svg>
+                </div>
+                <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">Inventory</span>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-0.5"><?= $totalEquipment ?? 0 ?></h3>
+            <p class="text-xs text-slate-600 font-medium">Lab Equipment</p>
+            <p class="text-xs text-slate-400 mt-1">Inventaris peralatan</p>
         </div>
     
     <?php elseif ($userRole === 'ketua_lab'): ?>

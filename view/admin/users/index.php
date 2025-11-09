@@ -151,8 +151,8 @@ ob_start();
 
 <!-- Modal -->
 <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-2xl w-full">
-        <div class="p-6 border-b">
+    <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+        <div class="p-6 border-b flex-shrink-0">
             <div class="flex justify-between">
                 <h3 class="text-lg font-bold" id="modalTitle">Tambah User</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
@@ -160,44 +160,137 @@ ob_start();
                 </button>
             </div>
         </div>
-        <form id="userForm" class="p-6 space-y-4">
+        <div class="overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-slate-100">
+            <form id="userForm" class="p-6 space-y-4">
             <input type="hidden" id="userId" name="id">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="col-span-2"><input type="text" name="name" id="userName" placeholder="Nama Lengkap *" required class="w-full px-3 py-2 border rounded-lg"></div>
-                <div><input type="email" name="email" id="userEmail" placeholder="Email *" required class="w-full px-3 py-2 border rounded-lg"></div>
-                <div><input type="text" name="phone" id="userPhone" placeholder="No. Telepon" class="w-full px-3 py-2 border rounded-lg"></div>
+            
+            <!-- STEP 1: Pilih Role Dulu -->
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                <p class="text-sm font-medium text-slate-700 mb-3">👤 Langkah 1: Pilih Role User</p>
+                <select name="role" id="userRole" required class="w-full px-4 py-3 text-sm font-medium border-2 border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" onchange="toggleRoleFields()">
+                    <option value="">-- Pilih Role Terlebih Dahulu --</option>
+                    <option value="admin">🔒 Admin</option>
+                    <option value="ketua_lab">👨‍🏫 Ketua Lab</option>
+                    <option value="dosen">👨‍🎓 Dosen</option>
+                    <option value="member">🎓 Member Lab</option>
+                </select>
+            </div>
+
+            <!-- STEP 2: Form Fields (Hidden until role selected) -->
+            <div id="formFields" class="hidden space-y-4">
+                <div class="border-t pt-4">
+                    <p class="text-sm font-medium text-slate-700 mb-4">📝 Langkah 2: Isi Data User</p>
+                    
+                    <!-- Basic Info -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Nama Lengkap *</label>
+                            <input type="text" name="name" id="userName" placeholder="Nama Lengkap" required class="w-full px-3 py-2 text-sm border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Email *</label>
+                            <input type="email" name="email" id="userEmail" placeholder="Email" required class="w-full px-3 py-2 text-sm border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">No. Telepon</label>
+                            <input type="text" name="phone" id="userPhone" placeholder="08xxxxxxxxxx" class="w-full px-3 py-2 text-sm border rounded-lg">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Status *</label>
+                            <select name="status" id="userStatus" required class="w-full px-3 py-2 text-sm border rounded-lg">
+                                <option value="active">Aktif</option>
+                                <option value="inactive">Tidak Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+
+            <!-- Fields for Dosen & Ketua Lab -->
+            <div id="nipField" class="hidden">
+                <label class="block text-xs font-medium text-slate-700 mb-1">NIP *</label>
+                <input type="text" name="nip" id="userNip" placeholder="Contoh: 197001011995031001" class="w-full px-3 py-2 text-sm border rounded-lg">
+            </div>
+
+            <!-- Fields for Member -->
+            <div id="memberFields" class="hidden space-y-4">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                    <p class="text-xs text-blue-700 font-medium mb-1">📋 Informasi Member</p>
+                    <p class="text-xs text-blue-600">⚠️ Member akan masuk ke <strong>approval workflow</strong> (Dosen → Ketua Lab)</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">NIM *</label>
+                        <input type="text" name="nim" id="userNim" placeholder="Contoh: 2141720010" class="w-full px-3 py-2 text-sm border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Angkatan *</label>
+                        <input type="text" name="angkatan" id="userAngkatan" placeholder="Contoh: 2024" class="w-full px-3 py-2 text-sm border rounded-lg">
+                    </div>
+                </div>
                 <div>
-                    <select name="role" id="userRole" required class="w-full px-3 py-2 border rounded-lg" onchange="toggleRoleFields()">
-                        <option value="">Pilih Role *</option>
-                        <option value="admin">Admin</option>
-                        <option value="ketua_lab">Ketua Lab</option>
-                        <option value="dosen">Dosen</option>
-                        <option value="member">Member</option>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Asal Prodi/Kelas</label>
+                    <input type="text" name="origin" id="userOrigin" placeholder="Contoh: TI 3A - Politeknik Negeri Malang" class="w-full px-3 py-2 text-sm border rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Judul Riset/Penelitian *</label>
+                    <input type="text" name="research_title" id="userResearchTitle" placeholder="Contoh: Face Recognition dengan Deep Learning" class="w-full px-3 py-2 text-sm border rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Dosen Pembimbing *</label>
+                    <select name="supervisor_id" id="userSupervisor" class="w-full px-3 py-2 text-sm border rounded-lg">
+                        <option value="">Pilih Dosen Pembimbing</option>
+                        <?php foreach ($users as $u): ?>
+                            <?php if ($u['role'] === 'dosen'): ?>
+                                <option value="<?= $u['id'] ?>"><?= $u['name'] ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div>
-                    <select name="status" id="userStatus" required class="w-full px-3 py-2 border rounded-lg">
-                        <option value="active">Aktif</option>
-                        <option value="inactive">Tidak Aktif</option>
-                    </select>
-                </div>
-                <div id="nipField" class="col-span-2 hidden"><input type="text" name="nip" id="userNip" placeholder="NIP (untuk Dosen/Ketua Lab)" class="w-full px-3 py-2 border rounded-lg"></div>
-                <div id="nimField" class="hidden"><input type="text" name="nim" id="userNim" placeholder="NIM" class="w-full px-3 py-2 border rounded-lg"></div>
-                <div id="angkatanField" class="hidden"><input type="text" name="angkatan" id="userAngkatan" placeholder="Angkatan" class="w-full px-3 py-2 border rounded-lg"></div>
-                <div class="col-span-2">
-                    <input type="password" name="password" id="userPassword" placeholder="Password *" class="w-full px-3 py-2 border rounded-lg">
-                    <p class="text-xs text-slate-500 mt-1" id="passwordHint">Minimal 8 karakter</p>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Motivasi Bergabung</label>
+                    <textarea name="motivation" id="userMotivation" rows="3" placeholder="Ceritakan motivasi Anda bergabung dengan Lab IVSS..." class="w-full px-3 py-2 text-sm border rounded-lg"></textarea>
                 </div>
             </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">Password <span id="passwordRequired">*</span></label>
+                        <input type="password" name="password" id="userPassword" placeholder="Minimal 8 karakter" class="w-full px-3 py-2 text-sm border rounded-lg">
+                        <p class="text-xs text-slate-500 mt-1" id="passwordHint">Minimal 8 karakter</p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="flex gap-3 pt-4">
                 <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                     <span id="btnText">Simpan</span>
                 </button>
                 <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200">Batal</button>
             </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
+
+<style>
+/* Custom Scrollbar Styling */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+</style>
 
 <script>
 let isEditMode = false;
@@ -210,6 +303,13 @@ function showAddModal() {
     document.getElementById('userPassword').required = true;
     document.getElementById('passwordHint').textContent = 'Minimal 8 karakter';
     document.getElementById('btnText').textContent = 'Simpan';
+    document.getElementById('passwordRequired').textContent = '*';
+    
+    // Hide all form fields until role selected
+    document.getElementById('formFields').classList.add('hidden');
+    document.getElementById('nipField').classList.add('hidden');
+    document.getElementById('memberFields').classList.add('hidden');
+    
     document.getElementById('userModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
@@ -221,20 +321,52 @@ function closeModal() {
 
 function toggleRoleFields() {
     const role = document.getElementById('userRole').value;
+    const formFields = document.getElementById('formFields');
     const nipField = document.getElementById('nipField');
-    const nimField = document.getElementById('nimField');
-    const angkatanField = document.getElementById('angkatanField');
+    const memberFields = document.getElementById('memberFields');
     
-    // Reset
+    // Get form inputs
+    const nipInput = document.getElementById('userNip');
+    const nimInput = document.getElementById('userNim');
+    const angkatanInput = document.getElementById('userAngkatan');
+    const researchTitleInput = document.getElementById('userResearchTitle');
+    const supervisorInput = document.getElementById('userSupervisor');
+    
+    // Jika role belum dipilih, sembunyikan semua form
+    if (!role) {
+        formFields.classList.add('hidden');
+        return;
+    }
+    
+    // Show form fields jika role sudah dipilih
+    formFields.classList.remove('hidden');
+    
+    // Reset all specific role fields
     nipField.classList.add('hidden');
-    nimField.classList.add('hidden');
-    angkatanField.classList.add('hidden');
+    memberFields.classList.add('hidden');
     
-    if (role === 'dosen' || role === 'ketua_lab') {
+    // Reset required attributes
+    if (nipInput) nipInput.required = false;
+    if (nimInput) nimInput.required = false;
+    if (angkatanInput) angkatanInput.required = false;
+    if (researchTitleInput) researchTitleInput.required = false;
+    if (supervisorInput) supervisorInput.required = false;
+    
+    // Show fields based on role
+    if (role === 'admin') {
+        // Admin: hanya basic fields
+        // Tidak ada field tambahan
+    } else if (role === 'dosen' || role === 'ketua_lab') {
+        // Dosen & Ketua Lab: tambah NIP
         nipField.classList.remove('hidden');
+        if (nipInput) nipInput.required = true;
     } else if (role === 'member') {
-        nimField.classList.remove('hidden');
-        angkatanField.classList.remove('hidden');
+        // Member: tambah member fields lengkap
+        memberFields.classList.remove('hidden');
+        if (nimInput) nimInput.required = true;
+        if (angkatanInput) angkatanInput.required = true;
+        if (researchTitleInput) researchTitleInput.required = true;
+        if (supervisorInput) supervisorInput.required = true;
     }
 }
 
@@ -244,6 +376,7 @@ function editUser(id) {
     document.getElementById('btnText').textContent = 'Update';
     document.getElementById('userPassword').required = false;
     document.getElementById('passwordHint').textContent = 'Kosongkan jika tidak ingin mengubah password';
+    document.getElementById('passwordRequired').textContent = '';
     
     // Fetch user data
     fetch('index.php?page=user-show&id=' + id)
@@ -257,9 +390,18 @@ function editUser(id) {
                 document.getElementById('userPhone').value = user.phone || '';
                 document.getElementById('userRole').value = user.role;
                 document.getElementById('userStatus').value = user.status;
+                
+                // NIP for dosen/ketua_lab
                 document.getElementById('userNip').value = user.nip || '';
+                
+                // Member fields
                 document.getElementById('userNim').value = user.nim || '';
                 document.getElementById('userAngkatan').value = user.angkatan || '';
+                document.getElementById('userOrigin').value = user.origin || '';
+                document.getElementById('userResearchTitle').value = user.research_title || '';
+                document.getElementById('userSupervisor').value = user.supervisor_id || '';
+                document.getElementById('userMotivation').value = user.motivation || '';
+                
                 toggleRoleFields();
                 document.getElementById('userModal').classList.remove('hidden');
                 document.body.style.overflow = 'hidden';

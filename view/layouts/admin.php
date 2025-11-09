@@ -10,6 +10,93 @@ if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'dosen' && $_SESSION[
     header('Location: ./index.php?page=home');
     exit;
 }
+
+// Get database connection untuk notification data
+require_once __DIR__ . '/../../app/config/database.php';
+$db = getDb();
+
+// Get notification count based on role
+$userRole = $_SESSION['user']['role'] ?? $_SESSION['role'] ?? 'member';
+$userId = $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0;
+
+$notificationCount = 0;
+$notifications = [];
+
+try {
+    if ($userRole === 'dosen') {
+        // Dosen: count pendaftar yang memilih dia sebagai supervisor
+        $query = "SELECT COUNT(*) as count FROM member_registrations 
+                  WHERE status = 'pending_supervisor' AND supervisor_id = $1";
+        $result = @pg_query_params($db, $query, [$userId]);
+        if ($result) {
+            $row = pg_fetch_assoc($result);
+            $notificationCount = (int)($row['count'] ?? 0);
+        }
+        
+        // Get latest notifications
+        $query = "SELECT mr.*, u.name as supervisor_name 
+                  FROM member_registrations mr 
+                  LEFT JOIN users u ON mr.supervisor_id = u.id 
+                  WHERE mr.status = 'pending_supervisor' AND mr.supervisor_id = $1 
+                  ORDER BY mr.created_at DESC LIMIT 3";
+        $result = @pg_query_params($db, $query, [$userId]);
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $notifications[] = $row;
+            }
+        }
+        
+    } elseif ($userRole === 'ketua_lab') {
+        // Ketua Lab: count yang sudah approve dosen
+        $query = "SELECT COUNT(*) as count FROM member_registrations 
+                  WHERE status = 'pending_lab_head'";
+        $result = @pg_query($db, $query);
+        if ($result) {
+            $row = pg_fetch_assoc($result);
+            $notificationCount = (int)($row['count'] ?? 0);
+        }
+        
+        // Get latest notifications
+        $query = "SELECT mr.*, u.name as supervisor_name 
+                  FROM member_registrations mr 
+                  LEFT JOIN users u ON mr.supervisor_id = u.id 
+                  WHERE mr.status = 'pending_lab_head' 
+                  ORDER BY mr.created_at DESC LIMIT 3";
+        $result = @pg_query($db, $query);
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $notifications[] = $row;
+            }
+        }
+        
+    } elseif ($userRole === 'admin') {
+        // Admin: count all pending registrations
+        $query = "SELECT COUNT(*) as count FROM member_registrations 
+                  WHERE status IN ('pending_supervisor', 'pending_lab_head')";
+        $result = @pg_query($db, $query);
+        if ($result) {
+            $row = pg_fetch_assoc($result);
+            $notificationCount = (int)($row['count'] ?? 0);
+        }
+        
+        // Get latest notifications
+        $query = "SELECT mr.*, u.name as supervisor_name 
+                  FROM member_registrations mr 
+                  LEFT JOIN users u ON mr.supervisor_id = u.id 
+                  WHERE mr.status IN ('pending_supervisor', 'pending_lab_head') 
+                  ORDER BY mr.created_at DESC LIMIT 3";
+        $result = @pg_query($db, $query);
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $notifications[] = $row;
+            }
+        }
+    }
+} catch (Exception $e) {
+    // Silent fail - notifikasi tidak krusial
+    $notificationCount = 0;
+    $notifications = [];
+}
 ?>
 <!doctype html>
 <html lang="id">
