@@ -285,7 +285,7 @@
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
+     <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -349,8 +349,114 @@
             </div>
         </div>
     </div>
-</section>
-
+<br><br>
+    <div class="container mx-auto px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Daftar Peralatan</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Peralatan yang tersedia di Lab IVSS</p>
+                <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+            </div>
+<div class="grid md:grid-cols-3 gap-8">
+    <?php if (!empty($equipmentForLanding) && is_array($equipmentForLanding)): ?>
+        <?php foreach ($equipmentForLanding as $equip): ?>
+            <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                    <?= htmlspecialchars($equip['name']) ?>
+                </h3>
+                <p class="text-sm text-gray-600 mb-1">
+                    <?= htmlspecialchars($equip['category'] ?? '') ?>
+                    <?php if (!empty($equip['brand'])): ?>
+                        • <?= htmlspecialchars($equip['brand']) ?>
+                    <?php endif; ?>
+                </p>
+                <p class="text-xs text-gray-500 mb-1">
+                    Jumlah: <?= (int)($equip['quantity'] ?? 0) ?>
+                </p>
+                <?php if (!empty($equip['condition'])): ?>
+                    <p class="text-xs text-gray-500 mb-1">
+                        Kondisi: <?= htmlspecialchars($equip['condition']) ?>
+                    </p>
+                <?php endif; ?>
+                <?php if (!empty($equip['location'])): ?>
+                    <p class="text-xs text-gray-500">
+                        Lokasi: <?= htmlspecialchars($equip['location']) ?>
+                    </p>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="col-span-3 text-center text-gray-500">
+            Belum ada data peralatan yang ditambahkan.
+        </div>
+    <?php endif; ?>
+</div>
+                
+                <!-- <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Camera 260fps</h3>
+                    <p class="text-gray-600 text-sm">Kamera berkecepatan tinggi untuk analisis visual</p>
+                </div>
+                
+                <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Perangkat IoT</h3>
+                    <p class="text-gray-600 text-sm">Sensor dan microcontroller untuk prototyping</p>
+                </div>
+                
+                <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Server GPU</h3>
+                    <p class="text-gray-600 text-sm">Server dengan GPU untuk training deep learning</p>
+                </div>
+                
+                <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Camera DSLR</h3>
+                    <p class="text-gray-600 text-sm">Kamera profesional untuk dataset berkualitas tinggi</p>
+                </div> -->
+                
+                <!-- <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Ruang Penelitian</h3>
+                    <p class="text-gray-600 text-sm">Ruang lab yang nyaman dan kondusif untuk riset</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+<br><br><br>
 <!-- Sorotan Publikasi Section -->
 <section id="publikasi" class="py-20 bg-gray-50">
     <div class="container mx-auto px-4">
@@ -526,7 +632,7 @@
                                     <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
                                         <div class="flex items-center gap-1">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 012 2z"></path>
                                             </svg>
                                             <span><?= $publishDate ?></span>
                                         </div>

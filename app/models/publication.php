@@ -22,29 +22,26 @@ class Publication {
     public $updated_at;
 
     public function __construct($db) {
-        $this->conn = $db;
+        $this->conn = $db; // PDO instance
     }
 
-    // Get all publications
     public function getAll($limit = null) {
-        $query = "SELECT * FROM " . $this->table . " 
-                  WHERE status = 'published' 
-                  ORDER BY year DESC, citations DESC";
-        
-        if ($limit) {
-            $query .= " LIMIT " . intval($limit);
+        $sql = "SELECT * FROM {$this->table}
+                WHERE status = 'published'
+                ORDER BY year DESC, citations DESC";
+
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $this->conn->query($sql);
         }
 
-        $result = pg_query($this->conn, $query);
-        
-        if (!$result) {
-            return false;
-        }
-        
-        return $result;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Get featured publications (untuk home page)
     public function getFeatured($limit = 6) {
         $query = "SELECT * FROM " . $this->table . " 
                   WHERE status = 'published' AND featured = TRUE 
@@ -57,7 +54,6 @@ class Publication {
             return false;
         }
         
-        // Convert to array for easier use in view
         $publications = array();
         while ($row = pg_fetch_assoc($result)) {
             $publications[] = $row;
@@ -66,145 +62,125 @@ class Publication {
         return $publications;
     }
 
-    // Get publication by ID
     public function getById($id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE id = $1 LIMIT 1";
-        
-        $result = pg_query_params($this->conn, $query, array($id));
-        
-        if (!$result) {
-            return false;
-        }
-        
-        return pg_fetch_assoc($result);
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Get by year
     public function getByYear($year) {
-        $query = "SELECT * FROM " . $this->table . " 
-                  WHERE year = $1 AND status = 'published' 
-                  ORDER BY citations DESC";
-        
-        $result = pg_query_params($this->conn, $query, array($year));
-        
-        if (!$result) {
-            return false;
-        }
-        
-        return $result;
+        $sql = "SELECT * FROM {$this->table}
+                WHERE year = :year AND status = 'published'
+                ORDER BY citations DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':year' => $year]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Get by type (journal, conference, etc)
     public function getByType($type) {
-        $query = "SELECT * FROM " . $this->table . " 
-                  WHERE type = $1 AND status = 'published' 
-                  ORDER BY year DESC, citations DESC";
-        
-        $result = pg_query_params($this->conn, $query, array($type));
-        
-        if (!$result) {
-            return false;
-        }
-        
-        return $result;
+        $sql = "SELECT * FROM {$this->table}
+                WHERE type = :type AND status = 'published'
+                ORDER BY year DESC, citations DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':type' => $type]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Search publications
     public function search($keyword) {
-        $query = "SELECT * FROM " . $this->table . " 
-                  WHERE status = 'published' 
-                  AND (title ILIKE $1 OR authors ILIKE $1 OR keywords ILIKE $1 OR abstract ILIKE $1) 
-                  ORDER BY year DESC, citations DESC";
-        
-        $searchTerm = "%" . $keyword . "%";
-        $result = pg_query_params($this->conn, $query, array($searchTerm));
-        
-        if (!$result) {
-            return false;
-        }
-        
-        return $result;
+        $sql = "SELECT * FROM {$this->table}
+                WHERE status = 'published'
+                  AND (title ILIKE :kw
+                       OR authors ILIKE :kw
+                       OR keywords ILIKE :kw
+                       OR abstract ILIKE :kw)
+                ORDER BY year DESC, citations DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $kw = '%' . $keyword . '%';
+        $stmt->execute([':kw' => $kw]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Get statistics
     public function getStats() {
-        $query = "SELECT 
-                    COUNT(*) as total_publications,
-                    SUM(citations) as total_citations,
-                    AVG(citations) as avg_citations,
-                    MAX(year) as latest_year,
-                    MIN(year) as earliest_year
-                  FROM " . $this->table . " 
-                  WHERE status = 'published'";
-        
-        $result = pg_query($this->conn, $query);
-        
-        if (!$result) {
-            return false;
-        }
-        
-        return pg_fetch_assoc($result);
+        $sql = "SELECT
+                    COUNT(*)                    AS total_publications,
+                    COALESCE(SUM(citations),0) AS total_citations,
+                    COALESCE(AVG(citations),0) AS avg_citations,
+                    MAX(year)                  AS latest_year,
+                    MIN(year)                  AS earliest_year
+                FROM {$this->table}
+                WHERE status = 'published'";
+        $stmt = $this->conn->query($sql);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Create new publication
     public function create() {
-        $query = "INSERT INTO " . $this->table . " 
-                  (title, authors, year, journal, conference, doi, url, abstract, citations, keywords, type, status, featured) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)";
+        $sql = "INSERT INTO {$this->table}
+                (title, authors, year, journal, conference, doi, url,
+                 abstract, citations, keywords, type, status, featured)
+                VALUES
+                (:title, :authors, :year, :journal, :conference, :doi, :url,
+                 :abstract, :citations, :keywords, :type, :status, :featured)";
 
-        $result = pg_query_params($this->conn, $query, array(
-            $this->title, 
-            $this->authors, 
-            $this->year, 
-            $this->journal, 
-            $this->conference, 
-            $this->doi, 
-            $this->url, 
-            $this->abstract, 
-            $this->citations, 
-            $this->keywords, 
-            $this->type, 
-            $this->status, 
-            $this->featured
-        ));
-
-        return $result !== false;
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':title'      => $this->title,
+            ':authors'    => $this->authors,
+            ':year'       => $this->year,
+            ':journal'    => $this->journal,
+            ':conference' => $this->conference,
+            ':doi'        => $this->doi,
+            ':url'        => $this->url,
+            ':abstract'   => $this->abstract,
+            ':citations'  => $this->citations,
+            ':keywords'   => $this->keywords,
+            ':type'       => $this->type,
+            ':status'     => $this->status,
+            ':featured'   => $this->featured,
+        ]);
     }
 
-    // Update publication
     public function update() {
-        $query = "UPDATE " . $this->table . " 
-                  SET title = $1, authors = $2, year = $3, journal = $4, conference = $5, 
-                      doi = $6, url = $7, abstract = $8, citations = $9, keywords = $10, 
-                      type = $11, status = $12, featured = $13, updated_at = CURRENT_TIMESTAMP 
-                  WHERE id = $14";
+        $sql = "UPDATE {$this->table}
+                SET title      = :title,
+                    authors    = :authors,
+                    year       = :year,
+                    journal    = :journal,
+                    conference = :conference,
+                    doi        = :doi,
+                    url        = :url,
+                    abstract   = :abstract,
+                    citations  = :citations,
+                    keywords   = :keywords,
+                    type       = :type,
+                    status     = :status,
+                    featured   = :featured,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = :id";
 
-        $result = pg_query_params($this->conn, $query, array(
-            $this->title, 
-            $this->authors, 
-            $this->year, 
-            $this->journal, 
-            $this->conference, 
-            $this->doi, 
-            $this->url, 
-            $this->abstract, 
-            $this->citations, 
-            $this->keywords, 
-            $this->type, 
-            $this->status, 
-            $this->featured, 
-            $this->id
-        ));
-
-        return $result !== false;
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            ':title'      => $this->title,
+            ':authors'    => $this->authors,
+            ':year'       => $this->year,
+            ':journal'    => $this->journal,
+            ':conference' => $this->conference,
+            ':doi'        => $this->doi,
+            ':url'        => $this->url,
+            ':abstract'   => $this->abstract,
+            ':citations'  => $this->citations,
+            ':keywords'   => $this->keywords,
+            ':type'       => $this->type,
+            ':status'     => $this->status,
+            ':featured'   => $this->featured,
+            ':id'         => $this->id,
+        ]);
     }
 
-    // Delete publication
     public function delete() {
-        $query = "DELETE FROM " . $this->table . " WHERE id = $1";
-        
-        $result = pg_query_params($this->conn, $query, array($this->id));
-        
-        return $result !== false;
+        $sql = "DELETE FROM {$this->table} WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':id' => $this->id]);
     }
 }

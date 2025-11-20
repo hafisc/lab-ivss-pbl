@@ -22,12 +22,12 @@
 <?php endif; ?>
 
 <div class="bg-white border border-slate-200 rounded-xl p-4">
-    <form method="POST" action="index.php?page=admin-equip&action=update&id=<?= $equipmentItem['id'] ?>" class="space-y-4">
+    <form method="POST" action="index.php?page=admin-equip&action=edit&id=<?= $equip['id'] ?>" class="space-y-4">
         
         <div>
             <label for="name" class="block text-xs font-medium text-slate-700 mb-1.5">Nama Peralatan *</label>
             <input type="text" id="name" name="name" required
-                   value="<?= htmlspecialchars($equipmentItem['name']) ?>"
+                   value="<?= htmlspecialchars($equip['name']) ?>"
                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
         </div>
 
@@ -36,16 +36,16 @@
                 <label for="category" class="block text-xs font-medium text-slate-700 mb-1.5">Kategori *</label>
                 <select id="category" name="category" required
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
-                    <option value="Hardware" <?= $equipmentItem['category'] === 'Hardware' ? 'selected' : '' ?>>Hardware</option>
-                    <option value="Software" <?= $equipmentItem['category'] === 'Software' ? 'selected' : '' ?>>Software</option>
-                    <option value="Aksesoris" <?= $equipmentItem['category'] === 'Aksesoris' ? 'selected' : '' ?>>Aksesoris</option>
+                    <option value="Hardware" <?= $equip['category']=='Hardware'?'selected':'' ?>>Hardware</option>
+                    <option value="Software" <?= $equip['category']=='Software'?'selected':'' ?>>Software</option>
+                    <option value="Aksesoris" <?= $equip['category']=='Aksesoris'?'selected':'' ?>>Aksesoris</option>
                 </select>
             </div>
 
             <div>
                 <label for="brand" class="block text-xs font-medium text-slate-700 mb-1.5">Brand/Merek</label>
                 <input type="text" id="brand" name="brand"
-                       value="<?= htmlspecialchars($equipmentItem['brand'] ?? '') ?>"
+                       value="<?= htmlspecialchars($equip['brand'] ?? '') ?>"
                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div>
                 <label for="quantity" class="block text-xs font-medium text-slate-700 mb-1.5">Jumlah *</label>
                 <input type="number" id="quantity" name="quantity" min="1" required
-                       value="<?= $equipmentItem['quantity'] ?>"
+                       value="<?= (int)($equip['quantity'] ?? 1) ?>"
                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
             </div>
 
@@ -62,16 +62,16 @@
                 <label for="condition" class="block text-xs font-medium text-slate-700 mb-1.5">Kondisi *</label>
                 <select id="condition" name="condition" required
                         class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
-                    <option value="baik" <?= $equipmentItem['condition'] === 'baik' ? 'selected' : '' ?>>Baik</option>
-                    <option value="maintenance" <?= $equipmentItem['condition'] === 'maintenance' ? 'selected' : '' ?>>Maintenance</option>
-                    <option value="rusak" <?= $equipmentItem['condition'] === 'rusak' ? 'selected' : '' ?>>Rusak</option>
+                    <option value="baik" <?= $equip['condition']=='baik'?'selected':'' ?>>Baik</option>
+                    <option value="rusak" <?= $equip['condition']=='rusak'?'selected':'' ?>>Rusak</option>
+                    <option value="maintenance" <?= $equip['condition']=='maintenance'?'selected':'' ?>>Maintenance</option>
                 </select>
             </div>
 
             <div>
                 <label for="purchase_year" class="block text-xs font-medium text-slate-700 mb-1.5">Tahun Pembelian</label>
                 <input type="number" id="purchase_year" name="purchase_year" min="1900" max="2100"
-                       value="<?= htmlspecialchars($equipmentItem['purchase_year'] ?? '') ?>"
+                       value="<?= htmlspecialchars($equip['purchase_year'] ?? '') ?>"
                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
             </div>
         </div>
@@ -79,30 +79,32 @@
         <div>
             <label for="location" class="block text-xs font-medium text-slate-700 mb-1.5">Lokasi</label>
             <input type="text" id="location" name="location"
-                   value="<?= htmlspecialchars($equipmentItem['location'] ?? '') ?>"
+                   value="<?= htmlspecialchars($equip['location'] ?? '') ?>"
                    class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs">
         </div>
 
         <div>
             <label for="specifications" class="block text-xs font-medium text-slate-700 mb-1.5">Spesifikasi</label>
             <textarea id="specifications" name="specifications" rows="3"
-                      class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"><?= htmlspecialchars($equipmentItem['specifications'] ?? '') ?></textarea>
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"><?= htmlspecialchars($equip['specifications'] ?? '') ?></textarea>
         </div>
 
         <div>
             <label for="notes" class="block text-xs font-medium text-slate-700 mb-1.5">Catatan</label>
             <textarea id="notes" name="notes" rows="2"
-                      class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"><?= htmlspecialchars($equipmentItem['notes'] ?? '') ?></textarea>
+                      class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"><?= htmlspecialchars($equip['notes'] ?? '') ?></textarea>
         </div>
 
         <div class="bg-slate-50 rounded-lg p-3 text-xs text-slate-600">
             <div class="grid md:grid-cols-2 gap-2">
                 <div>
-                    <span class="font-medium">Dibuat:</span> <?= date('d M Y H:i', strtotime($equipmentItem['created_at'])) ?>
+                    <span class="font-medium">Dibuat:</span>
+                    <?= !empty($equip['created_at']) ? date('d M Y H:i', strtotime($equip['created_at'])) : '-' ?>
                 </div>
-                <?php if (!empty($equipmentItem['updated_at'])): ?>
+                <?php if (!empty($equip['updated_at'])): ?>
                 <div>
-                    <span class="font-medium">Diupdate:</span> <?= date('d M Y H:i', strtotime($equipmentItem['updated_at'])) ?>
+                    <span class="font-medium">Diupdate:</span>
+                    <?= date('d M Y H:i', strtotime($equip['updated_at'])) ?>
                 </div>
                 <?php endif; ?>
             </div>
