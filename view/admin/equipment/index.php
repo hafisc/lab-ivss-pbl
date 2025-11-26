@@ -1,9 +1,7 @@
 <?php ob_start(); ?>
 
-
-
 <!-- Alert Messages -->
-<?php if (isset($_SESSION['success'])): ?>
+<?php if (isset($_SESSION['success'])):?> 
 <div class="mb-3 bg-green-50 border-l-4 border-green-500 p-3 rounded-lg">
     <p class="text-xs text-green-700"><?= $_SESSION['success'] ?></p>
 </div>

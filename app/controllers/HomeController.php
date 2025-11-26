@@ -29,6 +29,7 @@ class HomeController {
         
         // Get latest news untuk home page (max 6)
         $latestNews = $newsModel->getLatest(6);
+        
         // Data dosen inti - hardcode dulu untuk landing page
         $dosen_inti = [
             [
@@ -115,6 +116,13 @@ class HomeController {
             'Loker Penyimpanan',
             'Ruang Pelatihan Internal'
         ];
+
+        // Load equipment model
+        require_once __DIR__ . '/../models/equipment.php';
+        $equipmentModel = new Equipment($this->db);
+
+        // Ambil maksimal 6 peralatan untuk landing page
+        $equipmentForLanding = $equipmentModel->getForLanding("30");
 
         // Muat view dengan layout pages
         require_once __DIR__ . '/../../view/layouts/pages.php';

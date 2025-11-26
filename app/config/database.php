@@ -3,9 +3,9 @@ class Database
 {
     private $host = '127.0.0.1';
     private $port = '5432';
-    private $db_name = 'lab_ivs';
+    private $db_name = 'lab_ivss';
     private $username = 'postgres';
-    private $password = '170206';
+    private $password = '12345';
     private $conn;
 
     public function getConnection()
@@ -29,10 +29,10 @@ class Database
 function getDb()
 {
     $host = '127.0.0.1';
-    $port = '5432';
-    $db   = 'lab_ivs';
-    $user = 'postgres';
-    $pass = '170206';
+    $port = '5432';               
+    $db   = 'lab_ivss';
+    $user = 'postgres';          
+    $pass = '12345';           
 
     $connection_string = "host=$host port=$port dbname=$db user=$user password=$pass";
 

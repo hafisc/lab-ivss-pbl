@@ -284,8 +284,8 @@
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Peralatan dan infrastruktur riset yang modern</p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
+            
+     <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -346,11 +346,81 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Ruang Penelitian</h3>
                     <p class="text-gray-600 text-sm">Ruang lab yang nyaman dan kondusif untuk riset</p>
                 </div>
+
+                <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Mushola</h3>
+                    <p class="text-gray-600 text-sm">Ruang ibadah yang nyaman dan tenang untuk berdoa</p>
+                </div>
             </div>
         </div>
     </div>
-</section>
+<br><br>
+    <div class="container mx-auto px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Daftar Peralatan</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Peralatan yang tersedia di Lab IVSS</p>
+                <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+            </div>
+<div class="grid md:grid-cols-3 gap-8">
+    <?php if (!empty($equipmentForLanding) && is_array($equipmentForLanding)): ?>
+        <?php foreach ($equipmentForLanding as $equip): ?>
+            <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-25 h-25 mx-auto mb-4 rounded-2xl overflow-hidden bg-blue-900 flex items-center justify-center">
+                    <?php if (!empty($equip['image'])): ?>
+                        <img src="<?= htmlspecialchars($equip['image']) ?>" alt="<?= htmlspecialchars($equip['name']) ?>" class="w-full h-full object-cover">
+                    <?php else: ?>
+                        <!-- fallback ikon jika belum ada gambar -->
+                        <svg class="" fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                            </path>
+                        </svg>
+                    <?php endif; ?>
+                </div>
 
+                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                    <?= htmlspecialchars($equip['name']) ?>
+                </h3>
+                <p class="text-sm text-gray-600 mb-1">
+                    <?= htmlspecialchars($equip['category'] ?? '') ?>
+                    <?php if (!empty($equip['brand'])): ?>
+                        • <?= htmlspecialchars($equip['brand']) ?>
+                    <?php endif; ?>
+                </p>
+                <p class="text-xs text-gray-500 mb-1">
+                    Jumlah: <?= (int)($equip['quantity'] ?? 0) ?>
+                </p>
+                <?php if (!empty($equip['condition'])): ?>
+                    <p class="text-xs text-gray-500 mb-1">
+                        Kondisi: <?= htmlspecialchars($equip['condition']) ?>
+                    </p>
+                <?php endif; ?>
+                <?php if (!empty($equip['location'])): ?>
+                    <p class="text-xs text-gray-500">
+                        Lokasi: <?= htmlspecialchars($equip['location']) ?>
+                    </p>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="col-span-3 text-center text-gray-500">
+            Belum ada data peralatan yang ditambahkan.
+        </div>
+    <?php endif; ?>
+</div>
+<br><br><br>
 <!-- Sorotan Publikasi Section -->
 <section id="publikasi" class="py-20 bg-gray-50">
     <div class="container mx-auto px-4">
@@ -393,49 +463,38 @@
                                 // Determine publication venue (journal or conference)
                                 $venue = !empty($pub['journal']) ? $pub['journal'] : ($pub['conference'] ?? 'Conference');
                         ?>
-                                <div class="swiper-slide">
-                                    <div class="group relative bg-blue-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-                                        <!-- Featured Badge (jika featured dan citation tinggi) -->
-                                        <?php if ($pub['citations'] > 20): ?>
-                                            <div class="absolute top-4 right-4 w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center">
-                                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                                </svg>
-                                            </div>
-                                        <?php endif; ?>
-
-                                        <div class="mb-4">
-                                            <span class="inline-block px-3 py-1 bg-blue-900 text-white text-xs font-semibold rounded-full"><?= $pub['year'] ?></span>
-                                            <span class="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full ml-2"><?= ucfirst($pub['type']) ?></span>
-                                        </div>
-
-                                        <h3 class="text-xl font-bold text-gray-900 mb-3 <?= $pub['citations'] > 20 ? 'pr-12' : '' ?>"><?= htmlspecialchars($pub['title']) ?></h3>
-
-                                        <p class="text-xs text-gray-500 mb-2">
-                                            <strong>Authors:</strong> <?= htmlspecialchars($pub['authors']) ?>
-                                        </p>
-
-                                        <p class="text-xs text-blue-800 font-medium mb-3"><?= htmlspecialchars($venue) ?></p>
-
-                                        <p class="text-gray-600 text-sm mb-4 flex-grow"><?= htmlspecialchars($excerpt) ?></p>
-
-                                        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                                            <div class="flex items-center gap-2 text-sm text-gray-500">
-                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
-                                                </svg>
-                                                <span><?= $pub['citations'] ?> Sitasi</span>
-                                            </div>
-
-                                            <?php if (!empty($pub['doi'])): ?>
-                                                <a href="https://doi.org/<?= htmlspecialchars($pub['doi']) ?>" target="_blank" class="inline-flex items-center gap-2 text-blue-900 font-semibold hover:gap-3 transition-all text-sm">
-                                                    DOI
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                                    </svg>
-                                                </a>
-                                            <?php endif; ?>
-                                        </div>
+                        <div class="swiper-slide">
+                            <div class="group relative bg-blue-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
+                                <!-- Featured Badge (jika featured dan citation tinggi) -->
+                                <?php if($pub['citations'] > 20): ?>
+                                <div class="absolute top-4 right-4 w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <div class="mb-4">
+                                    <span class="inline-block px-3 py-1 bg-blue-900 text-white text-xs font-semibold rounded-full"><?= $pub['year'] ?></span>
+                                    <span class="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full ml-2"><?= ucfirst($pub['type']) ?></span>
+                                </div>
+                                
+                                <h3 class="text-xl font-bold text-gray-900 mb-3 <?= $pub['citations'] > 20 ? 'pr-12' : '' ?>"><?= htmlspecialchars($pub['title']) ?></h3>
+                                
+                                <p class="text-xs text-gray-500 mb-2">
+                                    <strong>Authors:</strong> <?= htmlspecialchars($pub['authors']) ?>
+                                </p>
+                                
+                                <p class="text-xs text-blue-800 font-medium mb-3"><?= htmlspecialchars($venue) ?></p>
+                                
+                                <p class="text-gray-600 text-sm mb-4 flex-grow"><?= htmlspecialchars($excerpt) ?></p>
+                                
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                                    <div class="flex items-center gap-2 text-sm text-gray-500">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 005.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
+                                        </svg>
+                                        <span><?= $pub['citations'] ?> Sitasi</span>
                                     </div>
                                 </div>
                             <?php
@@ -500,24 +559,35 @@
                                 // Format date
                                 $publishDate = !empty($news['published_at']) ? date('d M Y', strtotime($news['published_at'])) : date('d M Y', strtotime($news['created_at']));
                         ?>
-                                <div class="swiper-slide">
-                                    <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-                                        <!-- Image -->
-                                        <div class="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
-                                            <?php if (!empty($news['image_url'])): ?>
-                                                <img src="<?= htmlspecialchars($news['image_url']) ?>"
-                                                    alt="<?= htmlspecialchars($news['title']) ?>"
-                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                            <?php else: ?>
-                                                <div class="w-full h-full flex items-center justify-center">
-                                                    <svg class="w-20 h-20 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                                    </svg>
-                                                </div>
-                                            <?php endif; ?>
-
-                                            <!-- Overlay Gradient -->
-                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="swiper-slide">
+                            <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
+                                <!-- Image -->
+                                <div class="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+                                    <?php if (!empty($news['image_url'])): ?>
+                                        <img src="<?= htmlspecialchars($news['image_url']) ?>" 
+                                             alt="<?= htmlspecialchars($news['title']) ?>"
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <?php else: ?>
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <svg class="w-20 h-20 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                            </svg>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <!-- Overlay Gradient -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                </div>
+                                
+                                <!-- Content -->
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <!-- Meta Info -->
+                                    <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                                        <div class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 012 2z"></path>
+                                            </svg>
+                                            <span><?= $publishDate ?></span>
                                         </div>
 
                                         <!-- Content -->
@@ -771,13 +841,14 @@
                 </div>
             </div>
         `;
-
-            publicationSwiper.appendSlide(slideHTML);
-        });
-
-        // Update swiper
-        publicationSwiper.update();
-    }
+        
+        publicationSwiper.appendSlide(slideHTML);
+    });
+    
+    
+    // Update swiper
+    publicationSwiper.update();
+}
 </script>
 
 <style>

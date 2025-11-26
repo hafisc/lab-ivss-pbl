@@ -9,13 +9,14 @@ session_start();
 date_default_timezone_set('Asia/Jakarta');
 
 require_once __DIR__ . '/../app/config/database.php';
-$pg = getDb(); // dari database.php
+$pg = getDb(); // PgSql\Connection
+
+require_once __DIR__ . '/../app/controllers/HomeController.php';
 
 $page = $_GET['page'] ?? 'home';
 
 switch ($page) {
     case 'home':
-        require __DIR__ . '/../app/controllers/HomeController.php';
         (new HomeController($pg))->index();
         break;
 
@@ -103,8 +104,28 @@ switch ($page) {
         (new AdminController($pg))->members();
         break;
     case 'admin-equip':
-        require __DIR__ . '/../app/controllers/AdminController.php';
-        (new AdminController($pg))->equipment();
+        require_once __DIR__ . '/../app/controllers/EquipmentController.php';
+        $controller = new EquipmentController($pg);
+
+        $action = $_GET['action'] ?? 'index';
+
+        if ($action === 'create') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $controller->store();
+            } else {
+                $controller->create();
+            }
+        } elseif ($action === 'edit') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $controller->update();
+            } else {
+                $controller->edit();
+            }
+        } elseif ($action === 'delete') {
+            $controller->delete();
+        } else {
+            $controller->index();
+        }
         break;
     case 'admin-settings':
         require __DIR__ . '/../app/controllers/AdminController.php';

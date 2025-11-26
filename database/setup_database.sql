@@ -294,6 +294,7 @@ CREATE TABLE IF NOT EXISTS equipment (
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL,
     brand VARCHAR(100),
+    image VARCHAR(255),
     quantity INTEGER DEFAULT 1,
     condition VARCHAR(50) DEFAULT 'baik',
     purchase_year INTEGER,
