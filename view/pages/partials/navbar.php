@@ -34,7 +34,7 @@
             
             <!-- Tombol Login - Agak ke kiri -->
             <div class="hidden md:flex items-center pr-4">
-                <a href="index.php?page=login" class="px-4 py-2 bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800 transition">
+                <a href="index.php?page=login" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800 transition">
                     Login
                 </a>
             </div>
@@ -58,8 +58,8 @@
             <a href="#member" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Member</a>
             <a href="#berita" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Berita</a>
             <a href="#kontak" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Kontak</a>
-            <div class="pt-3 space-y-2">
-                <a href="index.php?page=login" class="block py-2 px-4 text-center bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800">
+                <div class="pt-3 space-y-2">
+                <a href="index.php?page=login" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-center bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800">
                     Login
                 </a>
             </div>

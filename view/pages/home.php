@@ -6,7 +6,7 @@
         <div class="absolute top-60 -left-20 w-60 h-60 bg-gray-100 rounded-full opacity-40"></div>
         <div class="absolute bottom-20 right-1/4 w-40 h-40 bg-blue-100 rounded-full opacity-30"></div>
     </div>
-    
+
     <div class="container mx-auto px-4 relative">
         <div class="min-h-[90vh] flex flex-col justify-center py-20">
             <!-- Main Content -->
@@ -18,18 +18,18 @@
                     </svg>
                     <span class="text-sm font-semibold text-blue-900">Laboratorium Jurusan Teknologi Informasi - Politeknik Negeri Malang</span>
                 </div>
-                
+
                 <!-- Main Title -->
                 <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
                     <span class="block">Intelligent Vision &</span>
                     <span class="block text-blue-900">Smart System</span>
                 </h1>
-                
+
                 <!-- Subtitle -->
                 <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
                     Pusat penelitian dan pengembangan teknologi <span class="font-semibold text-gray-900">Computer Vision</span>, <span class="font-semibold text-gray-900">Artificial Intelligence</span>, dan <span class="font-semibold text-gray-900">Internet of Things</span>
                 </p>
-                
+
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
                     <a href="#profil" class="group px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:shadow-xl hover:scale-105 inline-flex items-center gap-3">
@@ -45,20 +45,20 @@
                         <span>Bergabung Sekarang</span>
                     </a>
                 </div>
-                
-                
-            
-            <!-- Scroll Indicator -->
-            <div class="text-center mt-16">
-                <a href="#profil" class="inline-flex flex-col items-center gap-2 text-gray-400 hover:text-blue-900 transition-colors">
-                    <span class="text-xs font-medium uppercase tracking-wider"></span>
-                    <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                    </svg>
-                </a>
+
+
+
+                <!-- Scroll Indicator -->
+                <div class="text-center mt-16">
+                    <a href="#profil" class="inline-flex flex-col items-center gap-2 text-gray-400 hover:text-blue-900 transition-colors">
+                        <span class="text-xs font-medium uppercase tracking-wider"></span>
+                        <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
 </section>
 
 <!-- Profil Lab Section -->
@@ -75,7 +75,7 @@
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Profil Laboratorium</h2>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full"></div>
             </div>
-            
+
             <!-- Content -->
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <!-- Image/Logo Card -->
@@ -87,17 +87,17 @@
                                 <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
                             </svg>
                         </div>
-                        
+
                         <!-- Logo -->
                         <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
                             <img src="assets/images/Logo-lab-IVSS-300x118.png" alt="Lab IVSS Logo" class="w-full max-w-xs h-auto">
-                            
+
                             <!-- Lab Name -->
                             <div class="text-center">
                                 <h3 class="text-2xl font-bold text-blue-900 mb-2">Lab IVSS</h3>
                                 <p class="text-sm text-gray-600 font-medium">Intelligent Vision & Smart System</p>
                             </div>
-                            
+
                             <!-- Location -->
                             <div class="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
                                 <svg class="w-4 h-4 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Text -->
                 <div class="space-y-6">
                     <p class="text-gray-700 leading-relaxed text-justify">
@@ -118,7 +118,7 @@
                     <p class="text-gray-700 leading-relaxed text-justify">
                         Kami fokus pada penelitian dan pengembangan teknologi intelligent vision dan smart system yang inovatif, aplikatif, serta berdaya saing nasional dan internasional untuk mendukung kemajuan bidang teknologi informasi dan industri berbasis kecerdasan buatan.
                     </p>
-                    
+
                     <!-- Features -->
                     <div class="grid grid-cols-2 gap-4 pt-4">
                         <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
@@ -159,7 +159,7 @@
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Visi & Misi</h2>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full"></div>
             </div>
-            
+
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Visi -->
                 <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition-shadow duration-300">
@@ -176,7 +176,7 @@
                         Menjadi laboratorium unggulan dalam pengembangan teknologi <span class="font-semibold text-blue-900">Intelligent Vision</span> dan <span class="font-semibold text-blue-900">Smart System</span> yang inovatif, aplikatif, serta berdaya saing nasional dan internasional untuk mendukung kemajuan bidang teknologi informasi dan industri berbasis kecerdasan buatan.
                     </p>
                 </div>
-                
+
                 <!-- Misi -->
                 <div class="bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-lg transition-shadow duration-300">
                     <div class="flex items-center gap-4 mb-6">
@@ -233,7 +233,7 @@
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Berbagai riset dan proyek yang sedang berjalan</p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
-            
+
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
                     <div class="w-14 h-14 bg-blue-900 rounded-xl flex items-center justify-center mb-4">
@@ -244,7 +244,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Sistem Cerdas</h3>
                     <p class="text-gray-600 text-sm">Integrasi AI dengan sistem untuk pengambilan keputusan</p>
                 </div>
-                
+
                 <div class="bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
                     <div class="w-14 h-14 bg-purple-900 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +254,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Machine Learning</h3>
                     <p class="text-gray-600 text-sm">Pembelajaran mesin untuk klasifikasi dan clustering</p>
                 </div>
-                
+
                 <div class="bg-green-50 border border-green-100 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
                     <div class="w-14 h-14 bg-green-900 rounded-xl flex items-center justify-center mb-4">
                         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,7 +295,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Komputer Desktop</h3>
                     <p class="text-gray-600 text-sm">Workstation high-end untuk pengolahan data dan riset</p>
                 </div>
-                
+
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,7 +306,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Camera 260fps</h3>
                     <p class="text-gray-600 text-sm">Kamera berkecepatan tinggi untuk analisis visual</p>
                 </div>
-                
+
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -316,7 +316,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Perangkat IoT</h3>
                     <p class="text-gray-600 text-sm">Sensor dan microcontroller untuk prototyping</p>
                 </div>
-                
+
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,7 +326,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Server GPU</h3>
                     <p class="text-gray-600 text-sm">Server dengan GPU untuk training deep learning</p>
                 </div>
-                
+
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -336,7 +336,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Camera DSLR</h3>
                     <p class="text-gray-600 text-sm">Kamera profesional untuk dataset berkualitas tinggi</p>
                 </div>
-                
+
                 <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="w-20 h-20 bg-blue-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -436,7 +436,7 @@
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Penelitian dan karya ilmiah terbaru dari Lab IVSS</p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
-            
+
             <!-- Filter Buttons -->
             <div class="flex justify-center items-center gap-3 mb-12">
                 <button id="filterCited" class="filter-btn px-6 py-2.5 bg-blue-900 text-white rounded-full font-semibold text-sm hover:bg-blue-800 transition-all duration-300 shadow-md" data-filter="cited">
@@ -449,17 +449,17 @@
                     Terlama
                 </button>
             </div>
-            
+
             <!-- Publikasi Swiper -->
             <div class="relative">
                 <div class="swiper publicationSwiper">
                     <div class="swiper-wrapper pb-12">
-                        <?php 
+                        <?php
                         if ($publications && is_array($publications) && count($publications) > 0):
-                            foreach($publications as $pub): 
+                            foreach ($publications as $pub):
                                 // Truncate abstract untuk excerpt
                                 $excerpt = strlen($pub['abstract']) > 150 ? substr($pub['abstract'], 0, 150) . '...' : $pub['abstract'];
-                                
+
                                 // Determine publication venue (journal or conference)
                                 $venue = !empty($pub['journal']) ? $pub['journal'] : ($pub['conference'] ?? 'Conference');
                         ?>
@@ -496,35 +496,24 @@
                                         </svg>
                                         <span><?= $pub['citations'] ?> Sitasi</span>
                                     </div>
-                                    
-                                    <?php if(!empty($pub['doi'])): ?>
-                                    <a href="https://doi.org/<?= htmlspecialchars($pub['doi']) ?>" target="_blank" class="inline-flex items-center gap-2 text-blue-900 font-semibold hover:gap-3 transition-all text-sm">
-                                        DOI
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                        </svg>
-                                    </a>
-                                    <?php endif; ?>
                                 </div>
-                            </div>
-                        </div>
-                        <?php 
+                            <?php
                             endforeach;
                         else:
-                        ?>
-                        <div class="swiper-slide">
-                            <div class="bg-blue-50 rounded-2xl p-8 text-center">
-                                <p class="text-gray-600">Belum ada publikasi tersedia.</p>
+                            ?>
+                            <div class="swiper-slide">
+                                <div class="bg-blue-50 rounded-2xl p-8 text-center">
+                                    <p class="text-gray-600">Belum ada publikasi tersedia.</p>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <div class="swiper-pagination"></div>
                 </div>
             </div>
-            
+
             <!-- View All Button -->
             <div class="text-center mt-12">
                 <a href="#" class="inline-flex items-center gap-3 px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-xl">
@@ -553,20 +542,20 @@
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Update terkini seputar kegiatan dan pencapaian Lab IVSS</p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
-            
+
             <!-- News Swiper -->
             <div class="relative news-swiper-container">
                 <div class="swiper newsSwiper">
                     <div class="swiper-wrapper pb-12">
-                        <?php 
+                        <?php
                         if ($latestNews && is_array($latestNews) && count($latestNews) > 0):
-                            foreach($latestNews as $news): 
+                            foreach ($latestNews as $news):
                                 // Truncate excerpt
                                 $excerpt = !empty($news['excerpt']) ? $news['excerpt'] : substr(strip_tags($news['content']), 0, 120);
                                 if (strlen($excerpt) > 120) {
                                     $excerpt = substr($excerpt, 0, 120) . '...';
                                 }
-                                
+
                                 // Format date
                                 $publishDate = !empty($news['published_at']) ? date('d M Y', strtotime($news['published_at'])) : date('d M Y', strtotime($news['created_at']));
                         ?>
@@ -600,61 +589,72 @@
                                             </svg>
                                             <span><?= $publishDate ?></span>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                            </svg>
-                                            <span><?= number_format($news['views'] ?? 0) ?> views</span>
+
+                                        <!-- Content -->
+                                        <div class="p-6 flex flex-col flex-grow">
+                                            <!-- Meta Info -->
+                                            <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    <span><?= $publishDate ?></span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                    </svg>
+                                                    <span><?= number_format($news['views'] ?? 0) ?> views</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Title -->
+                                            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
+                                                <?= htmlspecialchars($news['title']) ?>
+                                            </h3>
+
+                                            <!-- Excerpt -->
+                                            <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
+                                                <?= htmlspecialchars($excerpt) ?>
+                                            </p>
+
+                                            <!-- Read More Button -->
+                                            <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>"
+                                                class="inline-flex items-center gap-2 text-blue-900 font-semibold text-sm hover:gap-3 transition-all mt-auto">
+                                                Baca Selengkapnya
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                                </svg>
+                                            </a>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Title -->
-                                    <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
-                                        <?= htmlspecialchars($news['title']) ?>
-                                    </h3>
-                                    
-                                    <!-- Excerpt -->
-                                    <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
-                                        <?= htmlspecialchars($excerpt) ?>
-                                    </p>
-                                    
-                                    <!-- Read More Button -->
-                                    <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>" 
-                                       class="inline-flex items-center gap-2 text-blue-900 font-semibold text-sm hover:gap-3 transition-all mt-auto">
-                                        Baca Selengkapnya
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                        </svg>
-                                    </a>
                                 </div>
-                            </div>
-                        </div>
-                        <?php 
+                            <?php
                             endforeach;
                         else:
-                        ?>
-                        <div class="swiper-slide">
-                            <div class="bg-white rounded-2xl p-12 text-center">
-                                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                </svg>
-                                <h3 class="text-lg font-medium text-gray-700 mb-2">Belum Ada Berita</h3>
-                                <p class="text-gray-500">Berita dan artikel akan segera ditambahkan.</p>
+                            ?>
+                            <div class="swiper-slide">
+                                <div class="bg-white rounded-2xl p-12 text-center">
+                                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-medium text-gray-700 mb-2">Belum Ada Berita</h3>
+                                    <p class="text-gray-500">Berita dan artikel akan segera ditambahkan.</p>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <div class="swiper-pagination"></div>
                 </div>
             </div>
-            
+
             <!-- View All Button -->
             <div class="text-center mt-12">
-                <a href="index.php?page=news" 
-                   class="inline-flex items-center gap-3 px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <a href="index.php?page=news"
+                    class="inline-flex items-center gap-3 px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                     Lihat Semua Berita
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
@@ -666,139 +666,139 @@
 </section>
 
 <!-- Swiper JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <!-- Pass PHP data to JavaScript -->
 <script>
-const publicationsData = <?php echo json_encode($publications ?? []); ?>;
+    const publicationsData = <?php echo json_encode($publications ?? []); ?>;
 </script>
 
 <!-- Initialize Swiper -->
 <script>
-let publicationSwiper = null;
-let newsSwiper = null;
+    let publicationSwiper = null;
+    let newsSwiper = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Swipers
-    initSwiper();
-    initNewsSwiper();
-    
-    // Filter buttons functionality
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remove active class from all buttons
-            filterButtons.forEach(b => {
-                b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
-                b.classList.add('bg-white', 'border-gray-200', 'text-gray-700');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Swipers
+        initSwiper();
+        initNewsSwiper();
+
+        // Filter buttons functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'border-gray-200', 'text-gray-700');
+                });
+
+                // Add active class to clicked button
+                this.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
+                this.classList.add('bg-blue-900', 'text-white', 'shadow-md');
+
+                // Filter publications
+                const filterType = this.getAttribute('data-filter');
+                filterPublications(filterType);
             });
-            
-            // Add active class to clicked button
-            this.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
-            this.classList.add('bg-blue-900', 'text-white', 'shadow-md');
-            
-            // Filter publications
-            const filterType = this.getAttribute('data-filter');
-            filterPublications(filterType);
         });
     });
-});
 
-function initSwiper() {
-    publicationSwiper = new Swiper('.publicationSwiper', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 5000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.publicationSwiper .swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-                spaceBetween: 20,
+    function initSwiper() {
+        publicationSwiper = new Swiper('.publicationSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
             },
-            768: {
-                slidesPerView: 2,
-                spaceBetween: 30,
+            pagination: {
+                el: '.publicationSwiper .swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
             },
-            1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
             },
-        },
-    });
-}
-
-function initNewsSwiper() {
-    newsSwiper = new Swiper('.newsSwiper', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 6000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.newsSwiper .swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-                spaceBetween: 20,
-            },
-            768: {
-                slidesPerView: 2,
-                spaceBetween: 30,
-            },
-            1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-            },
-        },
-    });
-}
-
-function filterPublications(filterType) {
-    let sortedData = [...publicationsData];
-    
-    // Sort based on filter type
-    switch(filterType) {
-        case 'cited':
-            sortedData.sort((a, b) => b.citations - a.citations);
-            break;
-        case 'latest':
-            sortedData.sort((a, b) => b.year - a.year);
-            break;
-        case 'oldest':
-            sortedData.sort((a, b) => a.year - b.year);
-            break;
+        });
     }
-    
-    // Update swiper slides
-    updateSwiperSlides(sortedData);
-}
 
-function updateSwiperSlides(data) {
-    if (!publicationSwiper) return;
-    
-    // Remove all slides
-    publicationSwiper.removeAllSlides();
-    
-    // Add new slides
-    data.forEach(pub => {
-        const excerpt = pub.abstract.length > 150 ? pub.abstract.substring(0, 150) + '...' : pub.abstract;
-        const venue = pub.journal || pub.conference || 'Conference';
-        
-        const slideHTML = `
+    function initNewsSwiper() {
+        newsSwiper = new Swiper('.newsSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 6000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.newsSwiper .swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
+            },
+        });
+    }
+
+    function filterPublications(filterType) {
+        let sortedData = [...publicationsData];
+
+        // Sort based on filter type
+        switch (filterType) {
+            case 'cited':
+                sortedData.sort((a, b) => b.citations - a.citations);
+                break;
+            case 'latest':
+                sortedData.sort((a, b) => b.year - a.year);
+                break;
+            case 'oldest':
+                sortedData.sort((a, b) => a.year - b.year);
+                break;
+        }
+
+        // Update swiper slides
+        updateSwiperSlides(sortedData);
+    }
+
+    function updateSwiperSlides(data) {
+        if (!publicationSwiper) return;
+
+        // Remove all slides
+        publicationSwiper.removeAllSlides();
+
+        // Add new slides
+        data.forEach(pub => {
+            const excerpt = pub.abstract.length > 150 ? pub.abstract.substring(0, 150) + '...' : pub.abstract;
+            const venue = pub.journal || pub.conference || 'Conference';
+
+            const slideHTML = `
             <div class="swiper-slide">
                 <div class="group relative bg-blue-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
                     ${pub.citations > 20 ? `
@@ -852,22 +852,22 @@ function updateSwiperSlides(data) {
 </script>
 
 <style>
-/* Custom Swiper Styling */
-.publicationSwiper {
-    padding: 0 0 50px;
-}
+    /* Custom Swiper Styling */
+    .publicationSwiper {
+        padding: 0 0 50px;
+    }
 
-.swiper-pagination-bullet {
-    width: 10px;
-    height: 10px;
-    background: #1e3a8a;
-    opacity: 0.3;
-}
+    .swiper-pagination-bullet {
+        width: 10px;
+        height: 10px;
+        background: #1e3a8a;
+        opacity: 0.3;
+    }
 
-.swiper-pagination-bullet-active {
-    opacity: 1;
-    background: #1e3a8a;
-}
+    .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: #1e3a8a;
+    }
 </style>
 
 <!-- Anggota Tim Section -->
@@ -884,7 +884,7 @@ function updateSwiperSlides(data) {
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Tim peneliti dan pengajar Lab IVSS</p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
-            
+
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div class="group text-center">
                     <div class="relative mb-4 mx-auto w-32 h-32">
@@ -896,7 +896,7 @@ function updateSwiperSlides(data) {
                     <h3 class="font-bold text-gray-900 text-sm mb-1">Dr. Ulla Delfana Rosiani, ST., MT.</h3>
                     <p class="text-xs text-blue-900 font-semibold">Kepala Lab</p>
                 </div>
-                
+
                 <div class="group text-center">
                     <div class="relative mb-4 mx-auto w-32 h-32">
                         <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
@@ -907,7 +907,7 @@ function updateSwiperSlides(data) {
                     <h3 class="font-bold text-gray-900 text-sm mb-1">Mamluatul Hani'ah, S.Kom., M.Kom</h3>
                     <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
                 </div>
-                
+
                 <div class="group text-center">
                     <div class="relative mb-4 mx-auto w-32 h-32">
                         <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
@@ -918,7 +918,7 @@ function updateSwiperSlides(data) {
                     <h3 class="font-bold text-gray-900 text-sm mb-1">Mungki Astiningrum, ST., M.Kom.</h3>
                     <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
                 </div>
-                
+
                 <div class="group text-center">
                     <div class="relative mb-4 mx-auto w-32 h-32">
                         <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
@@ -935,6 +935,15 @@ function updateSwiperSlides(data) {
 </section>
 
 <!-- Perkuliahan Terkait Section -->
+<?php
+$dataFile = __DIR__ . '/../../app/data/perkuliahan.json';
+$perkuliahan = null;
+if (file_exists($dataFile)) {
+    $raw = file_get_contents($dataFile);
+    $decoded = json_decode($raw, true);
+    if (is_array($decoded)) $perkuliahan = $decoded;
+}
+?>
 <section id="perkuliahan" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="max-w-6xl mx-auto">
@@ -944,60 +953,34 @@ function updateSwiperSlides(data) {
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                     </svg>
                 </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Perkuliahan Terkait</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Mata kuliah yang berkaitan dengan Lab IVSS</p>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4"><?= htmlspecialchars($perkuliahan['heading'] ?? 'Perkuliahan Terkait') ?></h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto"><?= htmlspecialchars($perkuliahan['subtitle'] ?? 'Mata kuliah yang berkaitan dengan Lab IVSS') ?></p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
-            
+
             <div class="grid md:grid-cols-2 gap-6">
-                <div class="flex items-start gap-4 bg-blue-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-                        </svg>
+                <?php
+                $items = $perkuliahan['items'] ?? [
+                    ['title' => 'Kecerdasan Artifisial (AI)', 'description' => 'Teknologi yang fokus pada pembelajaran tugas-tugas berbasis manusia seperti pengenalan pola'],
+                    ['title' => 'Machine Learning', 'description' => 'Cabang dari kecerdasan artifisial yang memungkinkan mesin belajar dari data'],
+                    ['title' => 'Pengolahan Citra dan Visi Komputer', 'description' => 'Menganalisis gambar atau video untuk ekstraksi pola, deteksi objek, segmentasi, dan lainnya'],
+                    ['title' => 'Sistem Cerdas (Intelligent System)', 'description' => 'Pengembangan sistem yang dapat melakukan keputusan otomatis, penanganan informasi dalam konteks aplikasi nyata']
+                ];
+
+                foreach ($items as $it):
+                ?>
+                    <div class="flex items-start gap-4 bg-blue-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
+                        <div class="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-2"><?= htmlspecialchars($it['title']) ?></h3>
+                            <p class="text-gray-600 text-sm"><?= htmlspecialchars($it['description']) ?></p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Kecerdasan Artifisial (AI)</h3>
-                        <p class="text-gray-600 text-sm">Teknologi yang fokus pada pembelajaran tugas-tugas berbasis manusia seperti pengenalan pola</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-start gap-4 bg-blue-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Machine Learning</h3>
-                        <p class="text-gray-600 text-sm">Cabang dari kecerdasan artifisial yang memungkinkan mesin belajar dari data</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-start gap-4 bg-blue-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Pengolahan Citra dan Visi Komputer</h3>
-                        <p class="text-gray-600 text-sm">Menganalisis gambar atau video untuk ekstraksi pola, deteksi objek, segmentasi, dan lainnya</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-start gap-4 bg-blue-50 rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">Sistem Cerdas (Intelligent System)</h3>
-                        <p class="text-gray-600 text-sm">Pengembangan sistem yang dapat melakukan keputusan otomatis, penanganan informasi dalam konteks aplikasi nyata</p>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

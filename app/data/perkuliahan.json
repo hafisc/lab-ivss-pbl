@@ -1,0 +1,22 @@
+{
+    "heading": "Perkuliahan Terkait",
+    "subtitle": "Mata kuliah yang berkaitan dengan Lab IVSS",
+    "items": [
+        {
+            "title": "Kecerdasan Artifisial (AI)",
+            "description": "Teknologi yang fokus pada pembelajaran tugas-tugas berbasis manusia seperti pengenalan pola"
+        },
+        {
+            "title": "Machine Learning",
+            "description": "Cabang dari kecerdasan artifisial yang memungkinkan mesin belajar dari data"
+        },
+        {
+            "title": "Pengolahan Citra dan Visi Komputer",
+            "description": "Menganalisis gambar atau video untuk ekstraksi pola, deteksi objek, segmentasi, dan lainnya"
+        },
+        {
+            "title": "Sistem Cerdas (Intelligent System)",
+            "description": "Pengembangan sistem yang dapat melakukan keputusan otomatis, penanganan informasi dalam konteks aplikasi nyata"
+        }
+    ]
+}

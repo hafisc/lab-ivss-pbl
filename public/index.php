@@ -19,7 +19,7 @@ switch ($page) {
     case 'home':
         (new HomeController($pg))->index();
         break;
-    
+
     case 'login':
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->login();
@@ -36,18 +36,31 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->logout();
         break;
-    
+
     // Admin Routes
     case 'admin':
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->dashboard();
+        break;
+    case 'admin-perkuliahan-list':
+        // List tampilan utama perkuliahan
+        include __DIR__ . '/../view/admin/perkuliahanTerkait/index.php';
+        break;
+    case 'admin-perkuliahan-edit':
+        // Edit/Add form untuk perkuliahan
+        include __DIR__ . '/../view/admin/perkuliahanTerkait/edit.php';
+        break;
+    case 'admin-perkuliahan':
+        // Backward compatibility - redirect to list
+        header('Location: index.php?page=admin-perkuliahan-list');
+        exit;
         break;
     case 'admin-users':
         require __DIR__ . '/../app/controllers/UserController.php';
         $controller = new UserController();
         $controller->index();
         break;
-    
+
     // User AJAX Actions
     case 'user-store':
         require __DIR__ . '/../app/controllers/UserController.php';
@@ -118,7 +131,7 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->settings();
         break;
-    
+
     // Dosen Routes (Publications & Students)
     case 'admin-publications':
         require __DIR__ . '/../view/admin/publications/index.php';
@@ -126,13 +139,13 @@ switch ($page) {
     case 'admin-students':
         require __DIR__ . '/../view/admin/students/index.php';
         break;
-    
+
     // Member Routes
     case 'member':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->dashboard();
         break;
-    
+
     // Member Research Routes
     case 'member-research':
         require __DIR__ . '/../view/member/research/index.php';
@@ -140,40 +153,40 @@ switch ($page) {
     case 'member-research-detail':
         require __DIR__ . '/../view/member/research/detail.php';
         break;
-    
+
     // Member Publications
     case 'member-publications':
         require __DIR__ . '/../view/member/publications/index.php';
         break;
-    
+
     // Member Profile & Settings
     case 'member-profile':
     case 'member-settings':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->profile();
         break;
-    
+
     case 'member-settings-edit':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->editProfile();
         break;
-    
+
     case 'member-settings-update':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->updateProfile();
         break;
-    
+
     case 'member-change-password':
     case 'member-settings-change-password':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->changePassword();
         break;
-    
+
     case 'member-settings-change-password-submit':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->submitChangePassword();
         break;
-    
+
     default:
         http_response_code(404);
         echo "404 Not Found";
