@@ -25,9 +25,12 @@ class News {
 
     // Get all news
     public function getAll($limit = null, $status = 'published') {
-        $query = "SELECT n.*, u.name as author_name 
+        $query = "SELECT n.*, 
+                         COALESCE(d.nama, m.nama, u.username) as author_name 
                   FROM " . $this->table . " n 
                   LEFT JOIN users u ON n.author_id = u.id 
+                  LEFT JOIN dosen d ON u.id = d.user_id
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id
                   WHERE n.status = $1 
                   ORDER BY n.published_at DESC, n.created_at DESC";
         
@@ -58,9 +61,12 @@ class News {
 
     // Get latest published news untuk home page
     public function getLatest($limit = 6) {
-        $query = "SELECT n.*, u.name as author_name 
+        $query = "SELECT n.*, 
+                         COALESCE(d.nama, m.nama, u.username) as author_name 
                   FROM " . $this->table . " n 
                   LEFT JOIN users u ON n.author_id = u.id 
+                  LEFT JOIN dosen d ON u.id = d.user_id
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id
                   WHERE n.status = 'published' 
                   ORDER BY n.published_at DESC, n.created_at DESC 
                   LIMIT $1";
@@ -88,9 +94,12 @@ class News {
 
     // Get news by ID
     public function getById($id) {
-        $query = "SELECT n.*, u.name as author_name 
+        $query = "SELECT n.*, 
+                         COALESCE(d.nama, m.nama, u.username) as author_name 
                   FROM " . $this->table . " n 
                   LEFT JOIN users u ON n.author_id = u.id 
+                  LEFT JOIN dosen d ON u.id = d.user_id
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id
                   WHERE n.id = $1 
                   LIMIT 1";
         
@@ -114,9 +123,12 @@ class News {
 
     // Get news by slug
     public function getBySlug($slug) {
-        $query = "SELECT n.*, u.name as author_name 
+        $query = "SELECT n.*, 
+                         COALESCE(d.nama, m.nama, u.username) as author_name 
                   FROM " . $this->table . " n 
                   LEFT JOIN users u ON n.author_id = u.id 
+                  LEFT JOIN dosen d ON u.id = d.user_id
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id
                   WHERE n.slug = $1 
                   LIMIT 1";
         
@@ -140,9 +152,12 @@ class News {
 
     // Search news
     public function search($keyword) {
-        $query = "SELECT n.*, u.name as author_name 
+        $query = "SELECT n.*, 
+                         COALESCE(d.nama, m.nama, u.username) as author_name 
                   FROM " . $this->table . " n 
                   LEFT JOIN users u ON n.author_id = u.id 
+                  LEFT JOIN dosen d ON u.id = d.user_id
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id
                   WHERE n.status = 'published' 
                   AND (n.title ILIKE $1 OR n.content ILIKE $1 OR n.excerpt ILIKE $1) 
                   ORDER BY n.published_at DESC";
