@@ -1,5 +1,5 @@
 -- ========================================
--- Lab IVSS Database Setup - Complete
+-- Lab IVSS Database Setup - Restructured
 -- Run this script in your SQL Editor
 -- ========================================
 
@@ -13,31 +13,42 @@
 -- DROP TABLE IF EXISTS publications CASCADE;
 -- DROP TABLE IF EXISTS news CASCADE;
 -- DROP TABLE IF EXISTS member_registrations CASCADE;
+-- DROP TABLE IF EXISTS mahasiswa CASCADE;
+-- DROP TABLE IF EXISTS dosen CASCADE;
 -- DROP TABLE IF EXISTS research CASCADE;
 -- DROP TABLE IF EXISTS users CASCADE;
+-- DROP TABLE IF EXISTS roles CASCADE;
 
--- 1. TABEL USERS
--- Untuk menyimpan data user (admin, ketua_lab, dosen, member)
+-- ========================================
+-- 1. TABEL ROLES (MASTER DATA)
+-- ========================================
+-- Untuk menyimpan master data role dalam sistem
+CREATE TABLE IF NOT EXISTS roles (
+    id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO roles (role_name, role_description) VALUES
+('admin', 'Administrator sistem dengan akses penuh'),
+('ketua_lab', 'Ketua laboratorium yang mengelola lab'),
+('dosen', 'Dosen pengampu/pembimbing riset'),
+('mahasiswa', 'Mahasiswa anggota lab');
+
+-- ========================================
+-- 2. TABEL USERS (RESTRUCTURED - UNTUK AUTENTIKASI)
+-- ========================================
+-- Tabel utama untuk autentikasi, hanya berisi kredensial dan info umum
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL DEFAULT 'member',  -- 'admin', 'ketua_lab', 'dosen', 'member'
-    status VARCHAR(50) DEFAULT 'active',          -- 'pending', 'active', 'inactive', 'rejected'
-    nim VARCHAR(50),
-    nip VARCHAR(50),
-    phone VARCHAR(20),
-    angkatan VARCHAR(10),
+    role_id INTEGER NOT NULL REFERENCES roles(id),
+    status VARCHAR(50) DEFAULT 'active',  -- 'pending', 'active', 'inactive', 'rejected'
     photo VARCHAR(255),
     bio TEXT,
-    
-    -- Member specific fields
-    origin VARCHAR(255),
-    research_title VARCHAR(255),
-    supervisor_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
-    motivation TEXT,
-    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP
@@ -45,34 +56,89 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Index untuk performa
 CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_role ON users(role_id);
 CREATE INDEX idx_users_status ON users(status);
-CREATE INDEX idx_users_nim ON users(nim) WHERE nim IS NOT NULL;
-CREATE INDEX idx_users_nip ON users(nip) WHERE nip IS NOT NULL;
 
--- Insert data user default (admin, ketua lab, dosen, member)
+-- Insert data user default (admin & ketua lab)
 -- Password untuk semua user: admin123
-INSERT INTO users (name, email, password, role, status, nim, nip, phone, angkatan, last_login) VALUES
+INSERT INTO users (username, email, password, role_id, status, last_login) VALUES
 -- Admin
-('Admin IVSS', 'admin@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'admin', 'active', NULL, NULL, '081234567890', NULL, CURRENT_TIMESTAMP),
+('admin_ivss', 'admin@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 1, 'active', CURRENT_TIMESTAMP),
 
 -- Ketua Lab
-('Dr. Muhammad Hasan', 'ketualab@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'ketua_lab', 'active', NULL, '197001011995031001', '081234567891', NULL, CURRENT_TIMESTAMP),
-
--- Dosen
-('Dr. Budi Santoso', 'budi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, '197505152000031001', '081234567892', NULL, CURRENT_TIMESTAMP),
-('Dr. Andi Wijaya', 'andi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, '198003102005011002', '081234567893', NULL, CURRENT_TIMESTAMP),
-('Dr. Siti Nurhaliza', 'siti.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'dosen', 'active', NULL, '198206182008012003', '081234567894', NULL, CURRENT_TIMESTAMP),
-
--- Member (sudah approved, bisa langsung login)
-('Ahmad Fauzi', 'ahmad@student.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'member', 'active', '2141720010', NULL, '081234567895', '2024', CURRENT_TIMESTAMP),
-
--- Member Alumni (inactive)
-('Agus Prasetyo', 'agus@alumni.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'member', 'inactive', '2131720001', NULL, '081234567896', '2021', '2024-10-15 10:00:00');
+('dr_hasan', 'ketualab@ivss.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 2, 'active', CURRENT_TIMESTAMP);
 
 -- ========================================
+-- 3. TABEL DOSEN
+-- ========================================
+-- Untuk menyimpan data spesifik dosen
+CREATE TABLE IF NOT EXISTS dosen (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    nip VARCHAR(50) UNIQUE NOT NULL,
+    nama VARCHAR(255) NOT NULL,
+    origin VARCHAR(255),  -- Asal institusi/pendidikan
+    no_hp VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- 2. TABEL RESEARCH
+-- Index
+CREATE INDEX idx_dosen_user ON dosen(user_id);
+CREATE INDEX idx_dosen_nip ON dosen(nip);
+
+-- Insert user dosen terlebih dahulu
+INSERT INTO users (username, email, password, role_id, status, last_login) VALUES
+('budi_dosen', 'budi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 3, 'active', CURRENT_TIMESTAMP),
+('andi_dosen', 'andi.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 3, 'active', CURRENT_TIMESTAMP),
+('siti_dosen', 'siti.dosen@polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 3, 'active', CURRENT_TIMESTAMP);
+
+-- Insert data dosen
+INSERT INTO dosen (user_id, nip, nama, origin, no_hp) VALUES
+(3, '197505152000031001', 'Dr. Budi Santoso', 'S3 Teknik Informatika - Institut Teknologi Bandung', '081234567892'),
+(4, '198003102005011002', 'Dr. Andi Wijaya', 'S3 Computer Science - Universitas Gadjah Mada', '081234567893'),
+(5, '198206182008012003', 'Dr. Siti Nurhaliza', 'S3 Artificial Intelligence - Institut Teknologi Sepuluh Nopember', '081234567894');
+
+-- ========================================
+-- 4. TABEL MAHASISWA
+-- ========================================
+-- Untuk menyimpan data spesifik mahasiswa
+CREATE TABLE IF NOT EXISTS mahasiswa (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    nim VARCHAR(50) UNIQUE NOT NULL,
+    nama VARCHAR(255) NOT NULL,
+    angkatan VARCHAR(10),
+    research_title VARCHAR(255),
+    no_phone VARCHAR(20),
+    supervisor_id INTEGER REFERENCES dosen(id) ON DELETE SET NULL,  -- FK ke tabel dosen
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index
+CREATE INDEX idx_mahasiswa_user ON mahasiswa(user_id);
+CREATE INDEX idx_mahasiswa_nim ON mahasiswa(nim);
+CREATE INDEX idx_mahasiswa_supervisor ON mahasiswa(supervisor_id);
+CREATE INDEX idx_mahasiswa_angkatan ON mahasiswa(angkatan);
+
+-- Insert user mahasiswa terlebih dahulu
+INSERT INTO users (username, email, password, role_id, status, last_login) VALUES
+-- Mahasiswa aktif
+('ahmad_fauzi', 'ahmad@student.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 4, 'active', CURRENT_TIMESTAMP),
+
+-- Mahasiswa alumni (inactive)
+('agus_prasetyo', 'agus@alumni.polinema.ac.id', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 4, 'inactive', '2024-10-15 10:00:00');
+
+-- Insert data mahasiswa
+INSERT INTO mahasiswa (user_id, nim, nama, angkatan, research_title, no_phone, supervisor_id) VALUES
+(6, '2141720010', 'Ahmad Fauzi', '2024', 'Face Recognition dengan Deep Learning', '081234567895', 1),  -- Supervisor: Dr. Budi
+(7, '2131720001', 'Agus Prasetyo', '2021', 'Object Detection untuk Smart City', '081234567896', 2);     -- Supervisor: Dr. Andi
+
+-- ========================================
+-- 5. TABEL RESEARCH (OPTIMIZED)
+-- ========================================
 -- Untuk menyimpan data riset/penelitian
 CREATE TABLE IF NOT EXISTS research (
     id SERIAL PRIMARY KEY,
@@ -80,13 +146,11 @@ CREATE TABLE IF NOT EXISTS research (
     description TEXT,
     category VARCHAR(100) DEFAULT 'Riset Lainnya',
     image VARCHAR(255),
-    leader_id INTEGER REFERENCES users(id),
-    team_members TEXT,
+    leader_id INTEGER REFERENCES users(id),  -- Bisa dosen, ketua_lab, atau admin
     status VARCHAR(50) DEFAULT 'active',
     start_date DATE,
     end_date DATE,
     funding VARCHAR(255),
-    publications TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -94,32 +158,33 @@ CREATE TABLE IF NOT EXISTS research (
 -- Index
 CREATE INDEX idx_research_status ON research(status);
 CREATE INDEX idx_research_category ON research(category);
+CREATE INDEX idx_research_leader ON research(leader_id);
 
 -- Insert sample data riset
-INSERT INTO research (title, description, category, leader_id, team_members, status, start_date, funding, publications) VALUES
+INSERT INTO research (title, description, category, leader_id, status, start_date, funding) VALUES
 ('Face Recognition dengan Deep Learning', 
 'Riset pengembangan sistem face recognition menggunakan Convolutional Neural Network (CNN) untuk aplikasi keamanan dan absensi.', 
-'Riset Utama', 3, 'Ahmad, Budi, Siti', 'active', '2024-01-15', 'Hibah Dikti 2024', 'IEEE Trans. 2024'),
+'Riset Utama', 3, 'active', '2024-01-15', 'Hibah Dikti 2024'),
 
 ('Object Detection untuk Smart Surveillance', 
 'Pengembangan sistem deteksi objek real-time menggunakan YOLO untuk aplikasi surveillance pintar di kampus.', 
-'Riset Utama', 4, 'Dedi, Rina, Andi', 'active', '2024-02-01', 'Hibah Internal', 'Conference ICAICTA 2024'),
+'Riset Utama', 4, 'active', '2024-02-01', 'Hibah Internal'),
 
 ('Natural Language Processing untuk Bahasa Indonesia', 
 'Riset pengembangan model NLP untuk pemrosesan bahasa Indonesia dalam aplikasi chatbot dan text analysis.', 
-'Riset Utama', 5, 'Rudi, Sari', 'active', '2024-02-20', 'Hibah Dikti 2024', NULL),
+'Riset Utama', 5, 'active', '2024-02-20', 'Hibah Dikti 2024'),
 
 ('IoT-based Smart Room Monitoring', 
 'Sistem monitoring ruangan pintar menggunakan sensor IoT dan computer vision untuk efisiensi energi.', 
-'Riset Pendukung', 3, 'Yusuf, Fitri', 'active', '2024-03-10', 'Mandiri', NULL),
+'Riset Pendukung', 3, 'active', '2024-03-10', 'Mandiri'),
 
 ('Emotion Recognition dari Facial Expression', 
 'Riset pengenalan emosi berdasarkan ekspresi wajah menggunakan deep learning untuk aplikasi HCI.', 
-'Riset Pendukung', 4, 'Siti, Andi', 'completed', '2023-06-01', 'Hibah Dikti 2023', 'Jurnal IJCCS 2024');
+'Riset Pendukung', 4, 'completed', '2023-06-01', 'Hibah Dikti 2023');
 
 -- ========================================
-
--- 3. TABEL MEMBER_REGISTRATIONS
+-- 6. TABEL MEMBER_REGISTRATIONS
+-- ========================================
 -- Untuk menyimpan pendaftaran member baru (pending approval bertingkat)
 CREATE TABLE IF NOT EXISTS member_registrations (
     id SERIAL PRIMARY KEY,
@@ -144,7 +209,7 @@ CREATE TABLE IF NOT EXISTS member_registrations (
     lab_head_approved_at TIMESTAMP,
     lab_head_notes TEXT,
     
-    role_wanted VARCHAR(50) DEFAULT 'member',
+    role_wanted VARCHAR(50) DEFAULT 'mahasiswa',
     motivation TEXT,
     status VARCHAR(50) DEFAULT 'pending_supervisor',  -- 'pending_supervisor', 'pending_lab_head', 'approved', 'rejected_supervisor', 'rejected_lab_head'
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -155,27 +220,26 @@ CREATE TABLE IF NOT EXISTS member_registrations (
 CREATE INDEX idx_registrations_status ON member_registrations(status);
 CREATE INDEX idx_registrations_supervisor ON member_registrations(supervisor_id);
 
--- Insert sample data pendaftar (masih pending, belum jadi member)
+-- Insert sample data pendaftar (masih pending, belum jadi mahasiswa)
 -- Password untuk semua pendaftar: admin123
--- Dibagi ke 3 dosen berbeda untuk testing role-based filtering
 INSERT INTO member_registrations (name, email, nim, phone, angkatan, origin, password, research_title, supervisor_id, motivation, status, supervisor_approved_at) VALUES
--- Pendaftar yang pilih Dr. Budi Santoso (id=3)
+-- Pendaftar yang pilih Dr. Budi Santoso (user_id=3)
 ('Budi Santoso', 'budi.santoso@student.polinema.ac.id', '2141720020', '081234567890', '2024', 'TI 3A - Politeknik Negeri Malang', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'Pengenalan Emosi dengan Deep Learning', 3, 'Saya tertarik dengan computer vision dan ingin belajar lebih dalam tentang AI. Ingin mengembangkan skill di bidang emotion recognition untuk aplikasi HCI.', 'pending_supervisor', NULL),
 ('Yusuf Rahman', 'yusuf@student.polinema.ac.id', '2141720023', '081234567893', '2024', 'TI 3C - Politeknik Negeri Malang', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'Smart Parking System', 3, 'Ingin belajar machine learning dan AI untuk aplikasi real-world seperti smart parking system.', 'pending_supervisor', NULL),
 
--- Pendaftar yang pilih Dr. Andi Wijaya (id=4)
+-- Pendaftar yang pilih Dr. Andi Wijaya (user_id=4)
 ('Siti Aminah', 'siti.aminah@student.polinema.ac.id', '2141720021', '081234567891', '2024', 'TI 3B - Politeknik Negeri Malang', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'Object Detection untuk Smart City', 4, 'Ingin mengembangkan skill di bidang image processing dan computer vision. Tertarik dengan aplikasi AI untuk smart city.', 'pending_supervisor', NULL),
 ('Fitri Handayani', 'fitri@student.polinema.ac.id', '2141720024', '081234567894', '2024', 'TI 3B - Politeknik Negeri Malang', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'IoT-based Smart Room Monitoring', 4, 'Tertarik dengan IoT dan smart systems. Ingin mengembangkan sistem monitoring yang efisien untuk gedung kampus.', 'pending_supervisor', NULL),
 
--- Pendaftar yang pilih Dr. Siti Nurhaliza (id=5)
+-- Pendaftar yang pilih Dr. Siti Nurhaliza (user_id=5)
 ('Rudi Hermawan', 'rudi@student.polinema.ac.id', '2141720025', '081234567895', '2024', 'TI 3A - Politeknik Negeri Malang', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'Natural Language Processing untuk Bahasa Indonesia', 5, 'Tertarik dengan NLP dan ingin berkontribusi dalam pengembangan aplikasi AI untuk bahasa Indonesia.', 'pending_supervisor', NULL),
 
 -- Pendaftar yang sudah lolos approval dosen (untuk testing Ketua Lab)
 ('Andi Pratama', 'andi.pratama@student.polinema.ac.id', '2141720022', '081234567892', '2023', 'TI 3A - Politeknik Negeri Malang', '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq', 'Face Recognition dengan CNN', 3, 'Tertarik dengan riset face recognition dan ingin berkontribusi dalam pengembangan sistem keamanan berbasis AI.', 'pending_lab_head', CURRENT_TIMESTAMP);
 
 -- ========================================
-
--- 4. TABEL NEWS
+-- 7. TABEL NEWS
+-- ========================================
 -- Untuk menyimpan berita dan artikel lab
 CREATE TABLE IF NOT EXISTS news (
     id SERIAL PRIMARY KEY,
@@ -197,6 +261,7 @@ CREATE TABLE IF NOT EXISTS news (
 -- Index
 CREATE INDEX idx_news_status ON news(status);
 CREATE INDEX idx_news_slug ON news(slug);
+CREATE INDEX idx_news_author ON news(author_id);
 
 -- Insert sample data berita
 INSERT INTO news (title, slug, content, excerpt, author_id, status, published_at, views) VALUES
@@ -221,8 +286,8 @@ INSERT INTO news (title, slug, content, excerpt, author_id, status, published_at
 'Pengembangan sistem absensi pintar', 1, 'draft', NULL, 0);
 
 -- ========================================
-
--- 5. TABEL EQUIPMENT
+-- 8. TABEL EQUIPMENT
+-- ========================================
 -- Untuk menyimpan inventaris peralatan lab
 CREATE TABLE IF NOT EXISTS equipment (
     id SERIAL PRIMARY KEY,
@@ -245,24 +310,24 @@ CREATE INDEX idx_equipment_condition ON equipment(condition);
 
 -- Insert sample data peralatan
 INSERT INTO equipment (name, category, brand, quantity, condition, purchase_year, location, specifications, notes) VALUES
-('Arduino Uno R3 Rak A3', 'Hardware', 'Arduino', 15, 'baik', 2023, 'Rak A3', 'Microcontroller ATmega328P, 14 Digital I/O, 6 Analog Input', 'Untuk prototyping IoT'),
-('Camera Canon EOS M50 Service Center', 'Hardware', 'Canon', 1, 'maintenance', 2024, 'Service Center', 'Mirrorless 24.1MP, DIGIC 8, 4K Video', 'Service rutin sensor cleaning'),
-('Camera Logitech C920 Rak A1', 'Hardware', 'Logitech', 5, 'baik', 2023, 'Rak A1', 'HD Pro Webcam 1080p, Autofocus, Dual Stereo Mics', 'Untuk riset face recognition'),
-('ESP32 DevKit Rak A3', 'Hardware', 'Espressif', 12, 'baik', 2024, 'Rak A3', 'WiFi + Bluetooth, Dual-core 240MHz, 520KB SRAM', 'IoT development'),
-('GPU NVIDIA RTX 3080 Server Room', 'Hardware', 'NVIDIA', 2, 'baik', 2024, 'Server Room', 'RTX 3080 10GB GDDR6X, 8704 CUDA Cores, 320-bit', 'Training model AI dan deep learning'),
-('Laptop Dell Precision Meja Lab', 'Hardware', 'Dell', 3, 'baik', 2024, 'Meja Lab', 'Precision 5540, i7-9850H, 32GB RAM, Quadro T2000', 'Deep learning workstation'),
+('Arduino Uno R3', 'Hardware', 'Arduino', 15, 'baik', 2023, 'Rak A3', 'Microcontroller ATmega328P, 14 Digital I/O, 6 Analog Input', 'Untuk prototyping IoT'),
+('Camera Canon EOS M50', 'Hardware', 'Canon', 1, 'maintenance', 2024, 'Service Center', 'Mirrorless 24.1MP, DIGIC 8, 4K Video', 'Service rutin sensor cleaning'),
+('Camera Logitech C920', 'Hardware', 'Logitech', 5, 'baik', 2023, 'Rak A1', 'HD Pro Webcam 1080p, Autofocus, Dual Stereo Mics', 'Untuk riset face recognition'),
+('ESP32 DevKit', 'Hardware', 'Espressif', 12, 'baik', 2024, 'Rak A3', 'WiFi + Bluetooth, Dual-core 240MHz, 520KB SRAM', 'IoT development'),
+('GPU NVIDIA RTX 3080', 'Hardware', 'NVIDIA', 2, 'baik', 2024, 'Server Room', 'RTX 3080 10GB GDDR6X, 8704 CUDA Cores, 320-bit', 'Training model AI dan deep learning'),
+('Laptop Dell Precision', 'Hardware', 'Dell', 3, 'baik', 2024, 'Meja Lab', 'Precision 5540, i7-9850H, 32GB RAM, Quadro T2000', 'Deep learning workstation'),
 ('LED Ring Light', 'Aksesoris', 'Godox', 3, 'baik', 2023, 'Lemari Storage', 'LR180 18" Ring Light, Dimmable 3200K-5600K', 'Lighting untuk capture'),
 ('MATLAB R2023', 'Software', 'MathWorks', 5, 'baik', 2023, 'Komputer Lab', 'R2023b License untuk 5 concurrent users', 'Signal & image processing'),
 ('OpenCV Library', 'Software', 'OpenCV', 1, 'baik', 2023, 'Server', 'Version 4.8.0 Computer Vision Library', 'Open source CV framework'),
 ('Python Deep Learning', 'Software', 'PyTorch', 1, 'baik', 2024, 'Server', 'PyTorch v2.0 with CUDA Support', 'Framework deep learning'),
-('Raspberry Pi 4 Model B Rak A2', 'Hardware', 'Raspberry Pi', 10, 'baik', 2023, 'Rak A2', '4B 8GB RAM, Quad-core ARM Cortex-A72, WiFi & Bluetooth', 'IoT dan edge computing'),
+('Raspberry Pi 4 Model B', 'Hardware', 'Raspberry Pi', 10, 'baik', 2023, 'Rak A2', '4B 8GB RAM, Quad-core ARM Cortex-A72, WiFi & Bluetooth', 'IoT dan edge computing'),
 ('Sensor HC-SR04', 'Hardware', 'Generic', 20, 'baik', 2023, 'Laci B1', 'Ultrasonic Sensor, Range 2cm-400cm', 'Sensor jarak ultrasonik'),
 ('Tripod Manfrotto', 'Aksesoris', 'Manfrotto', 4, 'baik', 2023, 'Lemari Storage', 'MT190X Professional Tripod, Max Height 146cm', 'Camera mounting'),
 ('Webcam 4K Logitech BRIO', 'Hardware', 'Logitech', 3, 'baik', 2024, 'Rak A1', 'BRIO 4K Ultra HD, HDR, Auto Light Correction', 'High resolution capture');
 
 -- ========================================
-
--- 7. TABEL SYSTEM_SETTINGS
+-- 9. TABEL SYSTEM_SETTINGS
+-- ========================================
 -- Untuk menyimpan konfigurasi sistem lab
 CREATE TABLE IF NOT EXISTS system_settings (
     id SERIAL PRIMARY KEY,
@@ -275,7 +340,7 @@ CREATE TABLE IF NOT EXISTS system_settings (
 );
 
 -- Index
-CREATE INDEX IF NOT EXISTS idx_system_settings_key ON system_settings(setting_key);
+CREATE INDEX idx_system_settings_key ON system_settings(setting_key);
 
 -- Insert default system settings
 INSERT INTO system_settings (setting_key, setting_value, setting_type, description) VALUES
@@ -288,8 +353,8 @@ INSERT INTO system_settings (setting_key, setting_value, setting_type, descripti
 ON CONFLICT (setting_key) DO NOTHING;
 
 -- ========================================
-
--- 8. TABEL PUBLICATIONS
+-- 10. TABEL PUBLICATIONS
+-- ========================================
 -- Untuk menyimpan data publikasi/paper/penelitian
 CREATE TABLE IF NOT EXISTS publications (
     id SERIAL PRIMARY KEY,
@@ -414,12 +479,12 @@ FALSE),
 FALSE);
 
 -- ========================================
-
--- 9. TABEL NOTIFICATIONS
+-- 11. TABEL NOTIFICATIONS
+-- ========================================
 -- Untuk menyimpan notifikasi yang ditargetkan ke role atau user tertentu
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
-    target_role VARCHAR(20) NOT NULL,           -- 'admin', 'ketua_lab', 'dosen', 'all'
+    target_role VARCHAR(20) NOT NULL,           -- 'admin', 'ketua_lab', 'dosen', 'mahasiswa', 'all'
     target_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,  -- NULL = untuk semua di role, INT = spesifik user
     title VARCHAR(255) NOT NULL,
     message TEXT,
@@ -444,7 +509,7 @@ CREATE INDEX idx_notifications_created ON notifications(created_at DESC);
 INSERT INTO notifications (target_role, target_user_id, title, message, type, reference_type, reference_id, icon, priority, is_read) VALUES
 
 -- Notifikasi untuk Admin
-('admin', NULL, 'Sistem Berhasil Diinstal', 'Database Lab IVSS telah berhasil disetup. Semua tabel dan data sample telah dibuat.', 'system', NULL, NULL, 'check', 'high', false),
+('admin', NULL, 'Sistem Berhasil Diinstal', 'Database Lab IVSS telah berhasil disetup dengan struktur yang baru. Semua tabel dan data sample telah dibuat.', 'system', NULL, NULL, 'check', 'high', false),
 ('admin', 1, 'Backup Database Scheduled', 'Backup database otomatis akan dilakukan setiap hari pukul 02:00 WIB.', 'system', NULL, NULL, 'alert', 'normal', false),
 
 -- Notifikasi untuk Ketua Lab
@@ -470,9 +535,9 @@ INSERT INTO notifications (target_role, target_user_id, title, message, type, re
 ('dosen', NULL, 'Rapat Dosen Lab IVSS', 'Rapat koordinasi dosen Lab IVSS akan dilaksanakan Jumat, 15 November 2024 pukul 13:00 WIB di Ruang Lab.', 'meeting', NULL, NULL, 'calendar', 'normal', false);
 
 -- ========================================
-
--- 10. TABEL RESEARCH_MEMBERS
--- Untuk relasi many-to-many antara member dan research
+-- 12. TABEL RESEARCH_MEMBERS
+-- ========================================
+-- Untuk relasi many-to-many antara mahasiswa dan research
 CREATE TABLE IF NOT EXISTS research_members (
     id SERIAL PRIMARY KEY,
     research_id INTEGER NOT NULL REFERENCES research(id) ON DELETE CASCADE,
@@ -488,20 +553,18 @@ CREATE INDEX idx_research_members_research ON research_members(research_id);
 CREATE INDEX idx_research_members_user ON research_members(user_id);
 CREATE INDEX idx_research_members_status ON research_members(status);
 
--- Insert sample data: relasi member dengan research
+-- Insert sample data: relasi mahasiswa dengan research
 INSERT INTO research_members (research_id, user_id, role, status) VALUES
--- Ahmad Fauzi (id=6) ikut 2 riset
-(1, 6, 'member', 'active'),  -- Face Recognition dengan Deep Learning
-(4, 6, 'member', 'active'),  -- IoT-based Smart Room Monitoring
-
--- Member lain bisa ditambahkan sesuai kebutuhan
+-- Ahmad Fauzi (user_id=6) ikut 4 riset
+(1, 6, 'member', 'active'),       -- Face Recognition dengan Deep Learning
 (2, 6, 'contributor', 'active'),  -- Object Detection untuk Smart Surveillance
-(3, 6, 'contributor', 'active');  -- NLP untuk Bahasa Indonesia
+(3, 6, 'contributor', 'active'),  -- NLP untuk Bahasa Indonesia
+(4, 6, 'member', 'active');       -- IoT-based Smart Room Monitoring
 
 -- ========================================
-
--- 11. TABEL RESEARCH_DOCUMENTS
--- Untuk upload dokumen/laporan riset oleh member
+-- 13. TABEL RESEARCH_DOCUMENTS
+-- ========================================
+-- Untuk upload dokumen/laporan riset oleh mahasiswa
 CREATE TABLE IF NOT EXISTS research_documents (
     id SERIAL PRIMARY KEY,
     research_id INTEGER NOT NULL REFERENCES research(id) ON DELETE CASCADE,
@@ -537,9 +600,9 @@ INSERT INTO research_documents (research_id, uploaded_by, title, description, fi
 (4, 6, 'Presentasi Desain Sistem', 'Slide presentasi desain sistem IoT', 'presentasi_design.pptx', '/uploads/documents/presentasi_design.pptx', 3145728, 'pptx', 'presentation', 'approved');
 
 -- ========================================
-
--- 12. TABEL MEMBER_PUBLICATIONS
--- Untuk publikasi personal member (paper/jurnal yang mereka tulis)
+-- 14. TABEL MEMBER_PUBLICATIONS
+-- ========================================
+-- Untuk publikasi personal mahasiswa (paper/jurnal yang mereka tulis)
 CREATE TABLE IF NOT EXISTS member_publications (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -568,9 +631,9 @@ CREATE INDEX idx_member_pubs_year ON member_publications(year DESC);
 CREATE INDEX idx_member_pubs_status ON member_publications(status);
 CREATE INDEX idx_member_pubs_type ON member_publications(publication_type);
 
--- Insert sample data: publikasi personal member
+-- Insert sample data: publikasi personal mahasiswa
 INSERT INTO member_publications (user_id, title, authors, year, journal, doi, citation_count, keywords, publication_type, status, research_id, published_date) VALUES
--- Publikasi Ahmad Fauzi (id=6)
+-- Publikasi Ahmad Fauzi (user_id=6)
 (6, 'Deep Learning for Face Recognition: A Comprehensive Study', 
 'Ahmad Fauzi, Dr. Budi Santoso, Siti Aminah', 
 2024, 
@@ -608,114 +671,622 @@ NULL,
 '2024-05-20');
 
 -- ========================================
+-- FUNCTIONS & STORED PROCEDURES
+-- ========================================
 
--- Selesai! Semua tabel berhasil dibuat
--- Total 12 tabel: users, member_registrations, news, research, equipment, system_settings, publications, notifications, research_members, research_documents, member_publications
+-- ========================================
+-- TRIGGERS: Auto Update Timestamp
+-- ========================================
+
+-- Function untuk auto update timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger untuk tabel users
+CREATE TRIGGER trigger_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger untuk tabel dosen
+CREATE TRIGGER trigger_dosen_updated_at
+    BEFORE UPDATE ON dosen
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger untuk tabel mahasiswa
+CREATE TRIGGER trigger_mahasiswa_updated_at
+    BEFORE UPDATE ON mahasiswa
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger untuk tabel research
+CREATE TRIGGER trigger_research_updated_at
+    BEFORE UPDATE ON research
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger untuk tabel news
+CREATE TRIGGER trigger_news_updated_at
+    BEFORE UPDATE ON news
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- ========================================
+-- FUNCTIONS: Helper Functions
+-- ========================================
+
+-- Function: Get user info lengkap (dengan role name)
+CREATE OR REPLACE FUNCTION get_user_details(p_user_id INTEGER)
+RETURNS TABLE (
+    user_id INTEGER,
+    username VARCHAR,
+    email VARCHAR,
+    role_name VARCHAR,
+    status VARCHAR,
+    photo VARCHAR,
+    bio TEXT,
+    created_at TIMESTAMP,
+    last_login TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        u.id,
+        u.username,
+        u.email,
+        r.role_name,
+        u.status,
+        u.photo,
+        u.bio,
+        u.created_at,
+        u.last_login
+    FROM users u
+    JOIN roles r ON u.role_id = r.id
+    WHERE u.id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get info lengkap dosen
+CREATE OR REPLACE FUNCTION get_dosen_details(p_user_id INTEGER)
+RETURNS TABLE (
+    user_id INTEGER,
+    username VARCHAR,
+    email VARCHAR,
+    dosen_id INTEGER,
+    nip VARCHAR,
+    nama VARCHAR,
+    origin VARCHAR,
+    no_hp VARCHAR,
+    status VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        u.id,
+        u.username,
+        u.email,
+        d.id,
+        d.nip,
+        d.nama,
+        d.origin,
+        d.no_hp,
+        u.status
+    FROM users u
+    JOIN dosen d ON u.id = d.user_id
+    WHERE u.id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get info lengkap mahasiswa
+CREATE OR REPLACE FUNCTION get_mahasiswa_details(p_user_id INTEGER)
+RETURNS TABLE (
+    user_id INTEGER,
+    username VARCHAR,
+    email VARCHAR,
+    mahasiswa_id INTEGER,
+    nim VARCHAR,
+    nama VARCHAR,
+    angkatan VARCHAR,
+    research_title VARCHAR,
+    no_phone VARCHAR,
+    supervisor_id INTEGER,
+    supervisor_nama VARCHAR,
+    status VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        u.id,
+        u.username,
+        u.email,
+        m.id,
+        m.nim,
+        m.nama,
+        m.angkatan,
+        m.research_title,
+        m.no_phone,
+        m.supervisor_id,
+        d.nama,
+        u.status
+    FROM users u
+    JOIN mahasiswa m ON u.id = m.user_id
+    LEFT JOIN dosen d ON m.supervisor_id = d.id
+    WHERE u.id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Count mahasiswa per dosen
+CREATE OR REPLACE FUNCTION count_mahasiswa_by_dosen(p_dosen_id INTEGER)
+RETURNS INTEGER AS $$
+DECLARE
+    total_mahasiswa INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO total_mahasiswa
+    FROM mahasiswa
+    WHERE supervisor_id = p_dosen_id;
+    
+    RETURN total_mahasiswa;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get research members
+CREATE OR REPLACE FUNCTION get_research_members(p_research_id INTEGER)
+RETURNS TABLE (
+    user_id INTEGER,
+    username VARCHAR,
+    nama VARCHAR,
+    role_member VARCHAR,
+    status VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        u.id,
+        u.username,
+        COALESCE(m.nama, d.nama) as nama,
+        rm.role,
+        rm.status
+    FROM research_members rm
+    JOIN users u ON rm.user_id = u.id
+    LEFT JOIN mahasiswa m ON u.id = m.user_id
+    LEFT JOIN dosen d ON u.id = d.user_id
+    WHERE rm.research_id = p_research_id
+    ORDER BY rm.joined_at;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get pending registrations by supervisor
+CREATE OR REPLACE FUNCTION get_pending_registrations_by_supervisor(p_supervisor_user_id INTEGER)
+RETURNS TABLE (
+    registration_id INTEGER,
+    nama VARCHAR,
+    email VARCHAR,
+    nim VARCHAR,
+    research_title VARCHAR,
+    motivation TEXT,
+    created_at TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        mr.id,
+        mr.name,
+        mr.email,
+        mr.nim,
+        mr.research_title,
+        mr.motivation,
+        mr.created_at
+    FROM member_registrations mr
+    WHERE mr.supervisor_id = p_supervisor_user_id
+    AND mr.status = 'pending_supervisor'
+    ORDER BY mr.created_at DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ========================================
+-- STORED PROCEDURES: Business Logic
+-- ========================================
+
+-- Procedure: Update last login
+CREATE OR REPLACE PROCEDURE update_last_login(p_user_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE users
+    SET last_login = CURRENT_TIMESTAMP
+    WHERE id = p_user_id;
+END;
+$$;
+
+-- Procedure: Approve registration by supervisor
+CREATE OR REPLACE PROCEDURE approve_registration_supervisor(
+    p_registration_id INTEGER,
+    p_notes TEXT DEFAULT NULL
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE member_registrations
+    SET 
+        status = 'pending_lab_head',
+        supervisor_approved_at = CURRENT_TIMESTAMP,
+        supervisor_notes = p_notes,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_registration_id
+    AND status = 'pending_supervisor';
+    
+    -- Log notification untuk ketua lab
+    INSERT INTO notifications (target_role, title, message, type, reference_type, reference_id, priority)
+    SELECT 
+        'ketua_lab',
+        'Pendaftar Baru Menunggu Approval',
+        CONCAT('Pendaftar ', name, ' telah disetujui oleh dosen dan menunggu approval Anda.'),
+        'approval',
+        'registration',
+        id,
+        'high'
+    FROM member_registrations
+    WHERE id = p_registration_id;
+END;
+$$;
+
+-- Procedure: Reject registration by supervisor
+CREATE OR REPLACE PROCEDURE reject_registration_supervisor(
+    p_registration_id INTEGER,
+    p_notes TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE member_registrations
+    SET 
+        status = 'rejected_supervisor',
+        supervisor_notes = p_notes,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_registration_id
+    AND status = 'pending_supervisor';
+END;
+$$;
+
+-- Procedure: Approve registration by lab head (create user + mahasiswa)
+CREATE OR REPLACE PROCEDURE approve_registration_lab_head(
+    p_registration_id INTEGER,
+    p_notes TEXT DEFAULT NULL
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_user_id INTEGER;
+    v_dosen_id INTEGER;
+    v_registration RECORD;
+BEGIN
+    -- Get registration data
+    SELECT * INTO v_registration
+    FROM member_registrations
+    WHERE id = p_registration_id
+    AND status = 'pending_lab_head';
+    
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Registration not found or not in pending_lab_head status';
+    END IF;
+    
+    -- Get dosen_id from supervisor_id
+    SELECT d.id INTO v_dosen_id
+    FROM dosen d
+    WHERE d.user_id = v_registration.supervisor_id;
+    
+    -- Create user
+    INSERT INTO users (username, email, password, role_id, status)
+    VALUES (
+        LOWER(REPLACE(v_registration.name, ' ', '_')),
+        v_registration.email,
+        v_registration.password,
+        4, -- role_id untuk mahasiswa
+        'active'
+    )
+    RETURNING id INTO v_user_id;
+    
+    -- Create mahasiswa
+    INSERT INTO mahasiswa (user_id, nim, nama, angkatan, research_title, no_phone, supervisor_id)
+    VALUES (
+        v_user_id,
+        v_registration.nim,
+        v_registration.name,
+        v_registration.angkatan,
+        v_registration.research_title,
+        v_registration.phone,
+        v_dosen_id
+    );
+    
+    -- Update registration status
+    UPDATE member_registrations
+    SET 
+        status = 'approved',
+        lab_head_approved_at = CURRENT_TIMESTAMP,
+        lab_head_notes = p_notes,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_registration_id;
+    
+    -- Notify dosen
+    INSERT INTO notifications (target_user_id, target_role, title, message, type, priority)
+    VALUES (
+        v_registration.supervisor_id,
+        'dosen',
+        'Mahasiswa Bimbingan Baru',
+        CONCAT('Mahasiswa baru ', v_registration.name, ' telah disetujui dan menjadi mahasiswa bimbingan Anda.'),
+        'approval',
+        'normal'
+    );
+END;
+$$;
+
+-- Procedure: Reject registration by lab head
+CREATE OR REPLACE PROCEDURE reject_registration_lab_head(
+    p_registration_id INTEGER,
+    p_notes TEXT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE member_registrations
+    SET 
+        status = 'rejected_lab_head',
+        lab_head_notes = p_notes,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_registration_id
+    AND status = 'pending_lab_head';
+END;
+$$;
+
+-- Procedure: Add member to research
+CREATE OR REPLACE PROCEDURE add_member_to_research(
+    p_research_id INTEGER,
+    p_user_id INTEGER,
+    p_role VARCHAR DEFAULT 'member'
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO research_members (research_id, user_id, role, status)
+    VALUES (p_research_id, p_user_id, p_role, 'active')
+    ON CONFLICT (research_id, user_id) DO NOTHING;
+END;
+$$;
+
+-- Procedure: Remove member from research
+CREATE OR REPLACE PROCEDURE remove_member_from_research(
+    p_research_id INTEGER,
+    p_user_id INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM research_members
+    WHERE research_id = p_research_id
+    AND user_id = p_user_id;
+END;
+$$;
+
+-- Procedure: Mark notification as read
+CREATE OR REPLACE PROCEDURE mark_notification_read(p_notification_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE notifications
+    SET 
+        is_read = TRUE,
+        read_at = CURRENT_TIMESTAMP
+    WHERE id = p_notification_id;
+END;
+$$;
+
+-- Procedure: Mark all notifications as read for user
+CREATE OR REPLACE PROCEDURE mark_all_notifications_read(p_user_id INTEGER)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE notifications
+    SET 
+        is_read = TRUE,
+        read_at = CURRENT_TIMESTAMP
+    WHERE target_user_id = p_user_id
+    AND is_read = FALSE;
+END;
+$$;
+
+-- Procedure: Clean expired notifications
+CREATE OR REPLACE PROCEDURE clean_expired_notifications()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM notifications
+    WHERE expires_at IS NOT NULL
+    AND expires_at < CURRENT_TIMESTAMP;
+END;
+$$;
+
+-- Procedure: Update equipment condition
+CREATE OR REPLACE PROCEDURE update_equipment_condition(
+    p_equipment_id INTEGER,
+    p_condition VARCHAR,
+    p_notes TEXT DEFAULT NULL
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE equipment
+    SET 
+        condition = p_condition,
+        notes = COALESCE(p_notes, notes),
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_equipment_id;
+END;
+$$;
+
+-- ========================================
+-- UTILITY FUNCTIONS: Statistics & Reports
+-- ========================================
+
+-- Function: Get total active users by role
+CREATE OR REPLACE FUNCTION get_active_users_by_role()
+RETURNS TABLE (
+    role_name VARCHAR,
+    total_users BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        r.role_name,
+        COUNT(u.id)
+    FROM roles r
+    LEFT JOIN users u ON r.id = u.role_id AND u.status = 'active'
+    GROUP BY r.role_name
+    ORDER BY r.id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get research statistics
+CREATE OR REPLACE FUNCTION get_research_statistics()
+RETURNS TABLE (
+    total_research BIGINT,
+    active_research BIGINT,
+    completed_research BIGINT,
+    total_members BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        COUNT(*),
+        COUNT(*) FILTER (WHERE status = 'active'),
+        COUNT(*) FILTER (WHERE status = 'completed'),
+        (SELECT COUNT(*) FROM research_members WHERE status = 'active')
+    FROM research;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get pending registrations count
+CREATE OR REPLACE FUNCTION get_pending_registrations_count()
+RETURNS TABLE (
+    pending_supervisor BIGINT,
+    pending_lab_head BIGINT,
+    total_pending BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        COUNT(*) FILTER (WHERE status = 'pending_supervisor'),
+        COUNT(*) FILTER (WHERE status = 'pending_lab_head'),
+        COUNT(*) FILTER (WHERE status IN ('pending_supervisor', 'pending_lab_head'))
+    FROM member_registrations;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function: Get dosen performance
+CREATE OR REPLACE FUNCTION get_dosen_performance()
+RETURNS TABLE (
+    dosen_id INTEGER,
+    nama VARCHAR,
+    jumlah_mahasiswa BIGINT,
+    jumlah_research BIGINT,
+    jumlah_publikasi BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.id,
+        d.nama,
+        COUNT(DISTINCT m.id) as jumlah_mahasiswa,
+        COUNT(DISTINCT r.id) as jumlah_research,
+        COUNT(DISTINCT p.id) as jumlah_publikasi
+    FROM dosen d
+    LEFT JOIN mahasiswa m ON m.supervisor_id = d.id AND m.user_id IN (SELECT id FROM users WHERE status = 'active')
+    LEFT JOIN research r ON r.leader_id = d.user_id AND r.status = 'active'
+    LEFT JOIN member_publications p ON p.user_id IN (SELECT m2.user_id FROM mahasiswa m2 WHERE m2.supervisor_id = d.id)
+    GROUP BY d.id, d.nama
+    ORDER BY jumlah_mahasiswa DESC, jumlah_research DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ========================================
+-- Selesai! Semua tabel, functions, dan procedures berhasil dibuat
+-- ========================================
+-- Total 14 tabel:
+-- 1. roles (BARU)
+-- 2. users (RESTRUCTURED)
+-- 3. dosen (BARU)
+-- 4. mahasiswa (BARU)
+-- 5. research (OPTIMIZED - hapus team_members & publications)
+-- 6. member_registrations
+-- 7. news
+-- 8. equipment
+-- 9. system_settings
+-- 10. publications
+-- 11. notifications
+-- 12. research_members
+-- 13. research_documents
+-- 14. member_publications
 --
--- DATA YANG SUDAH DITAMBAHKAN:
--- 1. Users (7 user):
---    - 1 Admin: admin@ivss.polinema.ac.id
---    - 2 Dosen: budi.dosen & siti.dosen@polinema.ac.id
---    - 3 Member Aktif: ahmad, rina, dedi@student.polinema.ac.id
---    - 1 Member Alumni: agus@alumni.polinema.ac.id
---    PASSWORD SEMUA USER: admin123
+-- Total 6 Triggers (Auto Update Timestamp):
+-- - users, dosen, mahasiswa, research, news
 --
--- 2. Member Registrations: 6 pendaftar (status pending)
--- 3. News: 5 berita (4 published, 1 draft)
--- 4. Research: 6 riset (5 active, 1 completed)
--- 5. Equipment: 15 peralatan lab
--- 6. Users: Kolom bio ditambahkan
--- 7. System Settings: 6 default settings
--- 8. Publications: 8 publikasi (5 featured untuk home page)
--- 9. Notifications: 15 notifikasi sample (targeted per role dan user)
---    - 2 untuk Admin
---    - 3 untuk Ketua Lab
---    - 3 untuk Dr. Budi (dosen)
---    - 3 untuk Dr. Andi (dosen)
---    - 2 untuk Dr. Siti (dosen)
---    - 1 untuk semua dosen (broadcast)
--- 10. Research Members: 4 relasi (Ahmad Fauzi tergabung di 4 riset)
--- 11. Research Documents: 5 dokumen sample (proposal, laporan, dataset)
--- 12. Member Publications: 3 publikasi personal Ahmad Fauzi (2 published, 1 draft)
+-- Total 11 Functions:
+-- 1. get_user_details() - Get user info lengkap
+-- 2. get_dosen_details() - Get dosen info lengkap
+-- 3. get_mahasiswa_details() - Get mahasiswa info lengkap
+-- 4. count_mahasiswa_by_dosen() - Hitung mahasiswa per dosen
+-- 5. get_research_members() - Get members dari research
+-- 6. get_pending_registrations_by_supervisor() - Get pendaftar pending per dosen
+-- 7. get_active_users_by_role() - Statistik user aktif per role
+-- 8. get_research_statistics() - Statistik research
+-- 9. get_pending_registrations_count() - Hitung pendaftar pending
+-- 10. get_dosen_performance() - Performance dosen
+-- 11. update_updated_at_column() - Helper untuk trigger
 --
--- ========================================
-
--- UTILITY QUERIES & MAINTENANCE
--- Gunakan script di bawah ini untuk maintenance dan update database
-
--- ========================================
--- 1. UPDATE EXISTING DATABASE (Jika upgrade dari versi lama)
--- ========================================
-
--- Tambah kolom bio jika belum ada (untuk database lama)
--- DO $$ 
--- BEGIN
---     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
---                    WHERE table_name='users' AND column_name='bio') THEN
---         ALTER TABLE users ADD COLUMN bio TEXT;
---     END IF;
--- END $$;
-
--- Update last_login untuk user yang NULL (uncomment jika perlu)
--- UPDATE users SET last_login = created_at WHERE last_login IS NULL;
-
--- ========================================
--- 2. RESET PASSWORD USER (Development Only)
--- ========================================
-
--- Reset password semua user ke admin123
--- UPDATE users SET password = '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq';
-
--- Reset password user tertentu
--- UPDATE users SET password = '$2y$10$ZIRh2/RXxMUbL/RFBLkDaODTPtZwf1Mb5XznEmWN2iLSoKFbxVZLq' WHERE email = 'user@email.com';
-
--- ========================================
--- 3. CLEANUP & MAINTENANCE
--- ========================================
-
--- Hapus user yang tidak pernah login dalam 6 bulan (member only)
--- DELETE FROM users WHERE role = 'member' AND last_login < NOW() - INTERVAL '6 months';
-
--- Set member jadi alumni (inactive)
--- UPDATE users SET status = 'inactive' WHERE role = 'member' AND angkatan <= '2021';
-
--- Vacuum database untuk optimize
--- VACUUM ANALYZE;
-
--- ========================================
--- 4. STATISTICS QUERIES
--- ========================================
-
--- Count users by role
--- SELECT role, COUNT(*) as total FROM users GROUP BY role ORDER BY total DESC;
-
--- Count users by status
--- SELECT status, COUNT(*) as total FROM users GROUP BY status;
-
--- Active research count
--- SELECT COUNT(*) as active_research FROM research WHERE status = 'active';
-
--- Member dengan publikasi terbanyak
--- SELECT u.name, COUNT(mp.id) as total_publications 
--- FROM users u 
--- LEFT JOIN member_publications mp ON u.id = mp.user_id 
--- WHERE u.role = 'member' 
--- GROUP BY u.id, u.name 
--- ORDER BY total_publications DESC;
-
--- ========================================
--- 5. BACKUP & RESTORE COMMANDS
--- ========================================
-
--- Export database (via terminal/cmd)
--- pg_dump -h 127.0.0.1 -p 5433 -U USER -d lab_ivss -F c -b -v -f "backup_lab_ivss_$(date +%Y%m%d).backup"
-
--- Import database
--- pg_restore -h 127.0.0.1 -p 5433 -U USER -d lab_ivss -v "backup_lab_ivss_20241108.backup"
-
--- Export to SQL file
--- pg_dump -h 127.0.0.1 -p 5433 -U USER -d lab_ivss > "backup_lab_ivss_$(date +%Y%m%d).sql"
-
--- ========================================
--- END OF SETUP SCRIPT
+-- Total 11 Stored Procedures:
+-- 1. update_last_login() - Update last login user
+-- 2. approve_registration_supervisor() - Approve pendaftar oleh dosen
+-- 3. reject_registration_supervisor() - Reject pendaftar oleh dosen
+-- 4. approve_registration_lab_head() - Approve & create user+mahasiswa
+-- 5. reject_registration_lab_head() - Reject pendaftar oleh ketua lab
+-- 6. add_member_to_research() - Tambah member ke research
+-- 7. remove_member_from_research() - Hapus member dari research
+-- 8. mark_notification_read() - Mark 1 notifikasi sebagai read
+-- 9. mark_all_notifications_read() - Mark semua notifikasi user sebagai read
+-- 10. clean_expired_notifications() - Hapus notifikasi expired
+-- 11. update_equipment_condition() - Update kondisi peralatan
+--
+-- PERUBAHAN DARI VERSI LAMA:
+-- ✅ Tabel users dipecah jadi users, dosen, dan mahasiswa
+-- ✅ Tambah tabel roles untuk master data
+-- ✅ Hapus kolom redundan: team_members dan publications dari research
+-- ✅ Hapus kolom nim, nip, angkatan dari users (pindah ke tabel spesifik)
+-- ✅ Hapus kolom origin, research_title, motivation dari users
+-- ✅ Tambah kolom username di users
+-- ✅ role diganti jadi role_id dengan FK ke tabel roles
+-- ✅ supervisor_id di mahasiswa mengacu ke dosen(id)
+-- ✅ Tambah 6 triggers untuk auto update timestamp
+-- ✅ Tambah 11 functions untuk helper dan statistics
+-- ✅ Tambah 11 stored procedures untuk business logic
+--
+-- PASSWORD SEMUA USER: admin123
+--
+-- DATA SAMPLE:
+-- - 2 Users (Admin & Ketua Lab)
+-- - 3 Dosen (Dr. Budi, Dr. Andi, Dr. Siti)
+-- - 2 Mahasiswa (Ahmad aktif, Agus alumni)
+-- - 6 Pendaftar (pending approval)
+-- - 5 Riset
+-- - 5 Berita
+-- - 14 Peralatan
+-- - 8 Publikasi lab
+-- - 15 Notifikasi
+-- - 4 Relasi research_members
+-- - 5 Dokumen riset
+-- - 3 Publikasi mahasiswa
 -- ========================================
