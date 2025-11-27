@@ -1,34 +1,39 @@
 <?php
+
 /**
  * HomeController.php
  * Controller untuk halaman utama / landing page Lab IVSS
  * Menampilkan informasi profil lab, dosen, riset, dan fasilitas
  */
 
-class HomeController {
+class HomeController
+{
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
     /**
      * Menampilkan halaman utama (home/landing page)
      */
-    public function index() {
+    public function index()
+    {
         // Load publication model
         require_once __DIR__ . '/../models/publication.php';
         $publicationModel = new Publication($this->db);
-        
+
         // Get featured publications untuk home page (max 6)
         $publications = $publicationModel->getFeatured(6);
-        
+
         // Load news model
         require_once __DIR__ . '/../models/news.php';
         $newsModel = new News($this->db);
-        
+
         // Get latest news untuk home page (max 6)
         $latestNews = $newsModel->getLatest(6);
+        
         // Data dosen inti - hardcode dulu untuk landing page
         $dosen_inti = [
             [
@@ -115,6 +120,13 @@ class HomeController {
             'Loker Penyimpanan',
             'Ruang Pelatihan Internal'
         ];
+
+        // Load equipment model
+        require_once __DIR__ . '/../models/equipment.php';
+        $equipmentModel = new Equipment($this->db);
+
+        // Ambil maksimal 6 peralatan untuk landing page
+        $equipmentForLanding = $equipmentModel->getForLanding("30");
 
         // Muat view dengan layout pages
         require_once __DIR__ . '/../../view/layouts/pages.php';

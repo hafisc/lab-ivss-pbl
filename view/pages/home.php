@@ -800,64 +800,108 @@
 </style>
 
 <!-- Anggota Tim Section -->
-<section id="tim" class="py-20 bg-gray-50">
+<section id="tim" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
                     <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M12 10a5 5 0 110-10 5 5 0 010 10z"></path>
                     </svg>
                 </div>
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Anggota Tim</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Tim peneliti dan pengajar Lab IVSS</p>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Dosen Peneliti dan Asisten Laboratorium Inti</p>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Kepala+Lab&background=1e40af&color=fff&size=256" alt="Kepala Lab" class="w-full h-full object-cover">
-                        </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900 shadow-lg">
+                        <img src="https://via.placeholder.com/128/1e3a8a/ffffff?text=Dosen+1" alt="Foto Dosen 1" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Dr. Ulla Delfana Rosiani, ST., MT.</h3>
-                    <p class="text-xs text-blue-900 font-semibold">Kepala Lab</p>
+                    <h3 class="text-xl font-bold text-blue-900 mb-1">Dr. [Nama Dosen 1]</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Kepala Laboratorium</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Computer Vision & AI</p>
+                        <p class="font-medium">NIP: 198001012005011001</p>
+                    </div>
                 </div>
 
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Peneliti&background=7c3aed&color=fff&size=256" alt="Peneliti" class="w-full h-full object-cover">
-                        </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900/50 shadow-lg">
+                        <img src="https://via.placeholder.com/128/1e3a8a/ffffff?text=Dosen+2" alt="Foto Dosen 2" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Mamluatul Hani'ah, S.Kom., M.Kom</h3>
-                    <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">Ir. [Nama Dosen 2], M.Kom</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Dosen Peneliti</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Smart System & IoT</p>
+                        <p class="font-medium">NIP: 198505052010012002</p>
+                    </div>
                 </div>
 
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Peneliti&background=0891b2&color=fff&size=256" alt="Peneliti" class="w-full h-full object-cover">
-                        </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900/20 shadow-lg">
+                        <img src="https://via.placeholder.com/128/9ca3af/ffffff?text=Asisten+1" alt="Foto Asisten 1" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Mungki Astiningrum, ST., M.Kom.</h3>
-                    <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">[Nama Asisten 1], S.Tr.Kom</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Asisten Lab Koordinator</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Deep Learning</p>
+                        <p class="font-medium">Tahun: 2024</p>
+                    </div>
                 </div>
 
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Peneliti&background=059669&color=fff&size=256" alt="Peneliti" class="w-full h-full object-cover">
-                        </div>
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900/20 shadow-lg">
+                        <img src="https://via.placeholder.com/128/9ca3af/ffffff?text=Asisten+2" alt="Foto Asisten 2" class="w-full h-full object-cover">
                     </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Prof. Dr. Eng. Rosa Andrie Asmara</h3>
-                    <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">[Nama Asisten 2]</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Asisten Lab Riset</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Data Science</p>
+                        <p class="font-medium">Tahun: 2024</p>
+                    </div>
                 </div>
+
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900/20 shadow-lg">
+                        <img src="https://via.placeholder.com/128/9ca3af/ffffff?text=Asisten+2" alt="Foto Asisten 2" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">[Nama Asisten 2]</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Asisten Lab Riset</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Data Science</p>
+                        <p class="font-medium">Tahun: 2024</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900/20 shadow-lg">
+                        <img src="https://via.placeholder.com/128/9ca3af/ffffff?text=Asisten+2" alt="Foto Asisten 2" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">[Nama Asisten 2]</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Asisten Lab Riset</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Data Science</p>
+                        <p class="font-medium">Tahun: 2024</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-2xl p-6 text-center hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                    <div class="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-full border-4 border-blue-900/20 shadow-lg">
+                        <img src="https://via.placeholder.com/128/9ca3af/ffffff?text=Asisten+2" alt="Foto Asisten 2" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-1">[Nama Asisten 2]</h3>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Asisten Lab Riset</p>
+                    <div class="text-xs text-gray-500 space-y-1">
+                        <p>Fokus Riset: Data Science</p>
+                        <p class="font-medium">Tahun: 2024</p>
+                    </div>
+                </div>
+
+                
+
             </div>
         </div>
     </div>
