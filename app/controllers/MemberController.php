@@ -2,11 +2,13 @@
 
 require_once __DIR__ . '/../models/member.php';
 
-class MemberController {
+class MemberController
+{
     private $memberModel;
     private $db;
 
-    public function __construct($db = null) {
+    public function __construct($db = null)
+    {
         if ($db) {
             $this->db = $db;
         } else {
@@ -15,12 +17,14 @@ class MemberController {
         $this->memberModel = new Member($this->db);
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
         // Member dashboard view
         require_once __DIR__ . '/../../view/member/dashboard.php';
     }
 
-    public function register() {
+    public function register()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
                 'name' => $_POST['name'],
@@ -47,11 +51,13 @@ class MemberController {
         }
     }
 
-    public function getPendingRegistrations($supervisor_id) {
+    public function getPendingRegistrations($supervisor_id)
+    {
         return $this->memberModel->getPendingBySupervisor($supervisor_id);
     }
 
-    public function approveRegistration($id, $role, $notes = null) {
+    public function approveRegistration($id, $role, $notes = null)
+    {
         if ($role === 'dosen') {
             return $this->memberModel->approveBySupervisor($id, $notes);
         } elseif ($role === 'ketua_lab') {
@@ -60,12 +66,176 @@ class MemberController {
         return false;
     }
 
-    public function rejectRegistration($id, $role, $notes) {
+    public function rejectRegistration($id, $role, $notes)
+    {
         if ($role === 'dosen') {
             return $this->memberModel->rejectBySupervisor($id, $notes);
         } elseif ($role === 'ketua_lab') {
             return $this->memberModel->rejectByLabHead($id, $notes);
         }
         return false;
+    }
+
+    public function profile()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        // Ambil data user dasar
+        $query = "SELECT u.id, u.username, u.email, u.status, u.photo, u.created_at
+                  FROM users u WHERE u.id = $1 LIMIT 1";
+        $res = @pg_query_params($this->db, $query, array($userId));
+        $user = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
+
+        // Jika ada data tambahan di member_registrations, ambil juga
+        $extra = null;
+        if (!empty($user['email'])) {
+            $q2 = "SELECT * FROM member_registrations WHERE email = $1 LIMIT 1";
+            $r2 = @pg_query_params($this->db, $q2, array($user['email']));
+            if ($r2 && pg_num_rows($r2) > 0) {
+                $extra = pg_fetch_assoc($r2);
+            }
+        }
+
+        $profileUser = $user ?: [];
+        $profileExtra = $extra ?: [];
+
+        // Build $me array expected by the view
+        $me = array_merge([
+            'name' => $profileUser['username'] ?? $profileExtra['name'] ?? '',
+            'email' => $profileUser['email'] ?? $profileExtra['email'] ?? '',
+            'nim' => $profileExtra['nim'] ?? $profileUser['nim'] ?? '',
+            'angkatan' => $profileExtra['angkatan'] ?? $profileUser['angkatan'] ?? '',
+            'origin' => $profileExtra['origin'] ?? $profileUser['origin'] ?? '',
+            'phone' => $profileExtra['phone'] ?? $profileUser['phone'] ?? '',
+            'status_lab' => $profileExtra['status'] ?? $profileUser['status'] ?? 'aktif'
+        ], $profileExtra);
+
+        // Include the view directly — the view will render the layout itself
+        include __DIR__ . '/../../view/member/settings/index.php';
+    }
+
+    public function editProfile()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $query = "SELECT id, username, email, photo FROM users WHERE id = $1 LIMIT 1";
+        $res = @pg_query_params($this->db, $query, array($userId));
+        $user = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
+
+        // Prepare $me for the view
+        $me = [
+            'name' => $user['username'] ?? '',
+            'email' => $user['email'] ?? '',
+            'nim' => $user['nim'] ?? '',
+            'phone' => $user['phone'] ?? '',
+            'angkatan' => $user['angkatan'] ?? '',
+            'origin' => $user['origin'] ?? ''
+        ];
+
+        include __DIR__ . '/../../view/member/settings/edit.php';
+    }
+
+    public function updateProfile()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=member-profile');
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+
+        if (empty($name) || empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = 'Nama dan email wajib diisi dengan format valid.';
+            header('Location: index.php?page=member-settings-edit');
+            exit;
+        }
+
+        $query = "UPDATE users SET username = $1, email = $2 WHERE id = $3";
+        $res = @pg_query_params($this->db, $query, array($name, $email, $userId));
+
+        if ($res) {
+            $_SESSION['success'] = 'Profil berhasil diperbarui.';
+        } else {
+            $_SESSION['error'] = 'Gagal memperbarui profil.';
+        }
+
+        header('Location: index.php?page=member-profile');
+        exit;
+    }
+
+    public function changePassword()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+        include __DIR__ . '/../../view/member/settings/change-password.php';
+    }
+
+    public function submitChangePassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=member-change-password');
+            exit;
+        }
+
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        // Note: form uses 'old_password' name
+        $current = $_POST['old_password'] ?? '';
+        $new = $_POST['new_password'] ?? '';
+        $confirm = $_POST['confirm_password'] ?? '';
+
+        if (empty($new) || strlen($new) < 8 || $new !== $confirm) {
+            $_SESSION['error'] = 'Password baru harus minimal 8 karakter dan cocok dengan konfirmasi.';
+            header('Location: index.php?page=member-settings-change-password');
+            exit;
+        }
+
+        // Verifikasi password saat ini
+        $q = "SELECT password FROM users WHERE id = $1 LIMIT 1";
+        $r = @pg_query_params($this->db, $q, array($userId));
+        $row = ($r && pg_num_rows($r) > 0) ? pg_fetch_assoc($r) : null;
+
+        if (!$row || !password_verify($current, $row['password'])) {
+            $_SESSION['error'] = 'Password saat ini salah.';
+            header('Location: index.php?page=member-settings-change-password');
+            exit;
+        }
+
+        $hashed = password_hash($new, PASSWORD_DEFAULT);
+        $uq = "UPDATE users SET password = $1 WHERE id = $2";
+        $ur = @pg_query_params($this->db, $uq, array($hashed, $userId));
+
+        if ($ur) {
+            $_SESSION['success'] = 'Password berhasil diubah.';
+        } else {
+            $_SESSION['error'] = 'Gagal mengubah password.';
+        }
+
+        header('Location: index.php?page=member-profile');
+        exit;
     }
 }

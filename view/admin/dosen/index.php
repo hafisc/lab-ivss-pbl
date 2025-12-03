@@ -42,17 +42,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
             </div>
         </div>
 
-        <!-- Dosen Aktif -->
-        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Dosen Aktif</p>
-                    <p class="text-4xl font-bold text-green-600 mt-2"><?= $dosenAktif ?></p>
-                </div>
-                <i class="fas fa-check-circle text-5xl text-green-100"></i>
-            </div>
-        </div>
-
         <!-- Total Mahasiswa -->
         <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
             <div class="flex items-center justify-between">
@@ -64,16 +53,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
             </div>
         </div>
 
-        <!-- Rata-rata Mahasiswa -->
-        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600 text-sm font-medium uppercase tracking-wide">Rata-rata/Dosen</p>
-                    <p class="text-4xl font-bold text-orange-600 mt-2"><?= $avgMahasiswa ?></p>
-                </div>
-                <i class="fas fa-chart-bar text-5xl text-orange-100"></i>
-            </div>
-        </div>
     </div>
 
     <!-- Search & Filter Section -->
@@ -103,18 +82,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-400 transition">
                 </div>
 
-                <!-- Filter by Status -->
-                <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-toggle-on mr-1"></i>Filter Status
-                    </label>
-                    <select id="status" name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-400 transition">
-                        <option value="all" <?= ($_GET['status'] ?? 'active') === 'all' ? 'selected' : '' ?>>Semua Status</option>
-                        <option value="active" <?= ($_GET['status'] ?? 'active') === 'active' ? 'selected' : '' ?>>✓ Aktif</option>
-                        <option value="inactive" <?= ($_GET['status'] ?? 'active') === 'inactive' ? 'selected' : '' ?>>✗ Tidak Aktif</option>
-                    </select>
-                </div>
-
                 <!-- Search Button -->
                 <div class="flex items-end">
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center shadow-md hover:shadow-lg">
@@ -122,15 +89,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
                     </button>
                 </div>
             </div>
-
-            <!-- Reset Filter (if any filter is active) -->
-            <?php if (!empty($_GET['search']) || ($_GET['status'] ?? 'active') !== 'active'): ?>
-                <div class="pt-2 flex justify-end">
-                    <a href="index.php?page=admin-dosen" class="text-sm text-gray-600 hover:text-gray-900 underline flex items-center">
-                        <i class="fas fa-redo mr-1"></i>Reset Filter
-                    </a>
-                </div>
-            <?php endif; ?>
         </form>
     </div>
 
@@ -154,9 +112,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
                             <th class="px-6 py-4 text-left text-sm font-bold text-gray-700">Asal Institusi</th>
                             <th class="px-6 py-4 text-center text-sm font-bold text-gray-700">
                                 <i class="fas fa-users mr-1 text-purple-600"></i>Mahasiswa
-                            </th>
-                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-700">
-                                <i class="fas fa-check-circle mr-1 text-green-600"></i>Status
                             </th>
                             <th class="px-6 py-4 text-center text-sm font-bold text-gray-700">
                                 <i class="fas fa-cog mr-1 text-blue-600"></i>Aksi
@@ -191,17 +146,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
                                         <i class="fas fa-users mr-1"></i><?= intval($d['jumlah_mahasiswa'] ?? 0) ?>
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    <?php if (($d['status'] ?? '') === 'active'): ?>
-                                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-green-100 text-green-800">
-                                            <i class="fas fa-check-circle mr-1"></i>Aktif
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-red-100 text-red-800">
-                                            <i class="fas fa-times-circle mr-1"></i>Tidak Aktif
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
                                 <td class="px-6 py-4 text-center text-sm space-x-2 flex items-center justify-center flex-wrap gap-2">
                                     <a href="index.php?page=admin-dosen-detail&id=<?= $d['dosen_id'] ?? $d['id'] ?>" class="inline-flex items-center px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold rounded-lg transition" title="Lihat Detail">
                                         <i class="fas fa-eye mr-1"></i>Lihat
@@ -214,28 +158,6 @@ $dosenAktif = count(array_filter($dosen, fn($d) => ($d['status'] ?? '') === 'act
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- Summary Stats Footer -->
-            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-6 border-t-2 border-gray-200">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="text-center p-4 bg-white rounded-lg shadow-sm border-l-4 border-blue-500">
-                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Ditampilkan</p>
-                        <p class="text-3xl font-bold text-blue-600 mt-2"><?= count($dosen) ?></p>
-                    </div>
-                    <div class="text-center p-4 bg-white rounded-lg shadow-sm border-l-4 border-purple-500">
-                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Total Mahasiswa</p>
-                        <p class="text-3xl font-bold text-purple-600 mt-2"><?= $totalMahasiswa ?></p>
-                    </div>
-                    <div class="text-center p-4 bg-white rounded-lg shadow-sm border-l-4 border-green-500">
-                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Rata-rata Mahasiswa</p>
-                        <p class="text-3xl font-bold text-green-600 mt-2"><?= $avgMahasiswa ?></p>
-                    </div>
-                    <div class="text-center p-4 bg-white rounded-lg shadow-sm border-l-4 border-orange-500">
-                        <p class="text-gray-600 text-sm font-medium uppercase tracking-wider">Dosen Aktif</p>
-                        <p class="text-3xl font-bold text-orange-600 mt-2"><?= $dosenAktif ?> / <?= $totalDosen ?></p>
-                    </div>
-                </div>
             </div>
         <?php endif; ?>
     </div>

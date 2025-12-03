@@ -71,6 +71,17 @@ class AuthController
 
                     $_SESSION['success'] = 'Login berhasil!';
 
+                    // Debug log successful login
+                    @mkdir(__DIR__ . '/../../storage', 0755, true);
+                    $debug = [
+                        'time' => date('c'),
+                        'event' => 'login_success',
+                        'email' => $email,
+                        'user_id' => $user['id'],
+                        'role' => $user['role_name'] ?? null
+                    ];
+                    @file_put_contents(__DIR__ . '/../../storage/login_debug.log', json_encode($debug) . PHP_EOL, FILE_APPEND | LOCK_EX);
+
                     // Redirect berdasarkan role ke dashboard masing-masing
                     if ($user['role_name'] === 'admin' || $user['role_name'] === 'ketua_lab' || $user['role_name'] === 'dosen') {
                         header('Location: index.php?page=admin');
@@ -83,9 +94,26 @@ class AuthController
                     exit;
                 } else {
                     $_SESSION['error'] = 'Email atau password salah!';
+                    // Debug failed password
+                    @mkdir(__DIR__ . '/../../storage', 0755, true);
+                    $debug = [
+                        'time' => date('c'),
+                        'event' => 'login_failed_password',
+                        'email' => $email,
+                        'user_id' => $user['id'] ?? null
+                    ];
+                    @file_put_contents(__DIR__ . '/../../storage/login_debug.log', json_encode($debug) . PHP_EOL, FILE_APPEND | LOCK_EX);
                 }
             } else {
                 $_SESSION['error'] = 'Email atau password salah!';
+                // Debug user not found
+                @mkdir(__DIR__ . '/../../storage', 0755, true);
+                $debug = [
+                    'time' => date('c'),
+                    'event' => 'login_failed_no_user',
+                    'email' => $email
+                ];
+                @file_put_contents(__DIR__ . '/../../storage/login_debug.log', json_encode($debug) . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
 
             header('Location: index.php?page=login');
