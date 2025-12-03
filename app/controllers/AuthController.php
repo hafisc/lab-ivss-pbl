@@ -16,11 +16,11 @@ class AuthController
         if (isset($_SESSION['user_id'])) {
             $role = $_SESSION['role'];
             if ($role === 'admin' || $role === 'dosen' || $role === 'ketua_lab') {
-                header('Location: ./index.php?page=admin');
+                header('Location: /Lab%20ivss/public/index.php?page=admin');
             } else if ($role === 'member') {
-                header('Location: ./index.php?page=member');
+                header('Location: /Lab%20ivss/public/index.php?page=member');
             } else {
-                header('Location: ./index.php?page=home');
+                header('Location: /Lab%20ivss/public/index.php?page=home');
             }
             exit;
         }
@@ -38,6 +38,11 @@ class AuthController
 
             // Query user berdasarkan email (include role name)
             $query = "SELECT u.*, r.role_name AS role FROM users u LEFT JOIN roles r ON r.id = u.role_id WHERE u.email = $1 LIMIT 1";
+            
+            // Query user berdasarkan email dengan join ke tabel roles
+            $query = "SELECT u.*, r.role_name FROM users u 
+                      JOIN roles r ON u.role_id = r.id 
+                      WHERE u.email = $1 LIMIT 1";
             $result = pg_query_params($this->db, $query, [$email]);
 
             if ($result && pg_num_rows($result) > 0) {
@@ -50,6 +55,8 @@ class AuthController
 
                     // Cek status untuk member
                     if ($user['role'] === 'member' && $user['status'] === 'pending') {
+                    // Cek status untuk member/mahasiswa
+                    if (($user['role_name'] === 'member' || $user['role_name'] === 'mahasiswa') && $user['status'] === 'pending') {
                         $_SESSION['error'] = 'Akun Anda masih dalam proses review. Silakan tunggu approval dari dosen pembimbing.';
                         header('Location: ./index.php?page=login');
                         exit;
@@ -67,8 +74,15 @@ class AuthController
                     ];
 
                     // Backward compatibility (untuk code lama yang masih pakai format flat)
+                        'name' => $user['username'], // Menggunakan username karena kolom name tidak ada di tabel users (adanya di tabel terkait)
+                        'email' => $user['email'],
+                        'role' => $user['role_name'],
+                        'photo' => $user['photo'] ?? null
+                    ];
+                    
+                    // Backward compatibility
                     $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['name'] = $user['name'];
+                    $_SESSION['name'] = $user['username'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
 
@@ -79,8 +93,18 @@ class AuthController
                         header('Location: ./index.php?page=admin');
                     } else if ($user['role'] === 'member') {
                         header('Location: ./index.php?page=member');
+                    $_SESSION['role'] = $user['role_name'];
+                    
+                    $_SESSION['success'] = 'Login berhasil!';
+                    
+                    // Redirect berdasarkan role ke dashboard masing-masing
+                    if ($user['role_name'] === 'admin' || $user['role_name'] === 'ketua_lab' || $user['role_name'] === 'dosen') {
+                        header('Location: /Lab%20ivss/public/index.php?page=admin');
+                    } else if ($user['role_name'] === 'member' || $user['role_name'] === 'mahasiswa') {
+                        header('Location: /Lab%20ivss/public/index.php?page=member');
                     } else {
-                        header('Location: ./index.php?page=home');
+                        // Fallback ke home jika role tidak dikenali
+                        header('Location: /Lab%20ivss/public/index.php?page=home');
                     }
                     exit;
                 } else {
@@ -91,6 +115,8 @@ class AuthController
             }
 
             header('Location: index.php?page=login');
+            
+            header('Location: /Lab%20ivss/public/index.php?page=login');
             exit;
         }
 
@@ -248,11 +274,30 @@ class AuthController
             if ($insertResult) {
                 $registration = pg_fetch_assoc($insertResult);
 
+            require_once __DIR__ . '/../models/member.php';
+            $memberModel = new Member($this->db);
+            
+            $registrationData = [
+                'name' => $name,
+                'email' => $email,
+                'nim' => $nim,
+                'phone' => $phone,
+                'angkatan' => $angkatan,
+                'origin' => $origin,
+                'password' => $password, // Model will hash it
+                'research_title' => $research_title,
+                'supervisor_id' => $supervisor_id,
+                'motivation' => $motivation
+            ];
+
+            $registrationId = $memberModel->register($registrationData);
+            
+            if ($registrationId) {
                 // Load Email Helper
                 require_once __DIR__ . '/../helpers/EmailHelper.php';
 
                 // Siapkan data untuk email
-                $registrationData = [
+                $emailData = [
                     'name' => $name,
                     'email' => $email,
                     'nim' => $nim,
@@ -266,7 +311,7 @@ class AuthController
                 $emailSent = EmailHelper::sendSupervisorNotification(
                     $supervisor['email'],
                     $supervisor['name'],
-                    $registrationData
+                    $emailData
                 );
 
                 // Kirim email ke ketua lab sebagai notifikasi info
@@ -274,7 +319,7 @@ class AuthController
                     EmailHelper::sendLabHeadNotification(
                         $labHead['email'],
                         $labHead['name'],
-                        $registrationData,
+                        $emailData,
                         $supervisor['name']
                     );
                 }

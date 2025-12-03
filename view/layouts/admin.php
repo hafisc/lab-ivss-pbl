@@ -39,6 +39,15 @@ try {
                   WHERE mr.status = 'pending_supervisor' AND mr.supervisor_id = $1 
                   ORDER BY mr.created_at DESC LIMIT 3";
         $result = @pg_query_params($db, $query, [$userId]);
+        $result = pg_query_params($db, "
+            SELECT mr.*, u.username AS supervisor_name
+            FROM member_registrations mr
+            LEFT JOIN users u ON mr.supervisor_id = u.id
+            WHERE mr.status = 'pending_supervisor' AND mr.supervisor_id = $1
+            ORDER BY mr.created_at DESC
+            LIMIT 3
+        ", [$userId]);
+        $notifications = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
@@ -62,6 +71,15 @@ try {
                   WHERE mr.status = 'pending_lab_head' 
                   ORDER BY mr.created_at DESC LIMIT 3";
         $result = @pg_query($db, $query);
+        $result = pg_query($db, "
+            SELECT mr.*, u.username AS supervisor_name
+            FROM member_registrations mr
+            LEFT JOIN users u ON mr.supervisor_id = u.id
+            WHERE mr.status = 'pending_lab_head'
+            ORDER BY mr.created_at DESC
+            LIMIT 3
+        ");
+        $notifications = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
@@ -85,6 +103,15 @@ try {
                   WHERE mr.status IN ('pending_supervisor', 'pending_lab_head') 
                   ORDER BY mr.created_at DESC LIMIT 3";
         $result = @pg_query($db, $query);
+        $result = pg_query($db, "
+            SELECT mr.*, u.username AS supervisor_name
+            FROM member_registrations mr
+            LEFT JOIN users u ON mr.supervisor_id = u.id
+            WHERE mr.status IN ('pending_supervisor', 'pending_lab_head')
+            ORDER BY mr.created_at DESC
+            LIMIT 3
+        ");
+        $notifications = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;

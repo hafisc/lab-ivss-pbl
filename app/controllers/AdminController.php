@@ -121,14 +121,10 @@ class AdminController
     }
     
     private function getTotalRiset() {
-        // Asumsi tabel research/riset sudah ada
-        $query = "SELECT COUNT(*) as total FROM research WHERE status = 'active'";
-        $result = @pg_query($this->db, $query);
-        if ($result) {
-            $row = pg_fetch_assoc($result);
-            return $row['total'] ?? 0;
-        }
-        return 0;
+        require_once __DIR__ . '/../models/research.php';
+        $researchModel = new Research($this->db);
+        $stats = $researchModel->getStats();
+        return $stats['active_research'] ?? 0;
     }
 
     private function getTotalNews()
@@ -304,12 +300,18 @@ class AdminController
                     $_SESSION['error'] = 'Gagal approve pendaftar (lab head): ' . pg_last_error($this->db);
                 }
             } else {
-                // Admin TIDAK bisa approve - hanya Dosen dan Ketua Lab
-                $_SESSION['error'] = 'Admin tidak memiliki akses untuk approve pendaftar. Silakan hubungi Dosen atau Ketua Lab.';
-                return;
+                $_SESSION['error'] = 'Gagal approve pendaftar! Pastikan status valid.';
+            }
+        } elseif ($userRole === 'ketua_lab') {
+            // Ketua Lab approval
+            $result = $memberModel->approveByLabHead($id);
+            if ($result) {
+                $_SESSION['success'] = 'Pendaftar berhasil di-approve! Akun member telah dibuat dan aktif.';
+            } else {
+                $_SESSION['error'] = 'Gagal approve pendaftar! Pastikan status valid.';
             }
         } else {
-            $_SESSION['error'] = 'Pendaftar tidak ditemukan!';
+            $_SESSION['error'] = 'Anda tidak memiliki akses untuk approve pendaftar.';
         }
     }
 
@@ -343,24 +345,29 @@ class AdminController
                 }
                 $newStatus = 'rejected_lab_head';
                 $message = 'Pendaftar berhasil ditolak. Email notifikasi akan dikirim.';
-            } else {
-                // Admin TIDAK bisa reject - hanya Dosen dan Ketua Lab
-                $_SESSION['error'] = 'Admin tidak memiliki akses untuk reject pendaftar. Silakan hubungi Dosen atau Ketua Lab.';
-                return;
-            }
-            
-            // Update status ke rejected
-            $updateQuery = "UPDATE member_registrations SET status = $1 WHERE id = $2";
-            $result = @pg_query_params($this->db, $updateQuery, [$newStatus, $id]);
-            
+        
+        require_once __DIR__ . '/../models/member.php';
+        $memberModel = new Member($this->db);
+        
+        // Notes can be passed via POST if available, here we use default
+        $notes = $_POST['notes'] ?? 'Rejected by ' . $userRole;
+
+        if ($userRole === 'dosen') {
+            $result = $memberModel->rejectBySupervisor($id, $notes);
             if ($result) {
-                $_SESSION['success'] = $message;
-                // TODO: Kirim email notifikasi rejection
+                $_SESSION['success'] = 'Pendaftar berhasil ditolak.';
+            } else {
+                $_SESSION['error'] = 'Gagal menolak pendaftar!';
+            }
+        } elseif ($userRole === 'ketua_lab') {
+            $result = $memberModel->rejectByLabHead($id, $notes);
+            if ($result) {
+                $_SESSION['success'] = 'Pendaftar berhasil ditolak.';
             } else {
                 $_SESSION['error'] = 'Gagal menolak pendaftar: ' . pg_last_error($this->db);
             }
         } else {
-            $_SESSION['error'] = 'Pendaftar tidak ditemukan!';
+            $_SESSION['error'] = 'Anda tidak memiliki akses untuk reject pendaftar.';
         }
     }
 
@@ -576,6 +583,10 @@ class AdminController
             session_start();
         }
 
+        
+        require_once __DIR__ . '/../models/research.php';
+        $researchModel = new Research($this->db);
+        
         $action = $_GET['action'] ?? 'index';
 
         // Tangani berbagai aksi
@@ -585,12 +596,12 @@ class AdminController
                 break;
 
             case 'store':
-                $this->storeResearch();
+                $this->storeResearch($researchModel);
                 break;
 
             case 'edit':
                 $id = intval($_GET['id'] ?? 0);
-                $researchItem = $this->getResearchById($id);
+                $researchItem = $researchModel->getById($id);
                 if ($researchItem) {
                     include __DIR__ . '/../../view/admin/research/edit.php';
                 } else {
@@ -601,11 +612,11 @@ class AdminController
                 break;
 
             case 'update':
-                $this->updateResearch();
+                $this->updateResearch($researchModel);
                 break;
 
             case 'delete':
-                $this->deleteResearch();
+                $this->deleteResearch($researchModel);
                 break;
 
             default:
@@ -613,10 +624,16 @@ class AdminController
                 $filter = $_GET['filter'] ?? 'all';
                 $allResearch = $this->getAllResearch();
 
+                $allResearch = $researchModel->getAll();
+                
                 if ($filter === 'active') {
-                    $researchList = array_filter($allResearch, fn($r) => $r['status'] === 'active');
+                    $researchList = array_filter($allResearch, function($r) {
+                        return $r['status'] === 'active';
+                    });
                 } elseif ($filter === 'completed') {
-                    $researchList = array_filter($allResearch, fn($r) => $r['status'] === 'completed');
+                    $researchList = array_filter($allResearch, function($r) {
+                        return $r['status'] === 'completed';
+                    });
                 } else {
                     $researchList = $allResearch;
                 }
@@ -682,10 +699,25 @@ class AdminController
         $team_members = !empty($_POST['team_members']) ? $_POST['team_members'] : null;
         $publications = !empty($_POST['publications']) ? $_POST['publications'] : null;
 
+    
+    private function storeResearch($model) {
+        $data = [
+            'title' => $_POST['title'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'category' => $_POST['category'] ?? '',
+            'status' => $_POST['status'] ?? 'active',
+            'start_date' => !empty($_POST['start_date']) ? $_POST['start_date'] : null,
+            'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null,
+            'funding' => !empty($_POST['funding']) ? $_POST['funding'] : null,
+            'team_members' => !empty($_POST['team_members']) ? $_POST['team_members'] : null,
+            'publications' => !empty($_POST['publications']) ? $_POST['publications'] : null,
+            'leader_id' => $_SESSION['user_id'] ?? null
+        ];
+        
         // Handle image upload
-        $image = null;
+        $data['image'] = null;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $image = $this->uploadImage($_FILES['image'], 'research');
+            $data['image'] = $this->uploadImage($_FILES['image'], 'research');
         }
 
         // Set leader_id dari session
@@ -709,9 +741,11 @@ class AdminController
         ]);
 
         if ($result) {
+        
+        if ($model->create($data)) {
             $_SESSION['success'] = 'Riset berhasil ditambahkan!';
         } else {
-            $_SESSION['error'] = 'Gagal menambahkan riset: ' . pg_last_error($this->db);
+            $_SESSION['error'] = 'Gagal menambahkan riset.';
         }
 
         header('Location: index.php?page=admin-research');
@@ -739,22 +773,45 @@ class AdminController
         $existing = $this->getResearchById($id);
         $image = $existing['image'] ?? null;
 
+    
+    private function updateResearch($model) {
+        $id = intval($_GET['id'] ?? 0);
+        $existing = $model->getById($id);
+        
+        if (!$existing) {
+            $_SESSION['error'] = 'Riset tidak ditemukan';
+            header('Location: index.php?page=admin-research');
+            exit;
+        }
+
+        $data = [
+            'title' => $_POST['title'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'category' => $_POST['category'] ?? '',
+            'status' => $_POST['status'] ?? 'active',
+            'start_date' => !empty($_POST['start_date']) ? $_POST['start_date'] : null,
+            'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null,
+            'funding' => !empty($_POST['funding']) ? $_POST['funding'] : null,
+            'team_members' => !empty($_POST['team_members']) ? $_POST['team_members'] : null,
+            'publications' => !empty($_POST['publications']) ? $_POST['publications'] : null
+        ];
+        
+        $data['image'] = $existing['image'];
+        
         // Check if user wants to remove current image
         if (isset($_POST['remove_image']) && $_POST['remove_image'] == '1') {
-            $image = null;
-            // Delete old image file if exists
-            if ($existing && $existing['image'] && file_exists(__DIR__ . '/../../public/' . $existing['image'])) {
+            $data['image'] = null;
+            if ($existing['image'] && file_exists(__DIR__ . '/../../public/' . $existing['image'])) {
                 @unlink(__DIR__ . '/../../public/' . $existing['image']);
             }
         }
 
         // Handle new image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            // Delete old image if exists
-            if ($existing && $existing['image'] && file_exists(__DIR__ . '/../../public/' . $existing['image'])) {
+            if ($existing['image'] && file_exists(__DIR__ . '/../../public/' . $existing['image'])) {
                 @unlink(__DIR__ . '/../../public/' . $existing['image']);
             }
-            $image = $this->uploadImage($_FILES['image'], 'research');
+            $data['image'] = $this->uploadImage($_FILES['image'], 'research');
         }
 
         $query = "UPDATE research SET title = $1, description = $2, category = $3, image = $4, status = $5, 
@@ -775,9 +832,11 @@ class AdminController
         ]);
 
         if ($result) {
+        
+        if ($model->update($id, $data)) {
             $_SESSION['success'] = 'Riset berhasil diupdate!';
         } else {
-            $_SESSION['error'] = 'Gagal mengupdate riset: ' . pg_last_error($this->db);
+            $_SESSION['error'] = 'Gagal mengupdate riset.';
         }
 
         header('Location: index.php?page=admin-research');
@@ -800,6 +859,15 @@ class AdminController
                 @unlink(__DIR__ . '/../../public/' . $existing['image']);
             }
 
+    
+    private function deleteResearch($model) {
+        $id = intval($_GET['id'] ?? 0);
+        $existing = $model->getById($id);
+        
+        if ($model->delete($id)) {
+            if ($existing && $existing['image'] && file_exists(__DIR__ . '/../../public/' . $existing['image'])) {
+                @unlink(__DIR__ . '/../../public/' . $existing['image']);
+            }
             $_SESSION['success'] = 'Riset berhasil dihapus!';
         } else {
             $_SESSION['error'] = 'Gagal menghapus riset!';
