@@ -1,19 +1,12 @@
 <?php
-// Pastikan session aktif (index.php biasanya sudah start session)
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Pastikan user sudah login
-$sessionUserId = $_SESSION['user_id'] ?? $_SESSION['user']['id'] ?? null;
-if (empty($sessionUserId)) {
+// Session sudah di-start di index.php
+if (!isset($_SESSION['user_id'])) {
     header('Location: ./index.php?page=login');
     exit;
 }
 
 // Check if user has admin access (admin, ketua_lab, dosen)
-$sessionRole = $_SESSION['role'] ?? $_SESSION['user']['role'] ?? null;
-if (!in_array($sessionRole, ['admin', 'dosen', 'ketua_lab'], true)) {
+if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'dosen' && $_SESSION['role'] !== 'ketua_lab') {
     header('Location: ./index.php?page=home');
     exit;
 }
@@ -40,21 +33,18 @@ try {
         $notificationCount = (int)($row['count'] ?? 0);
 
         // Get latest notifications
-        $result = pg_query_params($db, "
-            SELECT mr.*, COALESCE(d.nama, u.username) AS supervisor_name
-            FROM member_registrations mr
-            LEFT JOIN users u ON mr.supervisor_id = u.id
-            LEFT JOIN dosen d ON d.user_id = u.id
-            WHERE mr.status = 'pending_supervisor' AND mr.supervisor_id = $1
-            ORDER BY mr.created_at DESC
-            LIMIT 3
-        ", [$userId]);
-        $notifications = [];
+        $query = "SELECT mr.*, u.name as supervisor_name 
+                  FROM member_registrations mr 
+                  LEFT JOIN users u ON mr.supervisor_id = u.id 
+                  WHERE mr.status = 'pending_supervisor' AND mr.supervisor_id = $1 
+                  ORDER BY mr.created_at DESC LIMIT 3";
+        $result = @pg_query_params($db, $query, [$userId]);
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
             }
         }
+        
     } elseif ($userRole === 'ketua_lab') {
         // Ketua Lab: count yang sudah approve dosen
         $result = pg_query($db, "
@@ -66,21 +56,18 @@ try {
         $notificationCount = (int)($row['count'] ?? 0);
 
         // Get latest notifications
-        $result = pg_query($db, "
-            SELECT mr.*, COALESCE(d.nama, u.username) AS supervisor_name
-            FROM member_registrations mr
-            LEFT JOIN users u ON mr.supervisor_id = u.id
-            LEFT JOIN dosen d ON d.user_id = u.id
-            WHERE mr.status = 'pending_lab_head'
-            ORDER BY mr.created_at DESC
-            LIMIT 3
-        ");
-        $notifications = [];
+        $query = "SELECT mr.*, u.name as supervisor_name 
+                  FROM member_registrations mr 
+                  LEFT JOIN users u ON mr.supervisor_id = u.id 
+                  WHERE mr.status = 'pending_lab_head' 
+                  ORDER BY mr.created_at DESC LIMIT 3";
+        $result = @pg_query($db, $query);
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
             }
         }
+        
     } elseif ($userRole === 'admin') {
         // Admin: count all pending registrations
         $result = pg_query($db, "
@@ -92,16 +79,12 @@ try {
         $notificationCount = (int)($row['count'] ?? 0);
 
         // Get latest notifications
-        $result = pg_query($db, "
-            SELECT mr.*, COALESCE(d.nama, u.username) AS supervisor_name
-            FROM member_registrations mr
-            LEFT JOIN users u ON mr.supervisor_id = u.id
-            LEFT JOIN dosen d ON d.user_id = u.id
-            WHERE mr.status IN ('pending_supervisor', 'pending_lab_head')
-            ORDER BY mr.created_at DESC
-            LIMIT 3
-        ");
-        $notifications = [];
+        $query = "SELECT mr.*, u.name as supervisor_name 
+                  FROM member_registrations mr 
+                  LEFT JOIN users u ON mr.supervisor_id = u.id 
+                  WHERE mr.status IN ('pending_supervisor', 'pending_lab_head') 
+                  ORDER BY mr.created_at DESC LIMIT 3";
+        $result = @pg_query($db, $query);
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;

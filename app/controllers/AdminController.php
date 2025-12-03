@@ -8,12 +8,11 @@ class AdminController
     {
         $this->db = $db;
     }
-
-    public function dashboard()
-    {
+    
+    public function dashboard() {
         // Ambil statistik berdasarkan role
         $userRole = $_SESSION['user']['role'] ?? 'member';
-
+        
         if ($userRole === 'admin') {
             // Admin: System Overview
             $totalUsers = $this->getTotalUsers();
@@ -120,9 +119,9 @@ class AdminController
         }
         return 0;
     }
-
-    private function getTotalRiset()
-    {
+    
+    private function getTotalRiset() {
+        // Asumsi tabel research/riset sudah ada
         $query = "SELECT COUNT(*) as total FROM research WHERE status = 'active'";
         $result = @pg_query($this->db, $query);
         if ($result) {
@@ -152,7 +151,7 @@ class AdminController
 
         if ($userRole === 'dosen') {
             // Dosen: hanya lihat pendaftar yang memilih dirinya sebagai supervisor DAN masih pending_supervisor
-            $query = "SELECT mr.*, u.name as supervisor_name 
+            $query = "SELECT mr.*, u.username as supervisor_name 
                       FROM member_registrations mr 
                       LEFT JOIN users u ON mr.supervisor_id = u.id 
                       WHERE mr.status = 'pending_supervisor' AND mr.supervisor_id = $1 
@@ -160,7 +159,7 @@ class AdminController
             $params = [$userId];
         } elseif ($userRole === 'ketua_lab') {
             // Ketua Lab: hanya lihat yang sudah diapprove dosen (pending_lab_head)
-            $query = "SELECT mr.*, u.name as supervisor_name 
+            $query = "SELECT mr.*, u.username as supervisor_name 
                       FROM member_registrations mr 
                       LEFT JOIN users u ON mr.supervisor_id = u.id 
                       WHERE mr.status = 'pending_lab_head' 
@@ -168,7 +167,7 @@ class AdminController
             $params = [];
         } else {
             // Admin: lihat semua yang pending (supervisor atau lab_head)
-            $query = "SELECT mr.*, u.name as supervisor_name 
+            $query = "SELECT mr.*, u.username as supervisor_name 
                       FROM member_registrations mr 
                       LEFT JOIN users u ON mr.supervisor_id = u.id 
                       WHERE mr.status IN ('pending_supervisor', 'pending_lab_head') 
@@ -201,7 +200,7 @@ class AdminController
                   FROM member_registrations mr 
                   LEFT JOIN users u ON mr.supervisor_id = u.id 
                   WHERE mr.id = $1";
-
+        
         $result = @pg_query_params($this->db, $query, [$id]);
 
         if ($result && pg_num_rows($result) > 0) {
@@ -254,9 +253,15 @@ class AdminController
                     $_SESSION['error'] = 'Anda tidak bisa approve pendaftar yang tidak memilih Anda sebagai pembimbing!';
                     return;
                 }
-                // Gunakan stored procedure untuk approve oleh dosen
-                $res = @pg_query_params($this->db, "CALL approve_registration_supervisor($1, $2)", [$id, null]);
-                if ($res) {
+                
+                // Update ke pending_lab_head
+                $updateQuery = "UPDATE member_registrations 
+                               SET status = 'pending_lab_head', 
+                                   supervisor_approved_at = CURRENT_TIMESTAMP 
+                               WHERE id = $1";
+                $result = @pg_query_params($this->db, $updateQuery, [$id]);
+                
+                if ($result) {
                     $_SESSION['success'] = 'Pendaftar berhasil di-approve! Sekarang menunggu approval Ketua Lab.';
                 } else {
                     $_SESSION['error'] = 'Gagal approve pendaftar: ' . pg_last_error($this->db);
@@ -267,10 +272,34 @@ class AdminController
                     $_SESSION['error'] = 'Pendaftar ini belum di-approve dosen atau sudah diproses!';
                     return;
                 }
-                // Gunakan stored procedure yang menangani create user + mahasiswa
-                $res = @pg_query_params($this->db, "CALL approve_registration_lab_head($1, $2)", [$id, null]);
-                if ($res) {
+                
+                // Gunakan password yang sudah disimpan saat registrasi
+                $password = $registration['password'] ?? password_hash('member123', PASSWORD_BCRYPT);
+                
+                // Buat akun user
+                $insertQuery = "INSERT INTO users (name, email, password, role, status, nim, phone, angkatan) 
+                               VALUES ($1, $2, $3, 'member', 'active', $4, $5, $6)";
+                $insertResult = @pg_query_params($this->db, $insertQuery, [
+                    $registration['name'],
+                    $registration['email'],
+                    $password,
+                    $registration['nim'] ?? null,
+                    $registration['phone'] ?? null,
+                    $registration['angkatan'] ?? null
+                ]);
+                
+                if ($insertResult) {
+                    // Update status pendaftaran
+                    $updateQuery = "UPDATE member_registrations 
+                                   SET status = 'approved', 
+                                       lab_head_approved_at = CURRENT_TIMESTAMP 
+                                   WHERE id = $1";
+                    @pg_query_params($this->db, $updateQuery, [$id]);
+                    
                     $_SESSION['success'] = 'Pendaftar berhasil di-approve! Akun member telah dibuat dan aktif.';
+                    
+                    // TODO: Kirim email notifikasi ke mahasiswa bahwa akun sudah aktif
+                    
                 } else {
                     $_SESSION['error'] = 'Gagal approve pendaftar (lab head): ' . pg_last_error($this->db);
                 }
@@ -319,17 +348,12 @@ class AdminController
                 $_SESSION['error'] = 'Admin tidak memiliki akses untuk reject pendaftar. Silakan hubungi Dosen atau Ketua Lab.';
                 return;
             }
-
-            // Gunakan stored procedure untuk melakukan rejection sesuai role
-            if ($userRole === 'dosen') {
-                $res = @pg_query_params($this->db, "CALL reject_registration_supervisor($1, $2)", [$id, null]);
-            } elseif ($userRole === 'ketua_lab') {
-                $res = @pg_query_params($this->db, "CALL reject_registration_lab_head($1, $2)", [$id, null]);
-            } else {
-                $res = false;
-            }
-
-            if ($res) {
+            
+            // Update status ke rejected
+            $updateQuery = "UPDATE member_registrations SET status = $1 WHERE id = $2";
+            $result = @pg_query_params($this->db, $updateQuery, [$newStatus, $id]);
+            
+            if ($result) {
                 $_SESSION['success'] = $message;
                 // TODO: Kirim email notifikasi rejection
             } else {
@@ -791,14 +815,14 @@ class AdminController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-
+        
         // Tangani aksi
         if (isset($_GET['action'])) {
             $action = $_GET['action'];
-
+            
             if (isset($_GET['id'])) {
                 $id = intval($_GET['id']);
-
+                
                 if ($action === 'set-alumni') {
                     $this->setMemberStatus($id, 'inactive');
                     $_SESSION['success'] = 'Member berhasil dijadikan alumni!';
@@ -847,9 +871,8 @@ class AdminController
 
         return $members;
     }
-
-    private function setMemberStatus($id, $status)
-    {
+    
+    private function setMemberStatus($id, $status) {
         $query = "UPDATE users SET status = $1 WHERE id = $2 AND role = 'member'";
         @pg_query_params($this->db, $query, [$status, $id]);
     }
