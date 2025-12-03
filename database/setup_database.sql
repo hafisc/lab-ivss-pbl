@@ -1215,6 +1215,57 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ========================================
+-- VIEWS: Unified Data Views
+-- ========================================
+
+-- View: Unified Publications (Lab + Member)
+CREATE OR REPLACE VIEW all_publications_view AS
+SELECT 
+    id,
+    title,
+    authors,
+    year,
+    journal,
+    conference,
+    doi,
+    url,
+    abstract,
+    citations,
+    keywords,
+    type,
+    status,
+    featured,
+    created_at,
+    'lab' as source,
+    NULL::INTEGER as user_id
+FROM publications
+WHERE status = 'published'
+
+UNION ALL
+
+SELECT 
+    id,
+    title,
+    authors,
+    year,
+    journal,
+    conference,
+    doi,
+    url,
+    abstract,
+    citation_count as citations,
+    keywords,
+    publication_type as type,
+    status,
+    FALSE as featured, -- Member publications default not featured unless logic added
+    created_at,
+    'member' as source,
+    user_id
+FROM member_publications
+WHERE status = 'published';
+
+
+-- ========================================
 -- Selesai! Semua tabel, functions, dan procedures berhasil dibuat
 -- ========================================
 -- Total 14 tabel:

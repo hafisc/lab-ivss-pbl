@@ -183,4 +183,50 @@ class Publication {
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':id' => $this->id]);
     }
+
+    /**
+     * Get all publications from unified view (lab + member publications)
+     * @param int|null $limit Maximum number of results
+     * @param string $orderBy Order by field (citations, year, created_at)
+     * @return array|false
+     */
+    public function getAllUnified($limit = null, $orderBy = 'citations') {
+        $validOrderFields = ['citations', 'year', 'created_at'];
+        if (!in_array($orderBy, $validOrderFields)) {
+            $orderBy = 'citations';
+        }
+
+        $sql = "SELECT * FROM all_publications_view 
+                ORDER BY $orderBy DESC, year DESC";
+
+        if ($limit !== null) {
+            $sql .= " LIMIT :limit";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->execute();
+        } else {
+            $stmt = $this->conn->query($sql);
+        }
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get featured publications from unified view
+     * Featured means: high citation count OR featured flag
+     * @param int $limit Maximum number of results
+     * @return array|false
+     */
+    public function getFeaturedUnified($limit = 6) {
+        $sql = "SELECT * FROM all_publications_view 
+                WHERE featured = TRUE OR citations >= 20
+                ORDER BY citations DESC, year DESC 
+                LIMIT :limit";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

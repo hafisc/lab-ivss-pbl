@@ -21,7 +21,8 @@ class HomeController {
         $publicationModel = new Publication($this->db);
         
         // Get featured publications untuk home page (max 6)
-        $publications = $publicationModel->getFeatured(6);
+        // Using unified view to show both lab and member publications
+        $publications = $publicationModel->getFeaturedUnified(6);
         
         // Load news model
         require_once __DIR__ . '/../models/news.php';
