@@ -5,26 +5,41 @@ class UserController {
     private $conn;
     
     public function __construct() {
-        $db = new Database();
+        $db = Database::getInstance();
         $this->conn = $db->getConnection();
     }
     
     // Display users page
     public function index() {
-        // Fetch all users
-        $query = "SELECT id, name, email, role, status, nim, nip, phone, angkatan, last_login, created_at 
-                  FROM users 
-                  ORDER BY created_at DESC";
+        // Fetch all users with role information
+        $query = "SELECT 
+                    u.id, 
+                    u.username, 
+                    u.email, 
+                    r.role_name,
+                    u.status, 
+                    u.last_login, 
+                    u.created_at,
+                    COALESCE(m.nama, d.nama) as nama,
+                    m.nim,
+                    d.nip,
+                    m.angkatan,
+                    COALESCE(m.no_phone, d.no_hp) as phone
+                  FROM users u
+                  JOIN roles r ON u.role_id = r.id
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id
+                  LEFT JOIN dosen d ON u.id = d.user_id
+                  ORDER BY u.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Calculate stats
         $totalUsers = count($users);
-        $adminCount = count(array_filter($users, fn($u) => $u['role'] === 'admin'));
-        $dosenCount = count(array_filter($users, fn($u) => in_array($u['role'], ['dosen', 'ketua_lab'])));
-        $memberCount = count(array_filter($users, fn($u) => $u['role'] === 'member' && $u['status'] === 'active'));
-        $inactiveCount = count(array_filter($users, fn($u) => $u['status'] === 'inactive'));
+        $adminCount = count(array_filter($users, function($u) { return $u['role_name'] === 'admin'; }));
+        $dosenCount = count(array_filter($users, function($u) { return in_array($u['role_name'], ['dosen', 'ketua_lab']); }));
+        $memberCount = count(array_filter($users, function($u) { return $u['role_name'] === 'mahasiswa' && $u['status'] === 'active'; }));
+        $inactiveCount = count(array_filter($users, function($u) { return $u['status'] === 'inactive'; }));
         
         // Load view
         require_once __DIR__ . '/../../view/admin/users/index.php';
@@ -151,7 +166,25 @@ class UserController {
         try {
             $id = $_GET['id'] ?? 0;
             
-            $query = "SELECT id, name, email, role, status, phone, nim, nip, angkatan, origin, research_title, supervisor_id, motivation FROM users WHERE id = :id";
+            $query = "SELECT 
+                        u.id, 
+                        u.username, 
+                        u.email, 
+                        r.role_name,
+                        u.status,
+                        COALESCE(m.nama, d.nama) as nama,
+                        m.nim,
+                        d.nip,
+                        m.angkatan,
+                        COALESCE(m.no_phone, d.no_hp) as phone,
+                        d.origin,
+                        m.research_title,
+                        m.supervisor_id
+                      FROM users u
+                      JOIN roles r ON u.role_id = r.id
+                      LEFT JOIN mahasiswa m ON u.id = m.user_id
+                      LEFT JOIN dosen d ON u.id = d.user_id
+                      WHERE u.id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();

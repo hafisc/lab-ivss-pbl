@@ -97,20 +97,20 @@ ob_start();
                 <td class="px-4 py-3">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
-                            <span class="text-sm font-semibold text-slate-600"><?= strtoupper(substr($user['name'], 0, 2)) ?></span>
+                            <span class="text-sm font-semibold text-slate-600"><?= strtoupper(substr($user['nama'] ?? $user['username'], 0, 2)) ?></span>
                         </div>
                         <div>
-                            <div class="font-medium text-slate-800"><?= $user['name'] ?></div>
+                            <div class="font-medium text-slate-800"><?= $user['nama'] ?? $user['username'] ?></div>
                             <div class="text-sm text-slate-500"><?= $user['email'] ?></div>
                         </div>
                     </div>
                 </td>
                 <td class="px-4 py-3">
                     <?php
-                    $badges = ['admin' => 'bg-purple-100 text-purple-700', 'ketua_lab' => 'bg-blue-100 text-blue-700', 'dosen' => 'bg-green-100 text-green-700', 'member' => 'bg-orange-100 text-orange-700'];
-                    $labels = ['admin' => 'Admin', 'ketua_lab' => 'Ketua Lab', 'dosen' => 'Dosen', 'member' => 'Member'];
+                    $badges = ['admin' => 'bg-purple-100 text-purple-700', 'ketua_lab' => 'bg-blue-100 text-blue-700', 'dosen' => 'bg-green-100 text-green-700', 'mahasiswa' => 'bg-orange-100 text-orange-700'];
+                    $labels = ['admin' => 'Admin', 'ketua_lab' => 'Ketua Lab', 'dosen' => 'Dosen', 'mahasiswa' => 'Mahasiswa'];
                     ?>
-                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium <?= $badges[$user['role']] ?>"><?= $labels[$user['role']] ?></span>
+                    <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium <?= $badges[$user['role_name']] ?? 'bg-gray-100 text-gray-700' ?>"><?= $labels[$user['role_name']] ?? $user['role_name'] ?></span>
                 </td>
                 <td class="px-4 py-3 text-sm"><?= $user['nim'] ?? $user['nip'] ?? '-' ?></td>
                 <td class="px-4 py-3">
@@ -137,7 +137,7 @@ ob_start();
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
                         </button>
                         <?php if ($user['id'] != 1): ?>
-                        <button onclick="deleteUser(<?= $user['id'] ?>,'<?= $user['name'] ?>')" class="p-1.5 text-red-600 hover:bg-red-50 rounded" title="Hapus">
+                        <button onclick="deleteUser(<?= $user['id'] ?>,'<?= $user['nama'] ?? $user['username'] ?>')" class="p-1.5 text-red-600 hover:bg-red-50 rounded" title="Hapus">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                         <?php endif; ?>
@@ -239,8 +239,8 @@ ob_start();
                     <select name="supervisor_id" id="userSupervisor" class="w-full px-3 py-2 text-sm border rounded-lg">
                         <option value="">Pilih Dosen Pembimbing</option>
                         <?php foreach ($users as $u): ?>
-                            <?php if ($u['role'] === 'dosen'): ?>
-                                <option value="<?= $u['id'] ?>"><?= $u['name'] ?></option>
+                            <?php if ($u['role_name'] === 'dosen'): ?>
+                                <option value="<?= $u['id'] ?>"><?= $u['nama'] ?? $u['username'] ?></option>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
@@ -385,10 +385,10 @@ function editUser(id) {
             if (data.success) {
                 const user = data.data;
                 document.getElementById('userId').value = user.id;
-                document.getElementById('userName').value = user.name;
+                document.getElementById('userName').value = user.nama || user.username;
                 document.getElementById('userEmail').value = user.email;
                 document.getElementById('userPhone').value = user.phone || '';
-                document.getElementById('userRole').value = user.role;
+                document.getElementById('userRole').value = user.role_name;
                 document.getElementById('userStatus').value = user.status;
                 
                 // NIP for dosen/ketua_lab
