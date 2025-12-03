@@ -1113,49 +1113,26 @@ function updateSwiperSlides(data) {
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Kepala+Lab&background=1e40af&color=fff&size=256" alt="Kepala Lab" class="w-full h-full object-cover">
+                <?php if (!empty($teamMembers)): ?>
+                    <?php foreach ($teamMembers as $member): ?>
+                    <div class="group text-center">
+                        <div class="relative mb-4 mx-auto w-32 h-32">
+                            <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                            <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                                <?php if (!empty($member['photo'])): ?>
+                                    <img src="<?= htmlspecialchars($member['photo']) ?>" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-full object-cover">
+                                <?php else: ?>
+                                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($member['name']) ?>&background=1e40af&color=fff&size=256" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-full object-cover">
+                                <?php endif; ?>
+                            </div>
                         </div>
+                        <h3 class="font-bold text-gray-900 text-sm mb-1"><?= htmlspecialchars($member['name']) ?></h3>
+                        <p class="text-xs <?= $member['position'] === 'Kepala Lab' ? 'text-blue-900' : 'text-gray-700' ?> font-semibold"><?= htmlspecialchars($member['position']) ?></p>
                     </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Dr. Ulla Delfana Rosiani, ST., MT.</h3>
-                    <p class="text-xs text-blue-900 font-semibold">Kepala Lab</p>
-                </div>
-
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Peneliti&background=7c3aed&color=fff&size=256" alt="Peneliti" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Mamluatul Hani'ah, S.Kom., M.Kom</h3>
-                    <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
-                </div>
-
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Peneliti&background=0891b2&color=fff&size=256" alt="Peneliti" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Mungki Astiningrum, ST., M.Kom.</h3>
-                    <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
-                </div>
-
-                <div class="group text-center">
-                    <div class="relative mb-4 mx-auto w-32 h-32">
-                        <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                        <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                            <img src="https://ui-avatars.com/api/?name=Peneliti&background=059669&color=fff&size=256" alt="Peneliti" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h3 class="font-bold text-gray-900 text-sm mb-1">Prof. Dr. Eng. Rosa Andrie Asmara</h3>
-                    <p class="text-xs text-gray-700 font-semibold">Peneliti</p>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-span-full text-center text-gray-500">Data anggota tim belum tersedia</div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

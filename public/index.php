@@ -162,6 +162,32 @@ switch ($page) {
         (new AdminController($pg))->settings();
         break;
 
+    // Team Members Management
+    case 'admin-team':
+        require __DIR__ . '/../app/controllers/TeamMemberController.php';
+        (new TeamMemberController($pg))->index();
+        break;
+    case 'admin-team-show':
+        require __DIR__ . '/../app/controllers/TeamMemberController.php';
+        (new TeamMemberController($pg))->show();
+        break;
+    case 'admin-team-store':
+        require __DIR__ . '/../app/controllers/TeamMemberController.php';
+        (new TeamMemberController($pg))->store();
+        break;
+    case 'admin-team-update':
+        require __DIR__ . '/../app/controllers/TeamMemberController.php';
+        (new TeamMemberController($pg))->update();
+        break;
+    case 'admin-team-delete':
+        require __DIR__ . '/../app/controllers/TeamMemberController.php';
+        (new TeamMemberController($pg))->delete();
+        break;
+    case 'admin-team-toggle':
+        require __DIR__ . '/../app/controllers/TeamMemberController.php';
+        (new TeamMemberController($pg))->toggleActive();
+        break;
+
     // Dosen Routes (Publications & Students)
     case 'admin-publications':
         require __DIR__ . '/../view/admin/publications/index.php';

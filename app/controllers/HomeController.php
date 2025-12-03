@@ -31,10 +31,19 @@ class HomeController {
         // Get latest news untuk home page (max 6)
         $latestNews = $newsModel->getLatest(6);
         
+        // Load team members model
+        require_once __DIR__ . '/../models/TeamMember.php';
+        $teamModel = new TeamMember($this->db);
+        
+        // Get active team members
+        $teamMembers = $teamModel->getActive();
+        
         // Data dosen inti - hardcode dulu untuk landing page
         $dosen_inti = [
             [
-                'nama' => 'Ir. Andre',
+                'n
+
+ama' => 'Ir. Andre',
                 'role' => 'Kepala Laboratorium',
                 'bidang' => 'Computer Vision & AI'
             ],

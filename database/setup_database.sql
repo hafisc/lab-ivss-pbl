@@ -1469,3 +1469,38 @@ WHERE status = 'published';
 -- - 5 Dokumen riset
 -- - 3 Publikasi mahasiswa
 -- ========================================
+
+-- ========================================
+-- 15. TABEL TEAM_MEMBERS
+-- ========================================
+-- Untuk menyimpan data anggota tim yang ditampilkan di home page
+CREATE TABLE IF NOT EXISTS team_members (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    position VARCHAR(100) NOT NULL,  -- 'Kepala Lab', 'Peneliti', etc.
+    photo VARCHAR(255),  -- Path ke foto
+    email VARCHAR(255),
+    bio TEXT,
+    order_position INTEGER DEFAULT 0,  -- Urutan tampilan
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index
+CREATE INDEX idx_team_members_active ON team_members(is_active);
+CREATE INDEX idx_team_members_order ON team_members(order_position);
+
+-- Trigger untuk auto update timestamp
+CREATE TRIGGER trigger_team_members_updated_at
+    BEFORE UPDATE ON team_members
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert data sample dari home page yang ada
+INSERT INTO team_members (name, position, photo, order_position, is_active) VALUES
+('Dr. Ulla Delfana Rosiani, ST., MT.', 'Kepala Lab', NULL, 1, TRUE),
+('Mamluatul Hani''ah, S.Kom., M.Kom', 'Peneliti', NULL, 2, TRUE),
+('Mungki Astiningrum, ST., M.Kom.', 'Peneliti', NULL, 3, TRUE),
+('Prof. Dr. Eng. Rosa Andrie Asmara', 'Peneliti', NULL, 4, TRUE);
+
