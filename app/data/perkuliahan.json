@@ -17,6 +17,10 @@
         {
             "title": "Sistem Cerdas (Intelligent System)",
             "description": "Pengembangan sistem yang dapat melakukan keputusan otomatis, penanganan informasi dalam konteks aplikasi nyata"
+        },
+        {
+            "title": "Matematika",
+            "description": "Menggunakan matematika dalam menghitung error"
         }
     ]
 }

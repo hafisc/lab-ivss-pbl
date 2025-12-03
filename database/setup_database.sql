@@ -101,6 +101,25 @@ INSERT INTO dosen (user_id, nip, nama, origin, no_hp) VALUES
 (5, '198206182008012003', 'Dr. Siti Nurhaliza', 'S3 Artificial Intelligence - Institut Teknologi Sepuluh Nopember', '081234567894');
 
 -- ========================================
+-- VIEW: view_dosen
+-- Menyederhanakan akses daftar dosen dengan info lengkap
+-- ========================================
+CREATE OR REPLACE VIEW view_dosen AS
+SELECT
+    d.id,
+    d.user_id,
+    d.nip,
+    d.nama,
+    d.origin,
+    d.no_hp,
+    u.email,
+    u.status,
+    u.created_at
+FROM dosen d
+LEFT JOIN users u ON u.id = d.user_id
+ORDER BY d.nama ASC;
+
+-- ========================================
 -- 4. TABEL MAHASISWA
 -- ========================================
 -- Untuk menyimpan data spesifik mahasiswa
@@ -750,6 +769,114 @@ BEGIN
     FROM users u
     JOIN roles r ON u.role_id = r.id
     WHERE u.id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ========================================
+-- Function: Get Daftar Dosen (untuk display list)
+-- ========================================
+-- Function untuk menampilkan daftar semua dosen dengan informasi lengkap
+CREATE OR REPLACE FUNCTION get_daftar_dosen()
+RETURNS TABLE (
+    dosen_id INTEGER,
+    user_id INTEGER,
+    nip VARCHAR,
+    nama VARCHAR,
+    origin VARCHAR,
+    no_hp VARCHAR,
+    email VARCHAR,
+    status VARCHAR,
+    jumlah_mahasiswa BIGINT,
+    created_at TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.id,
+        d.user_id,
+        d.nip,
+        d.nama,
+        d.origin,
+        d.no_hp,
+        u.email,
+        u.status,
+        COUNT(m.id)::BIGINT as jumlah_mahasiswa,
+        u.created_at
+    FROM dosen d
+    LEFT JOIN users u ON u.id = d.user_id
+    LEFT JOIN mahasiswa m ON m.supervisor_id = d.id AND m.user_id IN (SELECT id FROM users WHERE status = 'active')
+    GROUP BY d.id, d.user_id, d.nip, d.nama, d.origin, d.no_hp, u.email, u.status, u.created_at
+    ORDER BY d.nama ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ========================================
+-- Function: Get Dosen by Status (filter by active/inactive)
+-- ========================================
+-- Function untuk menampilkan daftar dosen berdasarkan status
+CREATE OR REPLACE FUNCTION get_dosen_by_status(p_status VARCHAR DEFAULT 'active')
+RETURNS TABLE (
+    dosen_id INTEGER,
+    nip VARCHAR,
+    nama VARCHAR,
+    origin VARCHAR,
+    no_hp VARCHAR,
+    email VARCHAR,
+    jumlah_mahasiswa BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.id,
+        d.nip,
+        d.nama,
+        d.origin,
+        d.no_hp,
+        u.email,
+        COUNT(m.id)::BIGINT as jumlah_mahasiswa
+    FROM dosen d
+    LEFT JOIN users u ON u.id = d.user_id
+    LEFT JOIN mahasiswa m ON m.supervisor_id = d.id AND m.user_id IN (SELECT id FROM users WHERE status = 'active')
+    WHERE u.status = p_status
+    GROUP BY d.id, d.nip, d.nama, d.origin, d.no_hp, u.email
+    ORDER BY d.nama ASC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ========================================
+-- Function: Get Dosen with Search/Filter
+-- ========================================
+-- Function untuk mencari dosen berdasarkan nama atau NIP
+CREATE OR REPLACE FUNCTION search_dosen(p_search_term VARCHAR)
+RETURNS TABLE (
+    dosen_id INTEGER,
+    nip VARCHAR,
+    nama VARCHAR,
+    origin VARCHAR,
+    no_hp VARCHAR,
+    email VARCHAR,
+    status VARCHAR,
+    jumlah_mahasiswa BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        d.id,
+        d.nip,
+        d.nama,
+        d.origin,
+        d.no_hp,
+        u.email,
+        u.status,
+        COUNT(m.id)::BIGINT as jumlah_mahasiswa
+    FROM dosen d
+    LEFT JOIN users u ON u.id = d.user_id
+    LEFT JOIN mahasiswa m ON m.supervisor_id = d.id
+    WHERE LOWER(d.nama) LIKE LOWER('%' || p_search_term || '%')
+       OR LOWER(d.nip) LIKE LOWER('%' || p_search_term || '%')
+       OR LOWER(d.origin) LIKE LOWER('%' || p_search_term || '%')
+    GROUP BY d.id, d.nip, d.nama, d.origin, d.no_hp, u.email, u.status
+    ORDER BY d.nama ASC;
 END;
 $$ LANGUAGE plpgsql;
 

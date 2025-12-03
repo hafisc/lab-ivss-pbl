@@ -91,6 +91,36 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->registrations();
         break;
+
+    // Dosen Management Routes
+    case 'admin-dosen':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->index();
+        break;
+    case 'admin-dosen-create':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->create();
+        break;
+    case 'admin-dosen-store':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->store();
+        break;
+    case 'admin-dosen-detail':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->show();
+        break;
+    case 'admin-dosen-edit':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->edit();
+        break;
+    case 'admin-dosen-update':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->update();
+        break;
+    case 'admin-dosen-delete':
+        require __DIR__ . '/../app/controllers/DosenController.php';
+        (new DosenController($pg))->destroy();
+        break;
     case 'admin-news':
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->news();
