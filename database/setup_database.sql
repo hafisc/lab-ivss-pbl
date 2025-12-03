@@ -101,6 +101,22 @@ INSERT INTO dosen (user_id, nip, nama, origin, no_hp) VALUES
 (5, '198206182008012003', 'Dr. Siti Nurhaliza', 'S3 Artificial Intelligence - Institut Teknologi Sepuluh Nopember', '081234567894');
 
 -- ========================================
+-- VIEW: view_dosen
+-- Menyederhanakan akses daftar dosen (digunakan di form pendaftaran)
+-- ========================================
+CREATE OR REPLACE VIEW view_dosen AS
+SELECT
+    d.id,
+    d.user_id,
+    d.nip,
+    d.nama AS name,
+    d.origin,
+    d.no_hp,
+    u.email
+FROM dosen d
+LEFT JOIN users u ON u.id = d.user_id;
+
+-- ========================================
 -- 4. TABEL MAHASISWA
 -- ========================================
 -- Untuk menyimpan data spesifik mahasiswa
