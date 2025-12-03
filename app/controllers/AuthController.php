@@ -70,12 +70,12 @@ class AuthController {
                     
                     // Redirect berdasarkan role ke dashboard masing-masing
                     if ($user['role_name'] === 'admin' || $user['role_name'] === 'ketua_lab' || $user['role_name'] === 'dosen') {
-                        header('Location: /Lab%20ivss/public/index.php?page=admin');
+                        header('Location: index.php?page=admin');
                     } else if ($user['role_name'] === 'member' || $user['role_name'] === 'mahasiswa') {
-                        header('Location: /Lab%20ivss/public/index.php?page=member');
+                        header('Location: index.php?page=member');
                     } else {
                         // Fallback ke home jika role tidak dikenali
-                        header('Location: /Lab%20ivss/public/index.php?page=home');
+                        header('Location: index.php?page=home');
                     }
                     exit;
                 } else {
@@ -85,7 +85,7 @@ class AuthController {
                 $_SESSION['error'] = 'Email atau password salah!';
             }
             
-            header('Location: /Lab%20ivss/public/index.php?page=login');
+            header('Location: index.php?page=login');
             exit;
         }
         

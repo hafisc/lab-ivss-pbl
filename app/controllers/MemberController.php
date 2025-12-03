@@ -6,9 +6,18 @@ class MemberController {
     private $memberModel;
     private $db;
 
-    public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+    public function __construct($db = null) {
+        if ($db) {
+            $this->db = $db;
+        } else {
+            $this->db = Database::getInstance()->getConnection();
+        }
         $this->memberModel = new Member($this->db);
+    }
+
+    public function dashboard() {
+        // Member dashboard view
+        require_once __DIR__ . '/../../view/member/dashboard.php';
     }
 
     public function register() {
