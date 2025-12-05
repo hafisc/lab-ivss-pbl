@@ -581,114 +581,7 @@ INSERT INTO research_members (research_id, user_id, role, status) VALUES
 (3, 6, 'contributor', 'active'),  -- NLP untuk Bahasa Indonesia
 (4, 6, 'member', 'active');       -- IoT-based Smart Room Monitoring
 
--- ========================================
--- 13. TABEL RESEARCH_DOCUMENTS
--- ========================================
--- Untuk upload dokumen/laporan riset oleh mahasiswa
-CREATE TABLE IF NOT EXISTS research_documents (
-    id SERIAL PRIMARY KEY,
-    research_id INTEGER NOT NULL REFERENCES research(id) ON DELETE CASCADE,
-    uploaded_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    file_name VARCHAR(255) NOT NULL,
-    file_path VARCHAR(255) NOT NULL,
-    file_size BIGINT,  -- in bytes
-    file_type VARCHAR(50),  -- 'pdf', 'docx', 'xlsx', etc
-    document_type VARCHAR(50) DEFAULT 'report',  -- 'proposal', 'report', 'presentation', 'data', 'other'
-    version VARCHAR(20) DEFAULT '1.0',
-    status VARCHAR(50) DEFAULT 'submitted',  -- 'draft', 'submitted', 'approved', 'rejected'
-    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
--- Index
-CREATE INDEX idx_documents_research ON research_documents(research_id);
-CREATE INDEX idx_documents_uploader ON research_documents(uploaded_by);
-CREATE INDEX idx_documents_type ON research_documents(document_type);
-CREATE INDEX idx_documents_status ON research_documents(status);
-
--- Insert sample data: dokumen yang sudah diupload
-INSERT INTO research_documents (research_id, uploaded_by, title, description, file_name, file_path, file_size, file_type, document_type, status) VALUES
--- Dokumen untuk riset Face Recognition (id=1)
-(1, 6, 'Proposal Penelitian - Face Recognition', 'Proposal lengkap penelitian face recognition dengan CNN', 'proposal_face_recognition.pdf', '/uploads/documents/proposal_face_recognition.pdf', 2457600, 'pdf', 'proposal', 'approved'),
-(1, 6, 'Laporan Progress Bulan 1', 'Progress penelitian bulan pertama', 'progress_month_1.pdf', '/uploads/documents/progress_month_1.pdf', 1843200, 'pdf', 'report', 'approved'),
-(1, 6, 'Dataset Training Model', 'Dataset wajah untuk training CNN model', 'dataset_faces.zip', '/uploads/documents/dataset_faces.zip', 52428800, 'zip', 'data', 'approved'),
-
--- Dokumen untuk riset IoT (id=4)
-(4, 6, 'Proposal IoT Smart Room', 'Proposal sistem monitoring ruangan pintar', 'proposal_iot_smart_room.pdf', '/uploads/documents/proposal_iot_smart_room.pdf', 1920000, 'pdf', 'proposal', 'approved'),
-(4, 6, 'Presentasi Desain Sistem', 'Slide presentasi desain sistem IoT', 'presentasi_design.pptx', '/uploads/documents/presentasi_design.pptx', 3145728, 'pptx', 'presentation', 'approved');
-
--- ========================================
--- 14. TABEL MEMBER_PUBLICATIONS
--- ========================================
--- Untuk publikasi personal mahasiswa (paper/jurnal yang mereka tulis)
-CREATE TABLE IF NOT EXISTS member_publications (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    authors TEXT NOT NULL,
-    year INTEGER NOT NULL,
-    journal VARCHAR(255),
-    conference VARCHAR(255),
-    doi VARCHAR(255),
-    url VARCHAR(255),
-    abstract TEXT,
-    citation_count INTEGER DEFAULT 0,
-    keywords TEXT,
-    publication_type VARCHAR(50) DEFAULT 'journal',  -- 'journal', 'conference', 'book_chapter', 'thesis'
-    status VARCHAR(50) DEFAULT 'draft',  -- 'draft', 'submitted', 'under_review', 'published'
-    file_path VARCHAR(255),
-    research_id INTEGER REFERENCES research(id) ON DELETE SET NULL,  -- link ke riset jika ada
-    published_date DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Index
-CREATE INDEX idx_member_pubs_user ON member_publications(user_id);
-CREATE INDEX idx_member_pubs_year ON member_publications(year DESC);
-CREATE INDEX idx_member_pubs_status ON member_publications(status);
-CREATE INDEX idx_member_pubs_type ON member_publications(publication_type);
-
--- Insert sample data: publikasi personal mahasiswa
-INSERT INTO member_publications (user_id, title, authors, year, journal, doi, citation_count, keywords, publication_type, status, research_id, published_date) VALUES
--- Publikasi Ahmad Fauzi (user_id=6)
-(6, 'Deep Learning for Face Recognition: A Comprehensive Study', 
-'Ahmad Fauzi, Dr. Budi Santoso, Siti Aminah', 
-2024, 
-'IEEE Transactions on Pattern Analysis and Machine Intelligence', 
-'10.1109/TPAMI.2024.1234567',
-15,
-'Deep Learning, Face Recognition, CNN, Computer Vision',
-'journal',
-'published',
-1,  -- linked to research Face Recognition
-'2024-03-15'),
-
-(6, 'Optimization Techniques in Neural Networks for Real-time Applications', 
-'Ahmad Fauzi, Budi Santoso', 
-2024, 
-'Journal of Machine Learning Research', 
-NULL,
-0,
-'Neural Networks, Optimization, Real-time Processing',
-'journal',
-'draft',
-1,
-NULL),
-
-(6, 'IoT-based Smart Room Monitoring System using Computer Vision', 
-'Ahmad Fauzi, Dr. Budi Santoso', 
-2024, 
-NULL,
-NULL,
-3,
-'IoT, Smart Room, Computer Vision, Energy Efficiency',
-'conference',
-'published',
-4,  -- linked to research IoT
-'2024-05-20');
 
 -- ========================================
 -- FUNCTIONS & STORED PROCEDURES
@@ -1321,8 +1214,7 @@ RETURNS TABLE (
     dosen_id INTEGER,
     nama VARCHAR,
     jumlah_mahasiswa BIGINT,
-    jumlah_research BIGINT,
-    jumlah_publikasi BIGINT
+    jumlah_research BIGINT
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -1330,12 +1222,10 @@ BEGIN
         d.id,
         d.nama,
         COUNT(DISTINCT m.id) as jumlah_mahasiswa,
-        COUNT(DISTINCT r.id) as jumlah_research,
-        COUNT(DISTINCT p.id) as jumlah_publikasi
+        COUNT(DISTINCT r.id) as jumlah_research
     FROM dosen d
     LEFT JOIN mahasiswa m ON m.supervisor_id = d.id AND m.user_id IN (SELECT id FROM users WHERE status = 'active')
     LEFT JOIN research r ON r.leader_id = d.user_id AND r.status = 'active'
-    LEFT JOIN member_publications p ON p.user_id IN (SELECT m2.user_id FROM mahasiswa m2 WHERE m2.supervisor_id = d.id)
     GROUP BY d.id, d.nama
     ORDER BY jumlah_mahasiswa DESC, jumlah_research DESC;
 END;
@@ -1345,51 +1235,7 @@ $$ LANGUAGE plpgsql;
 -- VIEWS: Unified Data Views
 -- ========================================
 
--- View: Unified Publications (Lab + Member)
-CREATE OR REPLACE VIEW all_publications_view AS
-SELECT 
-    id,
-    title,
-    authors,
-    year,
-    journal,
-    conference,
-    doi,
-    url,
-    abstract,
-    citations,
-    keywords,
-    type,
-    status,
-    featured,
-    created_at,
-    'lab' as source,
-    NULL::INTEGER as user_id
-FROM publications
-WHERE status = 'published'
 
-UNION ALL
-
-SELECT 
-    id,
-    title,
-    authors,
-    year,
-    journal,
-    conference,
-    doi,
-    url,
-    abstract,
-    citation_count as citations,
-    keywords,
-    publication_type as type,
-    status,
-    FALSE as featured, -- Member publications default not featured unless logic added
-    created_at,
-    'member' as source,
-    user_id
-FROM member_publications
-WHERE status = 'published';
 
 
 -- ========================================
@@ -1408,8 +1254,8 @@ WHERE status = 'published';
 -- 10. publications
 -- 11. notifications
 -- 12. research_members
--- 13. research_documents
--- 14. member_publications
+-- 13. team_members
+-- 14. facilities
 --
 -- Total 6 Triggers (Auto Update Timestamp):
 -- - users, dosen, mahasiswa, research, news
