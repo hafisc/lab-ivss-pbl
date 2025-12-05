@@ -1504,3 +1504,29 @@ INSERT INTO team_members (name, position, photo, order_position, is_active) VALU
 ('Mungki Astiningrum, ST., M.Kom.', 'Peneliti', NULL, 3, TRUE),
 ('Prof. Dr. Eng. Rosa Andrie Asmara', 'Peneliti', NULL, 4, TRUE);
 
+-- ========================================
+-- 16. TABEL FACILITIES
+-- ========================================
+-- Untuk menyimpan data fasilitas lab yang ditampilkan di home page
+CREATE TABLE IF NOT EXISTS facilities (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    image VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMPh
+);
+
+-- Trigger untuk auto update timestamp
+CREATE TRIGGER trigger_facilities_updated_at
+    BEFORE UPDATE ON facilities
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert sample data fasilitas
+INSERT INTO facilities (name, description, image) VALUES
+('High Performance Computing', 'Server GPU untuk training model Deep Learning dan pemrosesan data besar.', 'assets/images/gpu-server.jpg'),
+('IoT & Embedded Systems Corner', 'Area pengembangan perangkat IoT dengan berbagai sensor dan mikrokontroler.', 'assets/images/iot-corner.jpg'),
+('Smart Surveillance System', 'Sistem kamera cerdas untuk riset computer vision dan keamanan.', 'assets/images/cctv-lab.jpg'),
+('Robotics Workstation', 'Workstation khusus untuk pengembangan robotika dan sistem otonom.', 'assets/images/robotics.jpg');
+
