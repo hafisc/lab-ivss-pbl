@@ -665,36 +665,40 @@ class AdminController
             session_start();
         }
 
-        // Tangani aksi
-        if (isset($_GET['action'])) {
-            $action = $_GET['action'];
+        $action = $_GET['action'] ?? 'index';
+        $id = intval($_GET['id'] ?? 0);
 
-            if (isset($_GET['id'])) {
-                $id = intval($_GET['id']);
-
-                if ($action === 'set-alumni') {
-                    $this->setMemberStatus($id, 'inactive');
-                    $_SESSION['success'] = 'Member berhasil dijadikan alumni!';
-                    header('Location: index.php?page=admin-members');
-                    exit;
-                } elseif ($action === 'set-active') {
-                    $this->setMemberStatus($id, 'active');
-                    $_SESSION['success'] = 'Member berhasil diaktifkan kembali!';
-                    header('Location: index.php?page=admin-members');
-                    exit;
-                } elseif ($action === 'delete') {
-                    $this->deleteMember($id);
-                    $_SESSION['success'] = 'Member berhasil dihapus!';
-                    header('Location: index.php?page=admin-members');
-                    exit;
-                }
-            }
+        if ($action === 'set-alumni' && $id > 0) {
+            $this->updateMemberStatus($id, 'inactive');
+        } elseif ($action === 'set-active' && $id > 0) {
+            $this->updateMemberStatus($id, 'active');
+        } elseif ($action === 'delete' && $id > 0) {
+            $this->deleteMember($id);
+        } elseif ($action === 'create') {
+            // TODO: Implement create member manually if needed
+            // For now redirect to index
+            header('Location: index.php?page=admin-members');
+            exit;
         }
 
-        // Default: Index - daftar semua member
+        // Get filter
         $filter = $_GET['filter'] ?? 'all';
-        $allMembers = $this->getAllMembers();
 
+        // Fetch members
+        $query = "SELECT u.id, u.username as name, u.email, u.is_active, u.created_at, m.nim, 
+                  CASE WHEN u.is_active THEN 'active' ELSE 'inactive' END as status
+                  FROM users u 
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id 
+                  WHERE u.role = 'member' 
+                  ORDER BY u.created_at DESC";
+        
+        $result = pg_query($this->db, $query);
+        $allMembers = [];
+        if ($result) {
+            $allMembers = pg_fetch_all($result) ?: [];
+        }
+
+        // Filter list
         if ($filter === 'active') {
             $membersList = array_filter($allMembers, fn($m) => $m['status'] === 'active');
         } elseif ($filter === 'inactive') {
@@ -706,31 +710,36 @@ class AdminController
         include __DIR__ . '/../../view/admin/members/index.php';
     }
 
-    private function getAllMembers()
+    private function updateMemberStatus($id, $status)
     {
-        $query = "SELECT * FROM users WHERE role = 'member' ORDER BY created_at DESC";
-        $result = @pg_query($this->db, $query);
-        $members = [];
+        $isActive = ($status === 'active') ? 'TRUE' : 'FALSE';
+        $query = "UPDATE users SET is_active = $isActive WHERE id = $1 AND role = 'member'";
+        $result = pg_query_params($this->db, $query, [$id]);
 
         if ($result) {
-            while ($row = pg_fetch_assoc($result)) {
-                $members[] = $row;
-            }
+            $_SESSION['success'] = 'Status member berhasil diperbarui!';
+        } else {
+            $_SESSION['error'] = 'Gagal memperbarui status member.';
         }
-
-        return $members;
-    }
-
-    private function setMemberStatus($id, $status)
-    {
-        $query = "UPDATE users SET status = $1 WHERE id = $2 AND role = 'member'";
-        @pg_query_params($this->db, $query, [$status, $id]);
+        
+        header('Location: index.php?page=admin-members');
+        exit;
     }
 
     private function deleteMember($id)
     {
+        // Delete from users (cascade should handle related tables if configured, otherwise delete manually)
         $query = "DELETE FROM users WHERE id = $1 AND role = 'member'";
-        @pg_query_params($this->db, $query, [$id]);
+        $result = pg_query_params($this->db, $query, [$id]);
+
+        if ($result) {
+            $_SESSION['success'] = 'Member berhasil dihapus!';
+        } else {
+            $_SESSION['error'] = 'Gagal menghapus member.';
+        }
+
+        header('Location: index.php?page=admin-members');
+        exit;
     }
 
     // Manajemen Peralatan
@@ -911,6 +920,8 @@ class AdminController
         header('Location: index.php?page=admin-equip');
         exit;
     }
+
+
 
     // Manajemen Pengaturan
     public function settings()

@@ -27,6 +27,24 @@ class Research {
         return $researches;
     }
 
+    public function getActive($limit = 4) {
+        $query = "SELECT * FROM " . $this->table . " WHERE status = 'active' ORDER BY created_at DESC LIMIT $1";
+        $result = pg_query_params($this->conn, $query, array($limit));
+        
+        $researches = array();
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                if (!empty($row['image'])) {
+                    $row['image_url'] = $row['image'];
+                } else {
+                    $row['image_url'] = null;
+                }
+                $researches[] = $row;
+            }
+        }
+        return $researches;
+    }
+
     public function getById($id) {
         $query = "SELECT * FROM " . $this->table . " WHERE id = $1";
         $result = pg_query_params($this->conn, $query, array($id));

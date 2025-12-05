@@ -2,7 +2,7 @@
 <div class="bg-blue-900 text-white text-xs py-2">
     <div class="container mx-auto px-4">
         <p class="text-center">
-            Laboratorium Intelligent Vision and Smart System (IVSS) – Jurusan Teknologi Informasi – Politeknik Negeri Malang
+            <?= htmlspecialchars($settings['topbar_text'] ?? 'Laboratorium Intelligent Vision and Smart System (IVSS) – Jurusan Teknologi Informasi – Politeknik Negeri Malang') ?>
         </p>
     </div>
 </div>
@@ -14,10 +14,10 @@
             
             <!-- Logo dan Nama Lab -->
             <div class="flex items-center space-x-3">
-                <img src="assets/images/logo1.png" alt="IVSS Lab Logo" class="w-10 h-10 object-contain">
+                <img src="<?= htmlspecialchars($settings['logo_url'] ?? 'assets/images/logo1.png') ?>" alt="IVSS Lab Logo" class="w-10 h-10 object-contain">
                 <div>
-                    <h1 class="text-xl font-bold text-blue-900">Politeknik Negeri Malang</h1>
-                    <p class="text-xs text-gray-600">Lab Intelligent Vision and Smart System</p>
+                    <h1 class="text-xl font-bold text-blue-900"><?= htmlspecialchars($settings['institution_name'] ?? 'Politeknik Negeri Malang') ?></h1>
+                    <p class="text-xs text-gray-600"><?= htmlspecialchars($settings['lab_name'] ?? 'Lab Intelligent Vision and Smart System') ?></p>
                 </div>
             </div>
             

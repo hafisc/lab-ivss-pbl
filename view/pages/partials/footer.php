@@ -1,3 +1,9 @@
+<?php
+// Default values if settings not available
+$footer_desc = $settings['site_description'] ?? 'Laboratorium Intelligent Vision and Smart System - Pusat riset Computer Vision, AI, dan IoT di Politeknik Negeri Malang.';
+$footer_email = $settings['contact_email'] ?? 'ivss@polinema.ac.id';
+$footer_phone = $settings['contact_phone'] ?? '(0341) 404424';
+?>
 <!-- Footer Modern -->
 <footer class="bg-blue-900 text-white mt-auto">
     <!-- Main Footer Content -->
@@ -19,7 +25,7 @@
                     </div>
                 </div>
                 <p class="text-sm text-gray-300 leading-relaxed">
-                    Laboratorium Intelligent Vision and Smart System - Pusat riset Computer Vision, AI, dan IoT di Politeknik Negeri Malang.
+                    <?= htmlspecialchars($footer_desc) ?>
                 </p>
                 <!-- Social Media -->
                 <div class="flex items-center space-x-3 pt-2">
@@ -114,7 +120,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-gray-500 mb-0.5">Email</p>
-                            <a href="mailto:ivss@polinema.ac.id" class="text-sm text-gray-300 hover:text-white transition-colors">ivss@polinema.ac.id</a>
+                            <a href="mailto:<?= htmlspecialchars($footer_email) ?>" class="text-sm text-gray-300 hover:text-white transition-colors"><?= htmlspecialchars($footer_email) ?></a>
                         </div>
                     </li>
                 </ul>

@@ -16,12 +16,16 @@ class HomeController {
      * Menampilkan halaman utama (home/landing page)
      */
     public function index() {
+        // Load system settings (Navbar/Footer dynamic)
+        require_once __DIR__ . '/../models/SystemSettings.php';
+        $settingsModel = new SystemSettings($this->db);
+        $settings = $settingsModel->getAll();
+
         // Load publication model
         require_once __DIR__ . '/../models/publication.php';
         $publicationModel = new Publication($this->db);
         
         // Get featured publications untuk home page (max 6)
-        // TODO: Change to getFeaturedUnified() after creating all_publications_view in database
         $publications = $publicationModel->getFeatured(6);
         
         // Load news model
@@ -31,107 +35,76 @@ class HomeController {
         // Get latest news untuk home page (max 6)
         $latestNews = $newsModel->getLatest(6);
         
-        // Load team members model
+        // Load team members model (Profil dinamis)
         require_once __DIR__ . '/../models/TeamMember.php';
         $teamModel = new TeamMember($this->db);
         
         // Get active team members
         $teamMembers = $teamModel->getActive();
+        // Fallback jika kosong (untuk development)
+        if (empty($teamMembers)) {
+            $teamMembers = [
+                ['name' => 'Ir. Andre', 'position' => 'Kepala Laboratorium', 'photo' => ''],
+                ['name' => 'Dr. Ari', 'position' => 'Dosen Pembina', 'photo' => ''],
+                ['name' => 'Bu Mungki', 'position' => 'Dosen Pembina', 'photo' => ''],
+                ['name' => 'Bu Eli', 'position' => 'Dosen Pembina', 'photo' => ''],
+                ['name' => 'Bu Heni', 'position' => 'Dosen Pembina', 'photo' => ''],
+                ['name' => 'Bu Vivi', 'position' => 'Dosen Pembina', 'photo' => '']
+            ];
+        }
+        $dosen_inti = $teamMembers;
+
+        // Load facilities model (Fasilitas dinamis)
+        require_once __DIR__ . '/../models/Facility.php';
+        $facilityModel = new Facility($this->db);
+        $facilities = $facilityModel->getAll();
         
-        // Data dosen inti - hardcode dulu untuk landing page
-        $dosen_inti = [
-            [
-                'n
+        // Fallback jika kosong
+        if (empty($facilities)) {
+             $fasilitas = [
+                'Deep Camera', 'High FPS Camera', 'Sony Alpha 6700', 'Lampu Data Primer',
+                'Peralatan Objek Kecil', 'Musholla', 'Loker Penyimpanan', 'Ruang Pelatihan Internal'
+            ];
+        } else {
+            $fasilitas = array_map(function($f) { return $f['name']; }, $facilities);
+            // Jika view butuh deskripsi/gambar, kita bisa kirim $facilities full object
+            $fasilitas_full = $facilities; 
+        }
 
-ama' => 'Ir. Andre',
-                'role' => 'Kepala Laboratorium',
-                'bidang' => 'Computer Vision & AI'
-            ],
-            [
-                'nama' => 'Dr. Ari',
-                'role' => 'Dosen Pembina',
-                'bidang' => 'Deep Learning & Image Processing'
-            ],
-            [
-                'nama' => 'Bu Mungki',
-                'role' => 'Dosen Pembina',
-                'bidang' => 'Intelligent Systems'
-            ],
-            [
-                'nama' => 'Bu Eli',
-                'role' => 'Dosen Pembina',
-                'bidang' => 'Pattern Recognition'
-            ],
-            [
-                'nama' => 'Bu Heni',
-                'role' => 'Dosen Pembina',
-                'bidang' => 'Computer Vision'
-            ],
-            [
-                'nama' => 'Bu Vivi',
-                'role' => 'Dosen Pembina',
-                'bidang' => 'AI & Machine Learning'
-            ],
-            [
-                'nama' => 'Dosen Pembina Lainnya',
-                'role' => 'Dosen Pembina',
-                'bidang' => 'Berbagai Bidang Riset'
-            ]
-        ];
-
-        // Data riset utama
-        $riset_utama = [
-            [
-                'judul' => 'Sistem Absensi Wajah Lab',
-                'deskripsi' => 'Pengembangan sistem absensi otomatis menggunakan teknologi pengenalan wajah dengan akurasi tinggi'
-            ],
-            [
-                'judul' => 'Kontrol Monitoring Ruangan',
-                'deskripsi' => 'Sistem monitoring dan kontrol orang yang berada di dalam ruangan secara real-time'
-            ],
-            [
-                'judul' => 'Micro-expression Camera',
-                'deskripsi' => 'Penelitian ekspresi mikro menggunakan Sony Alpha 6700 dengan frame rate tinggi'
-            ],
-            [
-                'judul' => 'Monitoring Peralatan Lab',
-                'deskripsi' => 'Sistem monitoring dan tracking penggunaan peralatan laboratorium'
-            ]
-        ];
-
-        // Data riset lainnya
+        // Data riset utama (bisa dibuat dinamis juga nanti jika ada tabelnya, sementara hardcode atau ambil dari research model)
+        // Load research model
+        require_once __DIR__ . '/../models/research.php';
+        $researchModel = new Research($this->db);
+        // Ambil riset active (misal 4 terbaru)
+        $riset_list = $researchModel->getActive(4);
+        
+        if (!empty($riset_list)) {
+             $riset_utama = array_map(function($r) {
+                return [
+                    'judul' => $r['title'],
+                    'deskripsi' => substr($r['description'], 0, 100) . '...'
+                ];
+            }, $riset_list);
+        } else {
+            // Fallback hardcoded
+            $riset_utama = [
+                ['judul' => 'Sistem Absensi Wajah Lab', 'deskripsi' => 'Pengembangan sistem absensi otomatis menggunakan teknologi pengenalan wajah'],
+                ['judul' => 'Kontrol Monitoring Ruangan', 'deskripsi' => 'Sistem monitoring dan kontrol orang yang berada di dalam ruangan'],
+                ['judul' => 'Micro-expression Camera', 'deskripsi' => 'Penelitian ekspresi mikro menggunakan Sony Alpha 6700'],
+                ['judul' => 'Monitoring Peralatan Lab', 'deskripsi' => 'Sistem monitoring dan tracking penggunaan peralatan laboratorium']
+            ];
+        }
+        
+        // Riset lainnya (hardcoded for now as requested focus is on facilities/profile/navbar)
         $riset_lainnya = [
-            [
-                'judul' => 'AI & Machine Learning',
-                'deskripsi' => 'Riset umum di bidang kecerdasan buatan dan pembelajaran mesin'
-            ],
-            [
-                'judul' => 'Klasifikasi Citra Digital',
-                'deskripsi' => 'Pengembangan algoritma klasifikasi untuk berbagai jenis citra'
-            ],
-            [
-                'judul' => 'Proyek Mahasiswa',
-                'deskripsi' => 'Berbagai proyek penelitian dan pengembangan oleh mahasiswa bimbingan'
-            ]
+            ['judul' => 'AI & Machine Learning', 'deskripsi' => 'Riset umum di bidang kecerdasan buatan'],
+            ['judul' => 'Klasifikasi Citra Digital', 'deskripsi' => 'Pengembangan algoritma klasifikasi'],
+            ['judul' => 'Proyek Mahasiswa', 'deskripsi' => 'Berbagai proyek penelitian mahasiswa']
         ];
 
-        // Data fasilitas
-        $fasilitas = [
-            'Deep Camera',
-            'High FPS Camera',
-            'Sony Alpha 6700',
-            'Lampu Data Primer',
-            'Peralatan Objek Kecil',
-            'Musholla',
-            'Loker Penyimpanan',
-            'Ruang Pelatihan Internal'
-        ];
-
-        // Load equipment model
+        // Load equipment model (tetap ada untuk landing page jika dibutuhkan)
         require_once __DIR__ . '/../models/equipment.php';
         $equipmentModel = new Equipment($this->db);
-
-        // Ambil maksimal 6 peralatan untuk landing page
         $equipmentForLanding = $equipmentModel->getForLanding("30");
 
         // Muat view dengan layout pages
