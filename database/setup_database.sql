@@ -1256,6 +1256,7 @@ $$ LANGUAGE plpgsql;
 -- 12. research_members
 -- 13. team_members
 -- 14. facilities
+-- 15. gallery
 --
 -- Total 6 Triggers (Auto Update Timestamp):
 -- - users, dosen, mahasiswa, research, news
@@ -1375,4 +1376,28 @@ INSERT INTO facilities (name, description, image) VALUES
 ('IoT & Embedded Systems Corner', 'Area pengembangan perangkat IoT dengan berbagai sensor dan mikrokontroler.', 'assets/images/iot-corner.jpg'),
 ('Smart Surveillance System', 'Sistem kamera cerdas untuk riset computer vision dan keamanan.', 'assets/images/cctv-lab.jpg'),
 ('Robotics Workstation', 'Workstation khusus untuk pengembangan robotika dan sistem otonom.', 'assets/images/robotics.jpg');
+
+-- ========================================
+-- 17. TABEL GALLERY
+-- ========================================
+-- Untuk menyimpan foto-foto kegiatan lab (Gallery)
+CREATE TABLE IF NOT EXISTS gallery (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    description TEXT,
+    image_path VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Trigger untuk auto update timestamp
+CREATE TRIGGER trigger_gallery_updated_at
+    BEFORE UPDATE ON gallery
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert sample data gallery
+INSERT INTO gallery (title, description, image_path) VALUES
+('Kunjungan Industri', 'Kunjungan dari PT. Smart Tech', 'assets/images/gallery/visit1.jpg'),
+('Workshop AI', 'Suasana workshop AI untuk mahasiswa', 'assets/images/gallery/workshop.jpg');
 
