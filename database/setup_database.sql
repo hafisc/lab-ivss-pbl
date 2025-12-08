@@ -1361,7 +1361,7 @@ CREATE TABLE IF NOT EXISTS facilities (
     description TEXT,
     image VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMPh
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Trigger untuk auto update timestamp

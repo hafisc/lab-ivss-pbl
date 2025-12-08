@@ -243,6 +243,58 @@ switch ($page) {
         (new MemberController($pg))->submitChangePassword();
         break;
 
+    // Facilities Routes
+    case 'admin-facilities':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->index();
+        break;
+    case 'admin-facilities-create':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->create();
+        break;
+    case 'admin-facilities-store':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->store();
+        break;
+    case 'admin-facilities-edit':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->edit();
+        break;
+    case 'admin-facilities-update':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->update();
+        break;
+    case 'admin-facilities-delete':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->delete();
+        break;
+
+    // Gallery Routes
+    case 'admin-gallery':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->index();
+        break;
+    case 'admin-gallery-create':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->create();
+        break;
+    case 'admin-gallery-store':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->store();
+        break;
+    case 'admin-gallery-edit':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->edit();
+        break;
+    case 'admin-gallery-update':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->update();
+        break;
+    case 'admin-gallery-delete':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->delete();
+        break;
+
     default:
         http_response_code(404);
         echo "404 Not Found";
