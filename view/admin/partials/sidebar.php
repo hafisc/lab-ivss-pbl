@@ -63,6 +63,18 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
                 </svg>
             </button>
             <div id="dropdown-landingPage" class="dropdown-content hidden ml-4 mt-1 space-y-1">
+                <!-- Identitas & Kontak -->
+                <a href="index.php?page=admin-settings&tab=system" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-settings' && isset($_GET['tab']) && $_GET['tab'] === 'system' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span>Identitas & Kontak</span>
+                    </div>
+                </a>
+
+                <!-- Portal Berita -->
                 <a href="index.php?page=admin-news" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-news' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,6 +83,8 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
                         <span>Portal Berita</span>
                     </div>
                 </a>
+                
+                <!-- Anggota Tim -->
                 <a href="index.php?page=admin-team" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-team' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,14 +93,18 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
                         <span>Anggota Tim</span>
                     </div>
                 </a>
-                <a href="index.php?page=admin-perkuliahan" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-perkuliahan' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
+                
+                <!-- Fasilitas Lab -->
+                <a href="index.php?page=admin-facilities" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-facilities' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                         </svg>
-                        <span>Perkuliahan Terkait</span>
+                        <span>Fasilitas Lab</span>
                     </div>
                 </a>
+
+                <!-- Galeri Foto -->
                 <a href="index.php?page=admin-gallery" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-gallery' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
                     <div class="flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,17 +113,27 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
                         <span>Galeri Foto</span>
                     </div>
                 </a>
+                
+                <!-- Perkuliahan Terkait (Optional) -->
+                <a href="index.php?page=admin-perkuliahan" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-perkuliahan' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                        </svg>
+                        <span>Perkuliahan Terkait</span>
+                    </div>
+                </a>
             </div>
         </div>
 
-        <!-- Inventaris & Fasilitas - DROPDOWN -->
+        <!-- Inventaris - DROPDOWN -->
         <div class="menu-dropdown">
             <button onclick="toggleDropdown('inventory')" class="w-full px-3 py-2 rounded-lg text-sm transition-colors text-slate-700 hover:bg-slate-100 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                     </svg>
-                    <span>Inventaris & Fasilitas</span>
+                    <span>Inventaris Lab</span>
                 </div>
                 <svg class="w-4 h-4 transition-transform chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -117,15 +145,7 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
                         </svg>
-                        <span>Inventaris Lab</span>
-                    </div>
-                </a>
-                <a href="index.php?page=admin-facilities" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-facilities' ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                        <span>Fasilitas Lab</span>
+                        <span>Data Inventaris</span>
                     </div>
                 </a>
             </div>
@@ -141,16 +161,7 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
             </div>
         </a>
 
-        <!-- Pengaturan Sistem -->
-        <a href="index.php?page=admin-settings" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= $currentPage === 'admin-settings' ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-            <div class="flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                <span>Pengaturan</span>
-            </div>
-        </a>
+
         
         <?php elseif ($userRole === 'ketua_lab'): ?>
         <!-- === MENU KETUA LAB === -->
@@ -269,6 +280,19 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
         
     </nav>
     
+    <!-- Pengaturan -->
+    <div class="px-3 py-2 mt-auto">
+        <a href="index.php?page=admin-settings&tab=profile" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isset($_GET['tab']) && ($_GET['tab'] === 'profile' || $_GET['tab'] === 'security') ? 'bg-blue-900 text-white font-medium hover:bg-blue-800' : 'text-slate-700 hover:bg-slate-100' ?>">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span>Pengaturan</span>
+            </div>
+        </a>
+    </div>
+
     <!-- Logout Button -->
     <div class="p-3 border-t border-slate-200">
         <a href="index.php?page=logout" class="block px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors">
