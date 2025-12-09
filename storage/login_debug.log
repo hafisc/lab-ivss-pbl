@@ -19,3 +19,4 @@
 {"time":"2025-12-08T21:31:10+07:00","event":"login_failed_password","email":"ketualab@ivss.polinema.ac.id","user_id":"2"}
 {"time":"2025-12-08T21:31:19+07:00","event":"login_success","email":"ketualab@ivss.polinema.ac.id","user_id":"2","role":"ketua_lab"}
 {"time":"2025-12-08T22:00:14+07:00","event":"login_success","email":"budi.dosen@polinema.ac.id","user_id":"3","role":"dosen"}
+{"time":"2025-12-08T22:40:33+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
