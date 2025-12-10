@@ -1388,3 +1388,36 @@ INSERT INTO gallery (title, description, image_path) VALUES
 ('Kunjungan Industri', 'Kunjungan dari PT. Smart Tech', 'assets/images/gallery/visit1.jpg'),
 ('Workshop AI', 'Suasana workshop AI untuk mahasiswa', 'assets/images/gallery/workshop.jpg');
 
+CREATE TABLE IF NOT EXISTS footer_settings (
+    id SERIAL PRIMARY KEY,
+    description TEXT,
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    address TEXT,
+    instagram VARCHAR(255),
+    facebook VARCHAR(255),
+    linkedin VARCHAR(255),
+    twitter VARCHAR(255),
+    youtube VARCHAR(255),
+    quick_links JSONB DEFAULT '[]',
+    resources JSONB DEFAULT '[]',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index for faster queries
+CREATE INDEX idx_footer_settings_id ON footer_settings(id);
+
+CREATE TABLE IF NOT EXISTS navbar_settings (
+    id SERIAL PRIMARY KEY,
+    topbar_text VARCHAR(255),
+    institution_name VARCHAR(255),
+    lab_name VARCHAR(255),
+    logo_url VARCHAR(255),
+    login_url VARCHAR(255),
+    menu_items JSONB DEFAULT '[]',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id)";
