@@ -24,6 +24,15 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->login();
         break;
+
+    case 'admin-visimisi':
+         require __DIR__ . '/../app/controllers/AdminController.php';
+         (new AdminController($pg))->visimisi();
+         break;
+        require __DIR__ . '/../app/controllers/AdminController.php';
+        (new AdminController($pg))->news();
+        break;
+        
     case 'register':
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->register();

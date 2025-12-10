@@ -288,7 +288,98 @@ class AdminController
             $_SESSION['error'] = 'Anda tidak memiliki akses untuk reject pendaftar.';
         }
     }
+ public function visimisi()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
+        $action = $_GET['action'] ?? 'index';
+
+        // Tangani berbagai aksi
+        switch ($action) {
+
+            case 'edit':
+                $id = intval($_GET['id'] ?? 0);
+                $visimisiItem = $this->getVisimisiById($id);
+                if ($visimisiItem) {
+                    include __DIR__ . '/../../view/admin/visimisi/edit.php';
+                } else {
+                    $_SESSION['error'] = 'Visi Misi tidak ditemukan';
+                    header('Location: index.php?page=admin-visimisi');
+                    exit;
+                }
+                break;
+
+            case 'update':
+                $this->updateVisimisi();
+                break;
+
+            default:
+                // Index - daftar semua visi misi
+                $filter = $_GET['filter'] ?? 'all';
+                $allVisimisi = $this->getAllVisimisi();
+
+                if ($filter === 'published') {
+                    $visimisiList = array_filter($allVisimisi, fn($n) => $n['status'] === 'published');
+                } elseif ($filter === 'draft') {
+                    $visimisiList = array_filter($allVisimisi, fn($n) => $n['status'] === 'draft');
+                } else {
+                    $visimisiList = $allVisimisi;
+                }
+
+                include __DIR__ . '/../../view/admin/visimisi/edit.php';
+                break;
+        }
+    }
+
+    private function getAllVisimisi()
+    {
+        $query = "SELECT * FROM visimisi ORDER BY created_at DESC";
+        $result = @pg_query($this->db, $query);
+        $visimisi = [];
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $visimisi[] = $row;
+            }
+        }
+        return $visimisi;
+    }
+
+    private function getVisimisiById($id)
+    {
+        $query = "SELECT * FROM visimisi WHERE id = $1";
+        $result = @pg_query_params($this->db, $query, [$id]);
+
+        if ($result && pg_num_rows($result) > 0) {
+            $row = pg_fetch_assoc($result);
+            return $row;
+        }
+
+        return null;
+    }
+    private function updateVisimisi()
+    {
+        $id = intval($_GET['id'] ?? 0);
+        $visi = $_POST['visi'] ?? '';
+        $misi = $_POST['misi'] ?? '';
+
+        // Get existing news
+        $existing = $this->getVisimisiById($id);
+        $image = $existing['image'] ?? null;
+
+        $query = "UPDATE visimisi SET visi = $1, misi = $2, updated_at = NOW() WHERE id = $3";
+        $result = @pg_query_params($this->db, $query, [$visi, $misi, $id]);
+
+        if ($result) {
+            $_SESSION['success'] = 'Berita berhasil diupdate!';
+        } else {
+            $_SESSION['error'] = 'Gagal mengupdate berita: ' . pg_last_error($this->db);
+        }
+
+        header('Location: index.php?page=admin-visimisi');
+        exit;
+    }
     // Manajemen Berita
     public function news()
     {
