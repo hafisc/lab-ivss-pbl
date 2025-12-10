@@ -70,12 +70,6 @@ usort($menu_items, function ($a, $b) {
                         <?= htmlspecialchars($menu['label']) ?>
                     </a>
                 <?php endforeach; ?>
-                <a href="#beranda" class="text-gray-700 hover:text-blue-900 font-medium transition">Beranda</a>
-                <a href="#profil" class="text-gray-700 hover:text-blue-900 font-medium transition">Profil</a>
-                <a href="#riset" class="text-gray-700 hover:text-blue-900 font-medium transition">Riset</a>
-                <a href="#fasilitas" class="text-gray-700 hover:text-blue-900 font-medium transition">Fasilitas</a>
-                <a href="#member" class="text-gray-700 hover:text-blue-900 font-medium transition">Member</a>
-                <a href="#berita" class="text-gray-700 hover:text-blue-900 font-medium transition">Berita</a>
                 <!-- <a href="#kontak" class="text-gray-700 hover:text-blue-900 font-medium transition">Kontak</a> -->
             </div>
 
