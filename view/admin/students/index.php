@@ -142,54 +142,18 @@ $userId = $_SESSION['user']['id'] ?? 0;
             <tbody class="divide-y divide-slate-200">
                 
                 <?php
-                // Sample data - nanti akan diambil dari database
-                $students = [
-                    [
-                        'id' => 1,
-                        'name' => 'Ahmad Fauzi',
-                        'nim' => '2141720010',
-                        'email' => 'ahmad@student.polinema.ac.id',
-                        'phone' => '081234567895',
-                        'angkatan' => '2024',
-                        'research_topic' => 'Machine Learning for IoT Security',
-                        'status' => 'active'
-                    ],
-                    [
-                        'id' => 2,
-                        'name' => 'Siti Nurhaliza',
-                        'nim' => '2141720011',
-                        'email' => 'siti@student.polinema.ac.id',
-                        'phone' => '081234567896',
-                        'angkatan' => '2024',
-                        'research_topic' => 'Computer Vision for Medical Imaging',
-                        'status' => 'active'
-                    ],
-                    [
-                        'id' => 3,
-                        'name' => 'Budi Pratama',
-                        'nim' => '2131720001',
-                        'email' => 'budi@student.polinema.ac.id',
-                        'phone' => '081234567897',
-                        'angkatan' => '2023',
-                        'research_topic' => 'Natural Language Processing',
-                        'status' => 'active'
-                    ],
-                    [
-                        'id' => 4,
-                        'name' => 'Dewi Kartika',
-                        'nim' => '2121720005',
-                        'email' => 'dewi@student.polinema.ac.id',
-                        'phone' => '081234567898',
-                        'angkatan' => '2022',
-                        'research_topic' => 'Blockchain for Supply Chain',
-                        'status' => 'inactive'
-                    ],
-                ];
+                // $students sudah dikirim dari controller
                 
                 foreach ($students as $student):
-                    $statusBadge = $student['status'] === 'active' 
+                    // Normalisasi data
+                    $studentName = $student['display_name'] ?? $student['nama'] ?? $student['username'] ?? '-';
+                    $studentPhone = $student['phone'] ?? '-';
+                    $studentTitle = $student['research_title'] ?? '-';
+                    $studentStatus = $student['status'] ?? 'active';
+
+                    $statusBadge = $studentStatus === 'active' 
                         ? '<span class="px-2.5 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Aktif</span>'
-                        : '<span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Alumni</span>';
+                        : '<span class="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">Alumni/Inactive</span>';
                 ?>
                 
                 <tr class="hover:bg-slate-50 transition-colors">
@@ -198,11 +162,11 @@ $userId = $_SESSION['user']['id'] ?? 0;
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
                                 <span class="text-sm font-bold text-white">
-                                    <?= strtoupper(substr($student['name'], 0, 1)) ?>
+                                    <?= strtoupper(substr($studentName, 0, 1)) ?>
                                 </span>
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-slate-800"><?= htmlspecialchars($student['name']) ?></p>
+                                <p class="text-sm font-semibold text-slate-800"><?= htmlspecialchars($studentName) ?></p>
                                 <p class="text-xs text-slate-500"><?= htmlspecialchars($student['email']) ?></p>
                             </div>
                         </div>
@@ -210,20 +174,20 @@ $userId = $_SESSION['user']['id'] ?? 0;
                     
                     <!-- NIM -->
                     <td class="px-6 py-4">
-                        <p class="text-sm font-medium text-slate-800"><?= htmlspecialchars($student['nim']) ?></p>
+                        <p class="text-sm font-medium text-slate-800"><?= htmlspecialchars($student['nim'] ?? '-') ?></p>
                     </td>
                     
                     <!-- Angkatan -->
                     <td class="px-6 py-4">
                         <span class="px-2.5 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
-                            <?= $student['angkatan'] ?>
+                            <?= htmlspecialchars($student['angkatan'] ?? '-') ?>
                         </span>
                     </td>
                     
                     <!-- Topik Riset -->
                     <td class="px-6 py-4">
-                        <p class="text-sm text-slate-700 max-w-xs truncate" title="<?= htmlspecialchars($student['research_topic']) ?>">
-                            <?= htmlspecialchars($student['research_topic']) ?>
+                        <p class="text-sm text-slate-700 max-w-xs truncate" title="<?= htmlspecialchars($studentTitle) ?>">
+                            <?= htmlspecialchars($studentTitle) ?>
                         </p>
                     </td>
                     
@@ -242,7 +206,7 @@ $userId = $_SESSION['user']['id'] ?? 0;
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
                             </a>
-                            <a href="https://wa.me/<?= htmlspecialchars($student['phone']) ?>" 
+                            <a href="https://wa.me/<?= htmlspecialchars($studentPhone) ?>" 
                                target="_blank"
                                class="p-1.5 text-green-600 hover:bg-green-50 rounded transition-colors" 
                                title="WhatsApp">

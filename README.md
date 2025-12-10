@@ -61,6 +61,7 @@ Terdiri dari 15 tabel utama:
 11. `notifications` - Notifikasi sistem
 12. `research_members` - Anggota riset
 13. `team_members` - Tim lab (tampilan home)
+14. `facilities` - Data fasilitas lab
 15. `gallery` - Foto kegiatan lab
 
 ## 🔄 Data Flow Diagram

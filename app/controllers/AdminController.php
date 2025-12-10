@@ -288,7 +288,98 @@ class AdminController
             $_SESSION['error'] = 'Anda tidak memiliki akses untuk reject pendaftar.';
         }
     }
+ public function visimisi()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
+        $action = $_GET['action'] ?? 'index';
+
+        // Tangani berbagai aksi
+        switch ($action) {
+
+            case 'edit':
+                $id = intval($_GET['id'] ?? 0);
+                $visimisiItem = $this->getVisimisiById($id);
+                if ($visimisiItem) {
+                    include __DIR__ . '/../../view/admin/visimisi/edit.php';
+                } else {
+                    $_SESSION['error'] = 'Visi Misi tidak ditemukan';
+                    header('Location: index.php?page=admin-visimisi');
+                    exit;
+                }
+                break;
+
+            case 'update':
+                $this->updateVisimisi();
+                break;
+
+            default:
+                // Index - daftar semua visi misi
+                $filter = $_GET['filter'] ?? 'all';
+                $allVisimisi = $this->getAllVisimisi();
+
+                if ($filter === 'published') {
+                    $visimisiList = array_filter($allVisimisi, fn($n) => $n['status'] === 'published');
+                } elseif ($filter === 'draft') {
+                    $visimisiList = array_filter($allVisimisi, fn($n) => $n['status'] === 'draft');
+                } else {
+                    $visimisiList = $allVisimisi;
+                }
+
+                include __DIR__ . '/../../view/admin/visimisi/edit.php';
+                break;
+        }
+    }
+
+    private function getAllVisimisi()
+    {
+        $query = "SELECT * FROM visimisi ORDER BY created_at DESC";
+        $result = @pg_query($this->db, $query);
+        $visimisi = [];
+        if ($result) {
+            while ($row = pg_fetch_assoc($result)) {
+                $visimisi[] = $row;
+            }
+        }
+        return $visimisi;
+    }
+
+    private function getVisimisiById($id)
+    {
+        $query = "SELECT * FROM visimisi WHERE id = $1";
+        $result = @pg_query_params($this->db, $query, [$id]);
+
+        if ($result && pg_num_rows($result) > 0) {
+            $row = pg_fetch_assoc($result);
+            return $row;
+        }
+
+        return null;
+    }
+    private function updateVisimisi()
+    {
+        $id = intval($_GET['id'] ?? 0);
+        $visi = $_POST['visi'] ?? '';
+        $misi = $_POST['misi'] ?? '';
+
+        // Get existing news
+        $existing = $this->getVisimisiById($id);
+        $image = $existing['image'] ?? null;
+
+        $query = "UPDATE visimisi SET visi = $1, misi = $2, updated_at = NOW() WHERE id = $3";
+        $result = @pg_query_params($this->db, $query, [$visi, $misi, $id]);
+
+        if ($result) {
+            $_SESSION['success'] = 'Berita berhasil diupdate!';
+        } else {
+            $_SESSION['error'] = 'Gagal mengupdate berita: ' . pg_last_error($this->db);
+        }
+
+        header('Location: index.php?page=admin-visimisi');
+        exit;
+    }
     // Manajemen Berita
     public function news()
     {
@@ -675,8 +766,6 @@ class AdminController
         } elseif ($action === 'delete' && $id > 0) {
             $this->deleteMember($id);
         } elseif ($action === 'create') {
-            // TODO: Implement create member manually if needed
-            // For now redirect to index
             header('Location: index.php?page=admin-members');
             exit;
         }
@@ -685,11 +774,11 @@ class AdminController
         $filter = $_GET['filter'] ?? 'all';
 
         // Fetch members
-        $query = "SELECT u.id, u.username as name, u.email, u.is_active, u.created_at, m.nim, 
-                  CASE WHEN u.is_active THEN 'active' ELSE 'inactive' END as status
+        $query = "SELECT u.id, COALESCE(m.nama, u.username) as name, u.email, u.status, u.created_at, m.nim
                   FROM users u 
+                  JOIN roles r ON u.role_id = r.id
                   LEFT JOIN mahasiswa m ON u.id = m.user_id 
-                  WHERE u.role = 'member' 
+                  WHERE r.role_name = 'mahasiswa' 
                   ORDER BY u.created_at DESC";
         
         $result = pg_query($this->db, $query);
@@ -712,34 +801,93 @@ class AdminController
 
     private function updateMemberStatus($id, $status)
     {
-        $isActive = ($status === 'active') ? 'TRUE' : 'FALSE';
-        $query = "UPDATE users SET is_active = $isActive WHERE id = $1 AND role = 'member'";
-        $result = pg_query_params($this->db, $query, [$id]);
+        $query = "UPDATE users SET status = $1 WHERE id = $2";
+        $result = @pg_query_params($this->db, $query, [$status, $id]);
 
         if ($result) {
             $_SESSION['success'] = 'Status member berhasil diperbarui!';
         } else {
-            $_SESSION['error'] = 'Gagal memperbarui status member.';
+            $_SESSION['error'] = 'Gagal memperbarui status member: ' . pg_last_error($this->db);
         }
-        
+
         header('Location: index.php?page=admin-members');
         exit;
     }
 
     private function deleteMember($id)
     {
-        // Delete from users (cascade should handle related tables if configured, otherwise delete manually)
-        $query = "DELETE FROM users WHERE id = $1 AND role = 'member'";
-        $result = pg_query_params($this->db, $query, [$id]);
-
-        if ($result) {
-            $_SESSION['success'] = 'Member berhasil dihapus!';
-        } else {
-            $_SESSION['error'] = 'Gagal menghapus member.';
+        pg_query($this->db, "BEGIN");
+        try {
+            $res1 = pg_query_params($this->db, "DELETE FROM mahasiswa WHERE user_id = $1", [$id]);
+            $res2 = pg_query_params($this->db, "DELETE FROM users WHERE id = $1", [$id]);
+            
+            if ($res1 && $res2) {
+                pg_query($this->db, "COMMIT");
+                $_SESSION['success'] = 'Member berhasil dihapus selamanya!';
+            } else {
+                throw new Exception("Gagal menghapus data");
+            }
+        } catch (Exception $e) {
+            pg_query($this->db, "ROLLBACK");
+            $_SESSION['error'] = 'Gagal menghapus member: ' . $e->getMessage();
         }
 
         header('Location: index.php?page=admin-members');
         exit;
+    }
+
+    public function publications()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $userRole = $_SESSION['user']['role'] ?? 'member';
+
+        if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+             $id = intval($_GET['id']);
+             @pg_query_params($this->db, "DELETE FROM publications WHERE id = $1", [$id]);
+             $_SESSION['success'] = 'Publikasi berhasil dihapus';
+             header('Location: index.php?page=admin-publications');
+             exit;
+        }
+
+        $query = "SELECT * FROM publications ORDER BY created_at DESC";
+        $result = @pg_query($this->db, $query);
+        $publications = $result ? (pg_fetch_all($result) ?: []) : [];
+
+        include __DIR__ . '/../../view/admin/publications/index.php';
+    }
+
+    public function students()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $userRole = $_SESSION['user']['role'] ?? 'member';
+        $userId = $_SESSION['user']['id'] ?? 0;
+        
+        $students = [];
+        
+        if ($userRole === 'dosen') {
+             $dosenRes = @pg_query_params($this->db, "SELECT id FROM dosen WHERE user_id = $1", [$userId]);
+             if ($dosenRes && pg_num_rows($dosenRes) > 0) {
+                 $dosenId = pg_fetch_result($dosenRes, 0, 0);
+                 $query = "SELECT m.*, u.email, u.status, u.username, 
+                           COALESCE(m.nama, u.username) as display_name
+                           FROM mahasiswa m 
+                           JOIN users u ON m.user_id = u.id 
+                           WHERE m.supervisor_id = $1 
+                           ORDER BY m.angkatan DESC";
+                 $result = @pg_query_params($this->db, $query, [$dosenId]);
+                 if ($result) $students = pg_fetch_all($result) ?: [];
+             }
+        } else {
+             $query = "SELECT m.*, u.email, u.status, u.username, d.nama as dosen_nama,
+                       COALESCE(m.nama, u.username) as display_name
+                       FROM mahasiswa m 
+                       JOIN users u ON m.user_id = u.id 
+                       LEFT JOIN dosen d ON m.supervisor_id = d.id
+                       ORDER BY m.angkatan DESC";
+             $result = @pg_query($this->db, $query);
+             if ($result) $students = pg_fetch_all($result) ?: [];
+        }
+        include __DIR__ . '/../../view/admin/students/index.php';
     }
 
     // Manajemen Peralatan
@@ -945,6 +1093,11 @@ class AdminController
         $userId = $_SESSION['user_id'] ?? 0;
         $currentUser = $this->getUserById($userId);
 
+        // Ambil system settings
+        require_once __DIR__ . '/../models/SystemSettings.php';
+        $settingsModel = new SystemSettings($this->db);
+        $settings = $settingsModel->getAll();
+
         include __DIR__ . '/../../view/admin/settings/index.php';
     }
 
@@ -1050,7 +1203,36 @@ class AdminController
 
     private function updateSystemSettings()
     {
-        // TODO: Implementasi update pengaturan sistem
+        require_once __DIR__ . '/../models/SystemSettings.php';
+        
+        $settings = [
+            'site_name' => $_POST['site_name'] ?? '',
+            'site_description' => $_POST['site_description'] ?? '',
+            'topbar_text' => $_POST['topbar_text'] ?? '',
+            'institution_name' => $_POST['institution_name'] ?? '',
+            'lab_name' => $_POST['lab_name'] ?? '',
+            'contact_email' => $_POST['contact_email'] ?? '',
+            'contact_phone' => $_POST['contact_phone'] ?? '',
+            'logo_url' => $_POST['logo_url'] ?? ''
+        ];
+
+        // Handle logo upload if provided
+        if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+             $logoPath = $this->uploadImage($_FILES['logo'], 'settings');
+             if ($logoPath) {
+                 $settings['logo_url'] = $logoPath;
+             }
+        }
+        
+        foreach ($settings as $key => $value) {
+            // Upsert setting using Postgres ON CONFLICT
+            $query = "INSERT INTO system_settings (setting_key, setting_value, updated_at, updated_by)
+                      VALUES ($1, $2, NOW(), $3)
+                      ON CONFLICT (setting_key) 
+                      DO UPDATE SET setting_value = EXCLUDED.setting_value, updated_at = NOW(), updated_by = EXCLUDED.updated_by";
+            @pg_query_params($this->db, $query, [$key, $value, $_SESSION['user_id']]);
+        }
+
         $_SESSION['success'] = 'Pengaturan sistem berhasil diupdate!';
         header('Location: index.php?page=admin-settings&tab=system');
         exit;

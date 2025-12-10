@@ -78,51 +78,21 @@ $userId = $_SESSION['user']['id'] ?? 0;
 <div class="grid grid-cols-1 gap-4">
     
     <?php
-    // Sample data - nanti akan diambil dari database
-    $publications = [
-        [
-            'id' => 1,
-            'title' => 'Machine Learning for Image Recognition in Computer Vision',
-            'authors' => 'Dr. Budi Santoso, Ahmad Fauzi',
-            'type' => 'Jurnal',
-            'publisher' => 'IEEE Transactions on Pattern Analysis',
-            'year' => '2024',
-            'doi' => '10.1109/TPAMI.2024.001',
-            'citation_count' => 15,
-            'indexed' => 'Scopus Q1'
-        ],
-        [
-            'id' => 2,
-            'title' => 'Deep Learning Approach for IoT Security Enhancement',
-            'authors' => 'Dr. Budi Santoso, Dr. Andi Wijaya',
-            'type' => 'Konferensi',
-            'publisher' => 'International Conference on IoT Security 2024',
-            'year' => '2024',
-            'doi' => '10.1145/ICTS.2024.002',
-            'citation_count' => 8,
-            'indexed' => 'Scopus'
-        ],
-        [
-            'id' => 3,
-            'title' => 'Artificial Intelligence in Smart City Development',
-            'authors' => 'Dr. Budi Santoso',
-            'type' => 'Jurnal',
-            'publisher' => 'Journal of Smart Cities',
-            'year' => '2023',
-            'doi' => '10.1016/JSC.2023.003',
-            'citation_count' => 42,
-            'indexed' => 'Scopus Q2'
-        ],
-    ];
+    // $publications sudah dikirim dari controller
     
     foreach ($publications as $pub):
         $typeColors = [
-            'Jurnal' => 'bg-blue-100 text-blue-700',
-            'Konferensi' => 'bg-purple-100 text-purple-700',
-            'Buku' => 'bg-green-100 text-green-700',
-            'Prosiding' => 'bg-orange-100 text-orange-700'
+            'journal' => 'bg-blue-100 text-blue-700',
+            'conference' => 'bg-purple-100 text-purple-700',
+            'book' => 'bg-green-100 text-green-700',
+            'prosiding' => 'bg-orange-100 text-orange-700'
         ];
-        $typeColor = $typeColors[$pub['type']] ?? 'bg-slate-100 text-slate-700';
+        // Normalize type key
+        $pubType = strtolower($pub['type'] ?? 'journal');
+        $typeColor = $typeColors[$pubType] ?? 'bg-slate-100 text-slate-700';
+        
+        // Determine publisher
+        $publisher = $pub['journal'] ?: ($pub['conference'] ?: '-');
     ?>
     
     <div class="bg-white border border-slate-200 rounded-xl p-5 hover:shadow-md transition-shadow">

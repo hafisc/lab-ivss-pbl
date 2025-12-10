@@ -33,6 +33,45 @@ class MemberController
         $currentMemberStatus = 'aktif';
         $supervisorInfo = null;
         $myResearches = [];
+
+        // Fetch Real Data
+        $query = "SELECT u.status, m.supervisor_id, m.research_title, m.nama
+                  FROM users u 
+                  LEFT JOIN mahasiswa m ON u.id = m.user_id 
+                  WHERE u.id = $1";
+        $res = @pg_query_params($this->db, $query, [$userId]);
+        
+        if ($res && pg_num_rows($res) > 0) {
+            $userData = pg_fetch_assoc($res);
+            $currentMemberStatus = $userData['status'] ?? 'inactive';
+
+            // Get Supervisor Info
+            if (!empty($userData['supervisor_id'])) {
+                // supervisor_id in mahasiswa table references dosen(id)
+                $sQuery = "SELECT u.username as name, u.email 
+                           FROM users u 
+                           JOIN dosen d ON u.id = d.user_id 
+                           WHERE d.id = $1";
+                $sRes = @pg_query_params($this->db, $sQuery, [$userData['supervisor_id']]);
+                if ($sRes && pg_num_rows($sRes) > 0) {
+                    $supervisorInfo = pg_fetch_assoc($sRes);
+                }
+            }
+
+            // Get Researches (From Mahasiswa Title)
+            if (!empty($userData['research_title'])) {
+                $myResearches[] = [
+                    'title' => $userData['research_title'],
+                    'category' => 'Tugas Akhir',
+                    'leader_name' => $userData['nama'] ?? 'Saya',
+                    'status' => 'active'
+                ];
+            }
+            $totalMyResearch = count($myResearches);
+            
+            // Count Publications (Dummy for now or name match)
+            $totalMyPublications = 0;
+        }
         
         // Member dashboard view
         require_once __DIR__ . '/../../view/member/dashboard.php';

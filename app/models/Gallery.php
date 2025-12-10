@@ -1,24 +1,24 @@
 <?php
 
-class Facility {
+class Gallery {
     private $db;
-    private $table = 'facilities';
+    private $table = 'gallery';
 
     public function __construct($db) {
         $this->db = $db;
     }
 
     public function getAll() {
-        $query = "SELECT * FROM {$this->table} ORDER BY id ASC";
+        $query = "SELECT * FROM {$this->table} ORDER BY created_at DESC";
         $result = pg_query($this->db, $query);
         
-        $facilities = [];
+        $items = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
-                $facilities[] = $row;
+                $items[] = $row;
             }
         }
-        return $facilities;
+        return $items;
     }
 
     public function getById($id) {
@@ -31,21 +31,21 @@ class Facility {
     }
 
     public function create($data) {
-        $query = "INSERT INTO {$this->table} (name, description, image) VALUES ($1, $2, $3)";
+        $query = "INSERT INTO {$this->table} (title, description, image_path, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())";
         return pg_query_params($this->db, $query, [
-            $data['name'], 
+            $data['title'] ?? null, 
             $data['description'] ?? null, 
-            $data['image'] ?? null
+            $data['image_path']
         ]);
     }
 
     public function update($id, $data) {
-        $query = "UPDATE {$this->table} SET name = $1, description = $2";
-        $params = [$data['name'], $data['description'] ?? null];
+        $query = "UPDATE {$this->table} SET title = $1, description = $2, updated_at = NOW()";
+        $params = [$data['title'] ?? null, $data['description'] ?? null];
         
-        if (isset($data['image'])) {
-            $query .= ", image = $3";
-            $params[] = $data['image'];
+        if (isset($data['image_path'])) {
+            $query .= ", image_path = $3";
+            $params[] = $data['image_path'];
             $query .= " WHERE id = $4";
             $params[] = $id;
         } else {

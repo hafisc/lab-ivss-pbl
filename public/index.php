@@ -27,6 +27,15 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->login();
         break;
+
+    case 'admin-visimisi':
+         require __DIR__ . '/../app/controllers/AdminController.php';
+         (new AdminController($pg))->visimisi();
+         break;
+        require __DIR__ . '/../app/controllers/AdminController.php';
+        (new AdminController($pg))->news();
+        break;
+        
     case 'register':
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->register();
@@ -213,10 +222,12 @@ switch ($page) {
 
     // Dosen Routes (Publications & Students)
     case 'admin-publications':
-        require __DIR__ . '/../view/admin/publications/index.php';
+        require __DIR__ . '/../app/controllers/AdminController.php';
+        (new AdminController($pg))->publications();
         break;
     case 'admin-students':
-        require __DIR__ . '/../view/admin/students/index.php';
+        require __DIR__ . '/../app/controllers/AdminController.php';
+        (new AdminController($pg))->students();
         break;
 
     // Member Routes
@@ -264,6 +275,58 @@ switch ($page) {
     case 'member-settings-change-password-submit':
         require __DIR__ . '/../app/controllers/MemberController.php';
         (new MemberController($pg))->submitChangePassword();
+        break;
+
+    // Facilities Routes
+    case 'admin-facilities':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->index();
+        break;
+    case 'admin-facilities-create':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->create();
+        break;
+    case 'admin-facilities-store':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->store();
+        break;
+    case 'admin-facilities-edit':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->edit();
+        break;
+    case 'admin-facilities-update':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->update();
+        break;
+    case 'admin-facilities-delete':
+        require __DIR__ . '/../app/controllers/FacilityController.php';
+        (new FacilityController($pg))->delete();
+        break;
+
+    // Gallery Routes
+    case 'admin-gallery':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->index();
+        break;
+    case 'admin-gallery-create':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->create();
+        break;
+    case 'admin-gallery-store':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->store();
+        break;
+    case 'admin-gallery-edit':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->edit();
+        break;
+    case 'admin-gallery-update':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->update();
+        break;
+    case 'admin-gallery-delete':
+        require __DIR__ . '/../app/controllers/GalleryController.php';
+        (new GalleryController($pg))->delete();
         break;
 
     default:

@@ -11,6 +11,7 @@ class DashboardController {
     private $memberModel;
     private $dosenModel;
     private $userModel;
+    private $visimisiModel;
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();

@@ -33,7 +33,7 @@
                 </p>
 
                 <!-- CTA Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                <!-- <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
                     <a href="#profil" class="group px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:shadow-xl hover:scale-105 inline-flex items-center gap-3">
                         <span>Jelajahi Lab</span>
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +46,7 @@
                         </svg>
                         <span>Bergabung Sekarang</span>
                     </a>
-                </div>
+                </div> -->
 
                 <!-- Scroll Indicator -->
                 <div class="text-center mt-16">
@@ -172,8 +172,7 @@
                         <h3 class="text-2xl font-bold text-gray-900">Visi</h3>
                     </div>
                     <p class="text-gray-700 leading-relaxed">
-                        Menjadi laboratorium unggulan dalam pengembangan teknologi <span class="font-semibold text-blue-900">Intelligent Vision</span> dan <span class="font-semibold text-blue-900">Smart System</span> yang inovatif, aplikatif, serta berdaya saing nasional dan internasional untuk mendukung kemajuan bidang teknologi informasi dan industri berbasis kecerdasan buatan.
-                    </p>
+                        <?= nl2br(htmlspecialchars($visimisi['visi'] ?? '')) ?>
                 </div>
 
                 <!-- Misi -->
@@ -188,29 +187,8 @@
                     </div>
                     <ul class="space-y-3">
                         <li class="flex items-start gap-3">
-                            <div class="w-5 h-5 bg-blue-900 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 leading-relaxed">Melaksanakan penelitian dan inovasi di bidang Computer Vision, AI, dan Smart System</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="w-5 h-5 bg-blue-900 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 leading-relaxed">Menyediakan fasilitas riset dan pelatihan bagi dosen dan mahasiswa</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="w-5 h-5 bg-blue-900 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-700 leading-relaxed">Mendorong kolaborasi akademik dan industri untuk solusi berkelanjutan</span>
-                        </li>
+                            <span class="text-gray-700 leading-relaxed">
+                            <?= nl2br(htmlspecialchars($visimisi['misi'] ?? '')) ?></span>
                     </ul>
                 </div>
             </div>
@@ -264,6 +242,56 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Vision Komputer</h3>
                     <p class="text-gray-600 text-sm">Penerapan teknik AI untuk pengolahan citra dan video</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</section>
+
+<!-- Galeri Kegiatan Section -->
+<section id="gallery" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                 <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                 </div>
+                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Galeri Kegiatan</h2>
+                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Dokumentasi aktivitas di Lab IVSS</p>
+                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+            </div>
+
+            <!-- Swiper -->
+            <div class="relative gallery-swiper-container">
+                 <div class="swiper gallerySwiper">
+                      <div class="swiper-wrapper pb-12">
+                           <?php if (!empty($galleryItems)): ?>
+                               <?php foreach ($galleryItems as $item): ?>
+                                   <div class="swiper-slide">
+                                       <div class="rounded-2xl overflow-hidden shadow-lg h-80 relative group cursor-pointer">
+                                           <img src="<?= htmlspecialchars($item['image_path']) ?>" alt="<?= htmlspecialchars($item['title']) ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 opacity-90 group-hover:opacity-100 transition-opacity">
+                                               <h3 class="text-white font-bold text-xl mb-1"><?= htmlspecialchars($item['title'] ?? '') ?></h3>
+                                               <?php if (!empty($item['description'])): ?>
+                                               <p class="text-gray-200 text-sm line-clamp-2"><?= htmlspecialchars($item['description']) ?></p>
+                                               <?php endif; ?>
+                                           </div>
+                                       </div>
+                                   </div>
+                               <?php endforeach; ?>
+                           <?php else: ?>
+                               <div class="swiper-slide">
+                                   <div class="h-80 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
+                                       Belum ada foto kegiatan.
+                                   </div>
+                               </div>
+                           <?php endif; ?>
+                      </div>
+                      <div class="swiper-pagination"></div>
+                 </div>
             </div>
         </div>
     </div>
@@ -692,12 +720,14 @@ let publicationSwiper = null;
 let newsSwiper = null;
 let fasilitasSwiper = null;
 let equipmentSwiper = null;
+let gallerySwiper = null;
 
 document.addEventListener('DOMContentLoaded', function() {
   initSwiper();
   initNewsSwiper();
   initFasilitasSwiper();
   initEquipmentSwiper();
+  initGallerySwiper();
   
   // Filter buttons functionality
   const filterButtons = document.querySelectorAll('.filter-btn');
@@ -778,6 +808,28 @@ function initNewsSwiper() {
                 slidesPerView: 3,
                 spaceBetween: 30,
             },
+        },
+    });
+}
+
+function initGallerySwiper() {
+    gallerySwiper = new Swiper('.gallerySwiper', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        loop: true,
+        autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.gallerySwiper .swiper-pagination',
+            clickable: true,
+            dynamicBullets: true,
+        },
+        breakpoints: {
+            640: { slidesPerView: 1, spaceBetween: 20 },
+            768: { slidesPerView: 2, spaceBetween: 30 },
+            1024: { slidesPerView: 3, spaceBetween: 30 },
         },
     });
 }

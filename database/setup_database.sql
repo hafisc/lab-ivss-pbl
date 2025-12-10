@@ -3,21 +3,8 @@
 -- Run this script in your SQL Editor
 -- ========================================
 
--- Drop existing tables (OPTIONAL - uncomment untuk reset database)
--- DROP TABLE IF EXISTS member_publications CASCADE;
--- DROP TABLE IF EXISTS research_documents CASCADE;
--- DROP TABLE IF EXISTS research_members CASCADE;
--- DROP TABLE IF EXISTS notifications CASCADE;
--- DROP TABLE IF EXISTS system_settings CASCADE;
--- DROP TABLE IF EXISTS equipment CASCADE;
--- DROP TABLE IF EXISTS publications CASCADE;
--- DROP TABLE IF EXISTS news CASCADE;
--- DROP TABLE IF EXISTS member_registrations CASCADE;
--- DROP TABLE IF EXISTS mahasiswa CASCADE;
--- DROP TABLE IF EXISTS dosen CASCADE;
--- DROP TABLE IF EXISTS research CASCADE;
--- DROP TABLE IF EXISTS users CASCADE;
--- DROP TABLE IF EXISTS roles CASCADE;
+-- Pastikan ekstensi pgcrypto aktif jika dibutuhkan (opsional)
+-- CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ========================================
 -- 1. TABEL ROLES (MASTER DATA)

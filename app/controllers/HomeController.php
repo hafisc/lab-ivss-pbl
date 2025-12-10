@@ -107,7 +107,17 @@ class HomeController {
         $equipmentModel = new Equipment($this->db);
         $equipmentForLanding = $equipmentModel->getForLanding("30");
 
+        // Load Gallery model (Baru)
+        require_once __DIR__ . '/../models/Gallery.php';
+        $galleryModel = new Gallery($this->db);
+        $galleryItems = $galleryModel->getAll();
+
         // Muat view dengan layout pages
         require_once __DIR__ . '/../../view/layouts/pages.php';
+        require_once __DIR__ . '/../models/visimisi.php';
+        $visimisiModel = new Visimisi($this->db);
+        
+        // Asumsi Visi Misi hanya ada 1 record, ambil berdasarkan ID (misalnya ID 1)
+        $visimisiData = $visimisiModel->getById(1);
     }
 }

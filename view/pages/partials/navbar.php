@@ -70,6 +70,13 @@ usort($menu_items, function ($a, $b) {
                         <?= htmlspecialchars($menu['label']) ?>
                     </a>
                 <?php endforeach; ?>
+                <a href="#beranda" class="text-gray-700 hover:text-blue-900 font-medium transition">Beranda</a>
+                <a href="#profil" class="text-gray-700 hover:text-blue-900 font-medium transition">Profil</a>
+                <a href="#riset" class="text-gray-700 hover:text-blue-900 font-medium transition">Riset</a>
+                <a href="#fasilitas" class="text-gray-700 hover:text-blue-900 font-medium transition">Fasilitas</a>
+                <a href="#member" class="text-gray-700 hover:text-blue-900 font-medium transition">Member</a>
+                <a href="#berita" class="text-gray-700 hover:text-blue-900 font-medium transition">Berita</a>
+                <!-- <a href="#kontak" class="text-gray-700 hover:text-blue-900 font-medium transition">Kontak</a> -->
             </div>
 
             <!-- Tombol Login - Agak ke kiri -->
@@ -98,6 +105,15 @@ usort($menu_items, function ($a, $b) {
             <?php endforeach; ?>
             <div class="pt-3 space-y-2">
                 <a href="<?= $login_url ?>" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-center bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800">
+            <a href="#beranda" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Beranda</a>
+            <a href="#profil" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Profil</a>
+            <a href="#riset" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Riset</a>
+            <a href="#fasilitas" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Fasilitas</a>
+            <a href="#member" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Member</a>
+            <a href="#berita" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Berita</a>
+            <!-- <a href="#kontak" class="block py-2 text-gray-700 hover:text-blue-900 font-medium">Kontak</a> -->
+                <div class="pt-3 space-y-2">
+                <a href="index.php?page=login" target="_blank" rel="noopener noreferrer" class="block py-2 px-4 text-center bg-blue-900 text-white rounded-lg font-medium hover:bg-blue-800">
                     Login
                 </a>
             </div>
