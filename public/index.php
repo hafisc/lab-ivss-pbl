@@ -11,6 +11,9 @@ date_default_timezone_set('Asia/Jakarta');
 require_once __DIR__ . '/../app/config/database.php';
 $pg = getDb(); // PgSql\Connection
 
+// Make database connection available globally for layouts and partials
+$GLOBALS['db'] = $pg;
+
 require_once __DIR__ . '/../app/controllers/HomeController.php';
 
 $page = $_GET['page'] ?? 'home';
@@ -59,6 +62,26 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/UserController.php';
         $controller = new UserController();
         $controller->index();
+        break;
+    case 'admin-footer':
+        require __DIR__ . '/../app/controllers/FooterController.php';
+        $controller = new FooterController($pg);
+
+        $action = $_GET['action'] ?? 'index';
+
+        if ($action === 'edit') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $controller->update();
+            } else {
+                $controller->edit();
+            }
+        } else {
+            $controller->index();
+        }
+        break;
+
+    case 'admin-navbar':
+        include __DIR__ . '/../view/admin/navbar/index.php';
         break;
 
     // User AJAX Actions
