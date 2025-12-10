@@ -20,7 +20,7 @@ function isDropdownItemActive($page, $tab = null) {
 }
 
 // Pages that belong to the 'Setting Pages' dropdown
-$settingPages = ['admin-settings', 'admin-news', 'admin-team', 'admin-perkuliahan'];
+$settingPages = ['admin-news', 'admin-team', 'admin-perkuliahan', 'admin-navbar', 'admin-footer', 'admin-visimisi'];
 
 // Pages that belong to the 'Inventaris & Fasilitas' dropdown
 $inventoryPages = ['admin-equip', 'admin-facilities', 'admin-gallery'];
@@ -82,15 +82,7 @@ $isInventoryActive = isMenuActive($inventoryPages);
                     </svg>
                 </button>
                 <div id="dropdown-landingPage" class="dropdown-content hidden ml-4 mt-1 space-y-1">
-                    <a href="index.php?page=admin-settings&tab=system" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-settings', 'system') ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            <span>Identitas & Kontak</span>
-                        </div>
-                    </a>
+
 
                     <a href="index.php?page=admin-news" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-news') ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
                         <div class="flex items-center gap-2">
@@ -116,6 +108,31 @@ $isInventoryActive = isMenuActive($inventoryPages);
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                             </svg>
                             <span>Perkuliahan Terkait</span>
+                        </div>
+                    </a>
+
+                    <a href="index.php?page=admin-navbar" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-navbar') ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                            <span>Kelola Navbar</span>
+                        </div>
+                    </a>
+
+                    <a href="index.php?page=admin-footer" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-footer') ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                            <span>Kelola Footer</span>
+                        </div>
+                    </a>
+
+                    <a href="index.php?page=admin-visimisi" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-visimisi') ? 'bg-blue-100 text-blue-900 font-medium' : 'text-slate-600 hover:bg-slate-50' ?>">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.5"><path stroke-linecap="round" d="M10 19.5c-3.771 0-5.657 0-6.828-1.172S2 15.271 2 11.5v-1c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h3.5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C21 5.07 21 6.712 21 10M2 8.5h19"/><path stroke-linecap="round" d="M5.5 5.5h.01m3.98 0h.01"/><path d="M14.672 21.5H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z"/></g></svg>
+                            <span>Visi Misi</span>
                         </div>
                     </a>
                 </div>
@@ -172,28 +189,7 @@ $isInventoryActive = isMenuActive($inventoryPages);
                 </div>
             </a>
 
-            <a href="index.php?page=admin-navbar" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-navbar') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                    <span>Kelola Navbar</span>
-                </div>
-            </a>
-            <a href="index.php?page=admin-footer" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-footer') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                    </svg>
-                    <span>Kelola Footer</span>
-                </div>
-            </a>
-            <a href="index.php?page=admin-visimisi" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-visimis') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#373737" stroke-linejoin="round" stroke-width="1"><path stroke-linecap="round" stroke-width="1.5" d="M10 19.5c-3.771 0-5.657 0-6.828-1.172S2 15.271 2 11.5v-1c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h3.5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C21 5.07 21 6.712 21 10M2 8.5h19"/><path stroke-linecap="round" stroke-width="2" d="M5.5 5.5h.01m3.98 0h.01"/><path stroke-width="1.5" d="M14.672 21.5H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z"/></g></svg>
-                    <span>Visi Misi</span>
-                </div>
-            </a>
+
             
             <a href="index.php?page=admin-settings" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-settings') && $currentTab === '' ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
                 <div class="flex items-center gap-2">
@@ -254,28 +250,7 @@ $isInventoryActive = isMenuActive($inventoryPages);
                 </div>
             </a>
 
-            <a href="index.php?page=admin-navbar" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-navbar') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                    <span>Kelola Navbar</span>
-                </div>
-            </a>
-            <a href="index.php?page=admin-footer" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-footer') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                    </svg>
-                    <span>Kelola Footer</span>
-                </div>
-            </a>
-            <a href="index.php?page=admin-visimisi" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-visimis') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#373737" stroke-linejoin="round" stroke-width="1"><path stroke-linecap="round" stroke-width="1.5" d="M10 19.5c-3.771 0-5.657 0-6.828-1.172S2 15.271 2 11.5v-1c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h3.5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C21 5.07 21 6.712 21 10M2 8.5h19"/><path stroke-linecap="round" stroke-width="2" d="M5.5 5.5h.01m3.98 0h.01"/><path stroke-width="1.5" d="M14.672 21.5H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z"/></g></svg>
-                    <span>Visi Misi</span>
-                </div>
-            </a>
+
 
             <a href="index.php?page=admin-settings" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-settings') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
                 <div class="flex items-center gap-2">

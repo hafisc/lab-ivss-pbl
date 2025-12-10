@@ -1304,6 +1304,8 @@ $$ LANGUAGE plpgsql;
 -- - 3 Publikasi mahasiswa
 -- ========================================
 
+
+
 -- ========================================
 -- 15. TABEL TEAM_MEMBERS
 -- ========================================
@@ -1408,16 +1410,39 @@ CREATE TABLE IF NOT EXISTS footer_settings (
 -- Create index for faster queries
 CREATE INDEX idx_footer_settings_id ON footer_settings(id);
 
+-- ========================================
+-- 18. TABEL NAVBAR_SETTINGS
+-- ========================================
+-- Untuk menyimpan pengaturan navigasi dinamis
 CREATE TABLE IF NOT EXISTS navbar_settings (
     id SERIAL PRIMARY KEY,
-    topbar_text VARCHAR(255),
-    institution_name VARCHAR(255),
-    lab_name VARCHAR(255),
-    logo_url VARCHAR(255),
-    login_url VARCHAR(255),
-    menu_items JSONB DEFAULT '[]',
+    brand_name VARCHAR(100) DEFAULT 'Lab IVSS',
+    brand_logo VARCHAR(255) DEFAULT 'assets/images/logo-polinema.png',
+    menu_items JSONB DEFAULT '[]', -- Menyimpan struktur menu dalam format JSON
+    is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
-CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id)";
+-- Trigger untuk auto update timestamp
+CREATE OR REPLACE TRIGGER trigger_navbar_settings_updated_at
+    BEFORE UPDATE ON navbar_settings
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert default navbar settings
+INSERT INTO navbar_settings (brand_name, brand_logo, menu_items) VALUES
+('Lab IVSS', 'assets/images/logo-polinema.png', 
+'[
+    {"label": "Home", "url": "index.php", "order": 1},
+    {"label": "Profil", "url": "index.php?page=profil", "order": 2, "children": [
+        {"label": "Sejarah", "url": "index.php?page=sejarah"},
+        {"label": "Visi Misi", "url": "index.php?page=visi-misi"}
+    ]},
+    {"label": "Riset", "url": "index.php?page=riset", "order": 3},
+    {"label": "Publikasi", "url": "index.php?page=publikasi", "order": 4},
+    {"label": "Kontak", "url": "index.php?page=kontak", "order": 5}
+]'::jsonb
+);
+
+CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id);

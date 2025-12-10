@@ -841,19 +841,76 @@ class AdminController
         if (session_status() === PHP_SESSION_NONE) session_start();
         $userRole = $_SESSION['user']['role'] ?? 'member';
 
-        if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
-             $id = intval($_GET['id']);
-             @pg_query_params($this->db, "DELETE FROM publications WHERE id = $1", [$id]);
-             $_SESSION['success'] = 'Publikasi berhasil dihapus';
-             header('Location: index.php?page=admin-publications');
-             exit;
+        $action = $_GET['action'] ?? 'index';
+
+        switch ($action) {
+            case 'create':
+                include __DIR__ . '/../../view/admin/publications/create.php';
+                break;
+
+            case 'store':
+                $this->storePublication();
+                break;
+
+            case 'delete':
+                if (isset($_GET['id'])) {
+                    $id = intval($_GET['id']);
+                    @pg_query_params($this->db, "DELETE FROM publications WHERE id = $1", [$id]);
+                    $_SESSION['success'] = 'Publikasi berhasil dihapus';
+                }
+                header('Location: index.php?page=admin-publications');
+                exit;
+                break;
+
+            default:
+                $query = "SELECT * FROM publications ORDER BY created_at DESC";
+                $result = @pg_query($this->db, $query);
+                $publications = $result ? (pg_fetch_all($result) ?: []) : [];
+                include __DIR__ . '/../../view/admin/publications/index.php';
+                break;
         }
+    }
 
-        $query = "SELECT * FROM publications ORDER BY created_at DESC";
-        $result = @pg_query($this->db, $query);
-        $publications = $result ? (pg_fetch_all($result) ?: []) : [];
+    private function storePublication()
+    {
+        $title = $_POST['title'] ?? '';
+        $authors = $_POST['authors'] ?? '';
+        $year = intval($_POST['year'] ?? date('Y'));
+        $type = $_POST['type'] ?? 'journal';
+        $publisher = $_POST['publisher'] ?? '';
+        $doi = $_POST['doi'] ?? '';
+        $url = $_POST['url'] ?? '';
 
-        include __DIR__ . '/../../view/admin/publications/index.php';
+        // Opsional fields
+        $volume = $_POST['volume'] ?? '';
+        $issue = $_POST['issue'] ?? '';
+        $pages = $_POST['pages'] ?? '';
+        $indexed = $_POST['indexed'] ?? '';
+        $citation_count = intval($_POST['citation_count'] ?? 0);
+        $abstract = $_POST['abstract'] ?? '';
+
+        // Tentukan kolom mana yang diisi berdasarkan tipe
+        $journal = ($type === 'journal' || $type === 'book' || $type === 'other') ? $publisher : null;
+        $conference = ($type === 'conference' || $type === 'prosiding') ? $publisher : null;
+
+        $query = "INSERT INTO publications (title, authors, year, type, journal, conference, doi, url, volume, issue, pages, indexed, citation_count, abstract, created_at, updated_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW(), NOW())";
+                  
+        $params = [
+            $title, $authors, $year, $type, $journal, $conference, 
+            $doi, $url, $volume, $issue, $pages, $indexed, $citation_count, $abstract
+        ];
+
+        $result = @pg_query_params($this->db, $query, $params);
+
+        if ($result) {
+            $_SESSION['success'] = 'Publikasi berhasil ditambahkan!';
+        } else {
+            $_SESSION['error'] = 'Gagal menambahkan publikasi: ' . pg_last_error($this->db);
+        }
+        
+        header('Location: index.php?page=admin-publications');
+        exit;
     }
 
     public function students()

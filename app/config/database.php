@@ -26,7 +26,7 @@ class Database
         
         // Load database config dari .env
         $this->host   = $_ENV['DB_HOST'] ?? '127.0.0.1';
-        $this->port   = $_ENV['DB_PORT'] ?? '5433';
+        $this->port   = $_ENV['DB_PORT'] ?? '5432';
         $this->dbname = $_ENV['DB_DATABASE'] ?? 'lab_ivss';
         $this->user   = $_ENV['DB_USERNAME'] ?? 'USER';
         $this->pass   = $_ENV['DB_PASSWORD'] ?? 'Nada140125@';
