@@ -1418,6 +1418,27 @@ CREATE TABLE IF NOT EXISTS navbar_settings (
     menu_items JSONB DEFAULT '[]',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
-CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id)";
+CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id);
+
+CREATE TABLE IF NOT EXISTs profile_lab (
+    id INT PRIMARY KEY DEFAULT 1,
+    nama_lab VARCHAR(255) NOT NULL,
+    singkatan VARCHAR(50),
+    deskripsi_singkat TEXT,
+    -- Visi dan Misi DIHAPUS
+    lokasi_ruangan VARCHAR(255),
+    riset_fitur_judul VARCHAR(100) DEFAULT 'Riset Inovatif',
+    riset_fitur_desk TEXT DEFAULT 'Penelitian berkelas dunia',
+    fasilitas_fitur_judul VARCHAR(100) DEFAULT 'Fasilitas Modern',
+    fasilitas_fitur_desk TEXT DEFAULT 'Peralatan canggih',
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Masukkan baris data awal (Hanya data yang tersisa)
+INSERT INTO profile_lab (id, nama_lab, singkatan, deskripsi_singkat, lokasi_ruangan)
+VALUES (1, 'Laboratorium Intelligent Vision and Smart System (IVSS)', 'IVSS', 
+        'Laboratorium Intelligent Vision and Smart System (IVSS) merupakan pusat riset dan pengembangan di bidang Computer Vision, Artificial Intelligence, dan Smart System...', 
+        'Gedung Jurusan Teknologi Informasi — Lantai 8 Barat')
+ON CONFLICT (id) DO NOTHING;

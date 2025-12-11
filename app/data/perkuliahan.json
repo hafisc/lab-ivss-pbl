@@ -21,6 +21,10 @@
         {
             "title": "Matematika",
             "description": "Menggunakan matematika dalam menghitung error"
+        },
+        {
+            "title": "Robotics",
+            "description": "bla bla"
         }
     ]
 }

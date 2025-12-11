@@ -1,4 +1,6 @@
-<?php /** home.php - Halaman utama Lab IVSS */ ?>
+<?php 
+
+?>
 
 <!-- Hero Section - Professional & Creative -->
 <section class="relative bg-white overflow-hidden">
@@ -61,85 +63,80 @@
         </div>
 </section>
 
-<!-- Profil Lab Section -->
+<?php
+require_once __DIR__ . '/../../app/config/Database.php'; 
+
+$pgConnection = Database::getInstance()->getPgConnection(); 
+
+$profileData = [];
+$defaultData = [
+    // Default Data Profil Detail
+    'nama_lab' => 'Lab Default',
+    'lokasi_ruangan' => 'Lokasi Belum Diatur',
+    'deskripsi_singkat' => 'Deskripsi Lab Belum Diisi. Silakan perbarui melalui halaman Admin.',
+    'riset_fitur_judul' => 'Riset Inovatif',
+    'riset_fitur_desk' => 'Penelitian berkelas dunia',
+    'fasilitas_fitur_judul' => 'Fasilitas Modern',
+    'fasilitas_fitur_desk' => 'Peralatan canggih',
+];
+
+if ($pgConnection) {
+    $query = 'SELECT * FROM "profile_lab" WHERE id = $1'; 
+    $result = pg_query_params($pgConnection, $query, [1]);
+    
+    if ($result) {
+        $dataFromDb = pg_fetch_assoc($result);
+        if ($dataFromDb) {
+            $profileData = $dataFromDb;
+        }
+        pg_free_result($result);
+    }
+} else {
+    error_log("Gagal mendapatkan koneksi PostgreSQL saat loading home.php");
+}
+
+$profileData = array_replace_recursive($defaultData, $profileData);
+
+?>
+
 <section id="profil" class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="max-w-6xl mx-auto">
-            <!-- Header -->
             <div class="text-center mb-16">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
-                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Profil Laboratorium</h2>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Profil <?= htmlspecialchars($profileData['nama_lab'] ?? 'Lab Default') ?></h2>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full"></div>
             </div>
 
-
-            <!-- Content -->
             <div class="grid md:grid-cols-2 gap-12 items-center">
-                <!-- Image/Logo Card -->
                 <div class="space-y-4">
                     <div class="relative group bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-blue-900 transition-all duration-300 hover:shadow-2xl">
-                        <!-- Lab Icon Background -->
-                        <div class="absolute top-6 right-6 opacity-5">
-                            <svg class="w-32 h-32 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
-                            </svg>
-                        </div>
-
-
-                        <!-- Logo -->
                         <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
-                            <img src="assets/images/IVSS LOGO.png" alt="Lab IVSS Logo" class="w-full max-w-xs h-auto">
-
-
-                            <!-- Location -->
+                            <img src="assets/images/IVSS LOGO.png" alt="Lab Logo" class="w-full max-w-xs h-auto">
                             <div class="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
-                                <svg class="w-4 h-4 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-sm font-medium text-gray-700">Gedung Jurusan Teknologi Informasi — Lantai 8 Barat</span>
+                                <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($profileData['lokasi_ruangan'] ?? 'Lokasi Belum Ditetapkan') ?></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-
-                <!-- Text -->
                 <div class="space-y-6">
                     <p class="text-gray-700 leading-relaxed text-justify">
-                        <span class="text-3xl font-bold text-blue-900 float-left mr-3 leading-none">L</span>
-                        aboratorium Intelligent Vision and Smart System (IVSS) merupakan pusat riset dan pengembangan di bidang Computer Vision, Artificial Intelligence, dan Smart System yang berada di bawah naungan Jurusan Teknologi Informasi, Politeknik Negeri Malang.
+                        <span class="text-3xl font-bold text-blue-900 float-left mr-3 leading-none"><?= substr(htmlspecialchars($profileData['nama_lab'] ?? 'D'), 0, 1) ?></span>
+                        <?= htmlspecialchars($profileData['deskripsi_singkat'] ?? 'Deskripsi Lab Belum Diisi. Silakan perbarui melalui halaman Admin.') ?>
                     </p>
-                    <p class="text-gray-700 leading-relaxed text-justify">
-                        Kami fokus pada penelitian dan pengembangan teknologi intelligent vision dan smart system yang inovatif, aplikatif, serta berdaya saing nasional dan internasional untuk mendukung kemajuan bidang teknologi informasi dan industri berbasis kecerdasan buatan.
-                    </p>
-
-
-                    <!-- Features -->
+                    
                     <div class="grid grid-cols-2 gap-4 pt-4">
                         <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
-                            <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                </svg>
-                            </div>
                             <div>
-                                <div class="font-semibold text-gray-900">Riset Inovatif</div>
-                                <div class="text-sm text-gray-600">Penelitian berkelas dunia</div>
+                                <div class="font-semibold text-gray-900"><?= htmlspecialchars($profileData['riset_fitur_judul'] ?? 'Riset Inovatif') ?></div>
+                                <div class="text-sm text-gray-600"><?= htmlspecialchars($profileData['riset_fitur_desk'] ?? 'Penelitian berkelas dunia') ?></div>
                             </div>
                         </div>
+                        
                         <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
-                            <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                                </svg>
-                            </div>
                             <div>
-                                <div class="font-semibold text-gray-900">Fasilitas Modern</div>
-                                <div class="text-sm text-gray-600">Peralatan canggih</div>
+                                <div class="font-semibold text-gray-900"><?= htmlspecialchars($profileData['fasilitas_fitur_judul'] ?? 'Fasilitas Modern') ?></div>
+                                <div class="text-sm text-gray-600"><?= htmlspecialchars($profileData['fasilitas_fitur_desk'] ?? 'Peralatan canggih') ?></div>
                             </div>
                         </div>
                     </div>
@@ -194,59 +191,6 @@
             </div>
         </div>
     </div>
-</section>
-
-<!-- Kegiatan & Proyek Section -->
-<section id="kegiatan" class="py-20 bg-gray-50">
-    <div class="container mx-auto px-4">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-16">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
-                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Kegiatan & Proyek</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Berbagai riset dan proyek yang sedang berjalan</p>
-                <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div class="w-14 h-14 bg-blue-900 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Sistem Cerdas</h3>
-                    <p class="text-gray-600 text-sm">Integrasi AI dengan sistem untuk pengambilan keputusan</p>
-                </div>
-
-                <div class="bg-purple-50 border border-purple-100 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div class="w-14 h-14 bg-purple-900 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Machine Learning</h3>
-                    <p class="text-gray-600 text-sm">Pembelajaran mesin untuk klasifikasi dan clustering</p>
-                </div>
-
-                <div class="bg-green-50 border border-green-100 rounded-2xl p-6 hover:shadow-lg transition-shadow duration-300">
-                    <div class="w-14 h-14 bg-green-900 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Vision Komputer</h3>
-                    <p class="text-gray-600 text-sm">Penerapan teknik AI untuk pengolahan citra dan video</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 </section>
 
 <!-- Galeri Kegiatan Section -->

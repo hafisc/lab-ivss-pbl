@@ -118,6 +118,35 @@ $isInventoryActive = isMenuActive($inventoryPages);
                             <span>Perkuliahan Terkait</span>
                         </div>
                     </a>
+
+                    <a href="index.php?page=admin-navbar" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-navbar') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <span>Kelola Navbar</span>
+                    </div>
+                    </a>
+                    <a href="index.php?page=admin-footer" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-footer') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                            <span>Kelola Footer</span>
+                        </div>
+                    </a>
+                    <a href="index.php?page=admin-visimisi" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-visimis') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#373737" stroke-linejoin="round" stroke-width="1"><path stroke-linecap="round" stroke-width="1.5" d="M10 19.5c-3.771 0-5.657 0-6.828-1.172S2 15.271 2 11.5v-1c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h3.5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C21 5.07 21 6.712 21 10M2 8.5h19"/><path stroke-linecap="round" stroke-width="2" d="M5.5 5.5h.01m3.98 0h.01"/><path stroke-width="1.5" d="M14.672 21.5H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z"/></g></svg>
+                            <span>Visi Misi</span>
+                        </div>
+                    </a>
+                    <a href="index.php?page=admin-profile-settings" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-visimis') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
+                        <div class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#373737" stroke-linejoin="round" stroke-width="1"><path stroke-linecap="round" stroke-width="1.5" d="M10 19.5c-3.771 0-5.657 0-6.828-1.172S2 15.271 2 11.5v-1c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h3.5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C21 5.07 21 6.712 21 10M2 8.5h19"/><path stroke-linecap="round" stroke-width="2" d="M5.5 5.5h.01m3.98 0h.01"/><path stroke-width="1.5" d="M14.672 21.5H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z"/></g></svg>
+                            <span>Profile Settings</span>
+                        </div>
+                    </a>
                 </div>
             </div>
 
@@ -169,29 +198,6 @@ $isInventoryActive = isMenuActive($inventoryPages);
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                     </svg>
                     <span>Publikasi & Penelitian</span>
-                </div>
-            </a>
-
-            <a href="index.php?page=admin-navbar" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-navbar') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                    <span>Kelola Navbar</span>
-                </div>
-            </a>
-            <a href="index.php?page=admin-footer" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-footer') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                    </svg>
-                    <span>Kelola Footer</span>
-                </div>
-            </a>
-            <a href="index.php?page=admin-visimisi" class="block px-3 py-2 rounded-lg text-sm transition-colors <?= isDropdownItemActive('admin-visimis') ? 'bg-blue-900 text-white font-medium' : 'text-slate-700 hover:bg-slate-100' ?>">
-                <div class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#373737" stroke-linejoin="round" stroke-width="1"><path stroke-linecap="round" stroke-width="1.5" d="M10 19.5c-3.771 0-5.657 0-6.828-1.172S2 15.271 2 11.5v-1c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h3.5c3.288 0 4.931 0 6.038.908a4 4 0 0 1 .554.554C21 5.07 21 6.712 21 10M2 8.5h19"/><path stroke-linecap="round" stroke-width="2" d="M5.5 5.5h.01m3.98 0h.01"/><path stroke-width="1.5" d="M14.672 21.5H13v-1.672a2 2 0 0 1 .586-1.414l5.476-5.475a1.5 1.5 0 0 1 2.121 0l.379.379a1.5 1.5 0 0 1 0 2.121l-5.476 5.475a2 2 0 0 1-1.414.586Z"/></g></svg>
-                    <span>Visi Misi</span>
                 </div>
             </a>
             

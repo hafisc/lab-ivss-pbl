@@ -21,7 +21,6 @@ if (empty($footerSettings)) {
         'resources' => []
     ];
 }
-include __DIR__ . '/../../../public/'
 ?>
 
 <div class="max-w-5xl mx-auto py-8">
