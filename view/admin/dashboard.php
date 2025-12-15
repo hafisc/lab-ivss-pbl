@@ -6,8 +6,7 @@ $userRole = $_SESSION['user']['role'] ?? $_SESSION['role'] ?? 'member';
 $userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'User';
 ?>
 
-<div class="max-w-7xl mx-auto">
-    
+<div class="max-w-7xl mx-auto"> 
     <!-- Welcome Message based on Role -->
     <div class="mb-6 bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl p-6 text-white shadow-lg">
         <h1 class="text-2xl font-bold mb-2">

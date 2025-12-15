@@ -20,7 +20,6 @@
                     </svg>
                     <span class="text-sm font-semibold text-blue-900">Laboratorium Jurusan Teknologi Informasi - Politeknik Negeri Malang</span>
                 </div>
-
                 <!-- Main Title -->
                 <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
                     <span class="block">Intelligent Vision &</span>

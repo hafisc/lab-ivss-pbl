@@ -61,5 +61,6 @@ class VisiMisi {
                 $id
             ]
         );
+        
     }
 }

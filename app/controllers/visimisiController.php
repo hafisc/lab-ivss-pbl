@@ -59,7 +59,6 @@ class VisiMisiController {
         } else {
             $_SESSION['error'] = 'Gagal mengupdate Visi & Misi. Silakan cek log database.';
         }
-
         // Redirect kembali ke halaman edit
         header("Location: index.php?page=admin-visimisi");
         exit;

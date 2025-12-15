@@ -103,7 +103,9 @@ $userRole = $_SESSION['user']['role'] ?? ($_SESSION['role'] ?? 'member');
                         <span>Fasilitas Lab</span>
                     </div>
                 </a>
+
                 <!-- visimisi -->
+                 
                 <a href="edit.php?page=admin-visimisi&action=edit" class="<?= $visiMisiActive ?>">
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

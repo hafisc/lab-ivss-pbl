@@ -62,7 +62,6 @@ ob_start();
         </div>
     </form>
 </div>
-
 <?php
 // Tangkap konten dan kirim ke layout admin
 $content = ob_get_clean();
