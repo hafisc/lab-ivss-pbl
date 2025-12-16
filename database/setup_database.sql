@@ -1447,3 +1447,26 @@ INSERT INTO navbar_settings (brand_name, brand_logo, menu_items) VALUES
 );
 
 CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id);
+
+-- ========================================
+-- 19. TABEL VISIMISI
+-- ========================================
+-- Untuk menyimpan visi dan misi lab
+CREATE TABLE IF NOT EXISTS visimisi (
+    id SERIAL PRIMARY KEY,
+    visi TEXT,
+    misi TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Trigger untuk auto update timestamp
+CREATE TRIGGER trigger_visimisi_updated_at
+    BEFORE UPDATE ON visimisi
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert default data
+INSERT INTO visimisi (visi, misi) VALUES 
+('Menjadi laboratorium unggulan di bidang Intelligent Vision System yang diakui secara nasional maupun internasional.', 
+'1. Menyelenggarakan kegiatan penelitian berkualitas di bidang computer vision.\n2. Mengembangkan solusi cerdas untuk permasalahan industri dan masyarakat.\n3. Membina mahasiswa untuk memiliki kompetensi tinggi di bidang AI dan Vision System.');
