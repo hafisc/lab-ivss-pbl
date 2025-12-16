@@ -1,18 +1,16 @@
-<?php ob_start(); ?>
+<?php 
+// Mulai output buffering untuk menangkap konten
+ob_start(); 
+// Variabel $data diisi oleh VisiMisiController->edit()
+// $data berisi: ['id', 'visi', 'misi'] 
+?>
 
-<div class="flex items-center justify-between mb-4">
-    <div>
-        <h2 class="text-lg md:text-xl font-bold text-slate-800">Edit visi misi</h2>
-        <p class="text-xs text-slate-500 mt-0.5">Ubah informasi visi misi</p>
-    </div>
-    <a href="index.php?page=admin-news" 
-       class="inline-flex items-center px-3 py-2 bg-slate-500 hover:bg-slate-600 text-white text-xs font-medium rounded-lg transition-colors">
-        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-        </svg>
-        Kembali
-    </a>
+<?php if (isset($_SESSION['success'])): ?>
+<div class="mb-3 bg-green-50 border-l-4 border-green-500 p-3 rounded-lg">
+    <p class="text-xs text-green-700"><?= $_SESSION['success'] ?></p>
 </div>
+<?php unset($_SESSION['success']); ?>
+<?php endif; ?>
 
 <?php if (isset($_SESSION['error'])): ?>
 <div class="mb-3 bg-red-50 border-l-4 border-red-500 p-3 rounded-lg">
@@ -21,33 +19,52 @@
 <?php unset($_SESSION['error']); ?>
 <?php endif; ?>
 
-<div class="bg-white border border-slate-200 rounded-xl p-4">
-    <form method="POST" action="index.php?page=admin-visimisi&action=update&id=<?= $visimisiItem['id'] ?>" enctype="multipart/form-data" class="space-y-4">
+<div class="max-w-4xl mx-auto bg-white border border-slate-200 rounded-xl p-6 md:p-8 shadow-sm">
+    <h2 class="text-xl font-semibold text-slate-800 mb-6 border-b pb-3">
+        Edit Visi & Misi Laboratorium
+    </h2>
 
-        <div>
-            <label for="visi" class="block text-xs font-medium text-slate-700 mb-1.5">visi</label>
-            <textarea id="visi" name="visi" rows="10" required
-                      class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-xs"><?= htmlspecialchars($visimisiItem['visi']) ?></textarea>
+    <form action="index.php?page=admin-visimisi&action=update" method="POST">
+        
+        <input type="hidden" name="id" value="<?= htmlspecialchars($data['id'] ?? '') ?>">
+
+        <div class="mb-5">
+            <label for="visi" class="block text-sm font-medium text-slate-700 mb-2">Visi</label>
+            <textarea 
+                name="visi" 
+                id="visi" 
+                rows="6" 
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
+                required
+            ><?= htmlspecialchars($data['visi'] ?? '') ?></textarea>
+            <p class="mt-1 text-xs text-slate-500">Masukkan Pernyataan Visi Lab.</p>
         </div>
-        <div>
-            <label for="misi" class="block text-xs font-medium text-slate-700 mb-1.5">misi</label>
-            <textarea id="misi" name="misi" rows="10" required
-                      class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-xs"><?= htmlspecialchars($visimisiItem['misi']) ?></textarea>
+
+        <div class="mb-6">
+            <label for="misi" class="block text-sm font-medium text-slate-700 mb-2">Misi</label>
+            <textarea 
+                name="misi" 
+                id="misi" 
+                rows="8" 
+                class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm"
+                required
+            ><?= htmlspecialchars($data['misi'] ?? '') ?></textarea>
+            <p class="mt-1 text-xs text-slate-500">Masukkan daftar Misi Lab.</p>
         </div>
-        <div class="flex gap-2 pt-3 border-t">
-            <button type="submit" class="px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white font-medium rounded-lg transition-colors text-xs">
-                Update visi misi
+
+        <div class="flex justify-end">
+            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white text-sm font-medium rounded-lg transition-colors shadow-md">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                </svg>
+                Simpan Perubahan
             </button>
-            <a href="index.php?page=admin-visimisi" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg text-xs">
-                Batal
-            </a>
         </div>
     </form>
 </div>
-
-
 <?php
+// Tangkap konten dan kirim ke layout admin
 $content = ob_get_clean();
-$title = "Edit visi misi";
-include __DIR__ . "/../../layouts/admin.php";
+$title = "Edit Visi & Misi"; // Judul halaman
+include __DIR__ . "/../../layouts/admin.php"; // Pastikan path ini benar ke file layout admin Anda
 ?>

@@ -32,6 +32,8 @@ switch ($page) {
          require __DIR__ . '/../app/controllers/AdminController.php';
          (new AdminController($pg))->visimisi();
          break;
+         
+    case 'admin-news'
         require __DIR__ . '/../app/controllers/AdminController.php';
         (new AdminController($pg))->news();
         break;

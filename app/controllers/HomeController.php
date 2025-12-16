@@ -111,13 +111,14 @@ class HomeController {
         require_once __DIR__ . '/../models/Gallery.php';
         $galleryModel = new Gallery($this->db);
         $galleryItems = $galleryModel->getAll();
-
-        // Muat view dengan layout pages
-        require_once __DIR__ . '/../../view/layouts/pages.php';
         require_once __DIR__ . '/../models/visimisi.php';
         $visimisiModel = new Visimisi($this->db);
+        $visimisiData = $visimisiModel->get();
+        require_once __DIR__ . '/../models/Profil.php';
+        $this->profilModel = new Profil($db);
+        // Muat view dengan layout pages
+        require_once __DIR__ . '/../../view/layouts/pages.php';
+
         
-        // Asumsi Visi Misi hanya ada 1 record, ambil berdasarkan ID (misalnya ID 1)
-        $visimisiData = $visimisiModel->getById(1);
     }
 }
