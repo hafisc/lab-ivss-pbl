@@ -398,7 +398,7 @@ class AuthController
         }
 
         // Tampilkan halaman forgot password
-        $authView = 'forgot-password';
+        $authView = 'forgot_password';
         include __DIR__ . '/../../view/layouts/auth.php';
     }
 
