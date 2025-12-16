@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS roles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 INSERT INTO roles (role_name, role_description) VALUES
 ('admin', 'Administrator sistem dengan akses penuh'),
 ('ketua_lab', 'Ketua laboratorium yang mengelola lab'),

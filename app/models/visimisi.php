@@ -1,42 +1,66 @@
 <?php
 
-class Visimisi {
-    private $conn;
-    private $table = 'visimisi';
-
-    public $id;
-    public $misi;
-    public $visi;
-    public $updated_at;
+class VisiMisi {
+    private $db;
 
     public function __construct($db) {
-        $this->conn = $db;
+        $this->db = $db;
     }
-    // Get news by ID
-    public function getById($id) {
-        $query = "SELECT n.*, 
-                         COALESCE(d.nama, m.nama, u.username) as author_name 
-                  FROM " . $this->table . " n 
-                  LEFT JOIN users u ON n.author_id = u.id 
-                  LEFT JOIN dosen d ON u.id = d.user_id
-                  LEFT JOIN mahasiswa m ON u.id = m.user_id
-                  WHERE n.id = $1 
-                  LIMIT 1";
+
+    /**
+     * Mengambil data Visi & Misi (hanya 1 baris)
+     */
+    public function get() {
+        $result = pg_query($this->db, "SELECT * FROM visimisi LIMIT 1");
+        // Gunakan LIMIT 1 (sudah benar)
+        return pg_fetch_assoc($result) ?: null;
     }
-    // Update news
-    public function update() {
-    $query = "UPDATE " . $this->table . " 
-              SET visi = $1, misi = $2, updated_at = CURRENT_TIMESTAMP 
-              WHERE id = $3";
+    
+    /**
+     * Memastikan setidaknya satu baris data VisiMisi ada. 
+     * Jika tidak ada, data awal akan di-INSERT dan dikembalikan.
+     * @return array|null Data VisiMisi yang ada atau yang baru dibuat.
+     */
+    public function ensureRecordExists() {
+        $data = $this->get();
 
-    $result = pg_query_params($this->conn, $query, array(
-        $this->visi,
-        $this->misi,
-        // Hapus $this->updated_at, karena sudah CURRENT_TIMESTAMP di SQL
-        $this->id // Ini akan menjadi $3
-    ));
+        if (!$data) {
+            // Data awal jika tabel kosong
+            $initialVisi = 'Silakan masukkan Visi Anda di sini.';
+            $initialMisi = 'Silakan masukkan Misi Anda di sini.';
+            
+            // Lakukan INSERT data awal dan kembalikan datanya
+            $result = pg_query_params(
+                $this->db,
+                // Pastikan mengembalikan semua kolom yang dibutuhkan
+                "INSERT INTO visimisi (visi, misi) VALUES ($1, $2) RETURNING id, visi, misi",
+                [
+                    $initialVisi,
+                    $initialMisi
+                ]
+            );
+            
+            // Kembalikan data yang baru di-insert
+            return pg_fetch_assoc($result) ?: null;
+        }
+        
+        // Kembalikan data yang sudah ada
+        return $data; 
+    }
 
-    return $result !== false;
-}
-
+    /**
+     * Mengupdate data Visi & Misi berdasarkan ID (ID ini harusnya selalu 1)
+     */
+    public function update($id, $data) {
+        return pg_query_params(
+            $this->db,
+            "UPDATE visimisi SET visi=$1, misi=$2 WHERE id=$3",
+            [
+                $data['visi'],
+                $data['misi'],
+                $id
+            ]
+        );
+        
+    }
 }
