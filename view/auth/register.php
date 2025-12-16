@@ -59,6 +59,7 @@
                         required 
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Nama lengkap Anda"
+                        value="<?= htmlspecialchars($_SESSION['old']['name'] ?? '') ?>"
                     >
                 </div>
             </div>
@@ -81,6 +82,7 @@
                         required 
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="email@student.polinema.ac.id"
+                        value="<?= htmlspecialchars($_SESSION['old']['email'] ?? '') ?>"
                     >
                 </div>
             </div>
@@ -103,6 +105,7 @@
                         required 
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Contoh: 2141720001"
+                        value="<?= htmlspecialchars($_SESSION['old']['nim'] ?? '') ?>"
                     >
                 </div>
             </div>
@@ -124,6 +127,7 @@
                         type="tel" 
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="08xxxxxxxxxx"
+                        value="<?= htmlspecialchars($_SESSION['old']['phone'] ?? '') ?>"
                     >
                 </div>
             </div>
@@ -146,6 +150,7 @@
                         required
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Contoh: 2024"
+                        value="<?= htmlspecialchars($_SESSION['old']['angkatan'] ?? '') ?>"
                     >
                 </div>
             </div>
@@ -168,6 +173,7 @@
                         required
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Contoh: TI 3A - Politeknik Negeri Malang"
+                        value="<?= htmlspecialchars($_SESSION['old']['origin'] ?? '') ?>"
                     >
                 </div>
             </div>
@@ -195,6 +201,7 @@
                         required
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Contoh: Face Recognition dengan Deep Learning"
+                        value="<?= htmlspecialchars($_SESSION['old']['research_title'] ?? '') ?>"
                     >
                 </div>
                 <p class="mt-1 text-xs text-gray-500">Tulis judul penelitian yang ingin Anda kerjakan di Lab IVSS</p>
@@ -218,9 +225,9 @@
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition appearance-none"
                     >
                         <option value="">Pilih Dosen Pengampu</option>
-                        <option value="3">Dr. Budi Santoso - Computer Vision & Deep Learning</option>
-                        <option value="4">Dr. Andi Wijaya - Image Processing & AI</option>
-                        <option value="5">Dr. Siti Nurhaliza - Natural Language Processing</option>
+                        <option value="3" <?= (isset($_SESSION['old']['supervisor_id']) && $_SESSION['old']['supervisor_id'] == 3) ? 'selected' : '' ?>>Dr. Budi Santoso - Computer Vision & Deep Learning</option>
+                        <option value="4" <?= (isset($_SESSION['old']['supervisor_id']) && $_SESSION['old']['supervisor_id'] == 4) ? 'selected' : '' ?>>Dr. Andi Wijaya - Image Processing & AI</option>
+                        <option value="5" <?= (isset($_SESSION['old']['supervisor_id']) && $_SESSION['old']['supervisor_id'] == 5) ? 'selected' : '' ?>>Dr. Siti Nurhaliza - Natural Language Processing</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                         <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,7 +250,7 @@
                     required
                     class="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none"
                     placeholder="Jelaskan motivasi Anda bergabung dengan Lab IVSS dan mengapa Anda tertarik dengan topik penelitian yang dipilih..."
-                ></textarea>
+                ><?= htmlspecialchars($_SESSION['old']['motivation'] ?? '') ?></textarea>
                 <p class="mt-1 text-xs text-gray-500">Minimal 50 karakter</p>
             </div>
 
@@ -355,7 +362,10 @@
     </div>
     
     
-    
+    <script>
+    // Cleanup old session data after render
+    <?php if (isset($_SESSION['old'])) unset($_SESSION['old']); ?>
+    </script>
 </div>
 
 <script>

@@ -140,6 +140,11 @@ class AuthController
 
         // Proses register jika form disubmit
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Simpan input user ke session untuk repopulate form jika error
+            $_SESSION['old'] = $_POST;
+            unset($_SESSION['old']['password']);
+            unset($_SESSION['old']['password_confirm']);
+
             // Ambil data biodata
             $name = trim($_POST['name'] ?? '');
             $email = trim($_POST['email'] ?? '');
