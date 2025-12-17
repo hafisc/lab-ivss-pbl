@@ -111,7 +111,6 @@ class HomeController {
         require_once __DIR__ . '/../models/Gallery.php';
         $galleryModel = new Gallery($this->db);
         $galleryItems = $galleryModel->getAll();
-        
         require_once __DIR__ . '/../models/VisiMisi.php';
         $visimisiModel = new Visimisi($this->db);
         $visimisi = $visimisiModel->get();
@@ -119,43 +118,5 @@ class HomeController {
         require_once __DIR__ . '/../../view/layouts/pages.php';
 
         
-    }
-
-    /**
-     * Menampilkan halaman berita (list atau detail)
-     */
-    public function news() {
-        // Load System settings
-        require_once __DIR__ . '/../models/SystemSettings.php';
-        $settingsModel = new SystemSettings($this->db);
-        $settings = $settingsModel->getAll();
-
-        require_once __DIR__ . '/../models/news.php';
-        $newsModel = new News($this->db);
-
-        $slug = $_GET['slug'] ?? null;
-
-        if ($slug) {
-            $news = $newsModel->getBySlug($slug);
-            if ($news) {
-                // Increment views
-                $newsModel->incrementViews($news['id']);
-                
-                // Get related news (optional)
-                $relatedNews = $newsModel->getLatest(3);
-                
-                $pageView = __DIR__ . '/../../view/pages/berita/show.php';
-            } else {
-                 // 404 behavior or redirect
-                 header('Location: index.php?page=news');
-                 exit;
-            }
-        } else {
-            // List page
-            $latestNews = $newsModel->getAll(null, 'published');
-            $pageView = __DIR__ . '/../../view/pages/berita/index.php';
-        }
-
-        require_once __DIR__ . '/../../view/layouts/pages.php';
     }
 }

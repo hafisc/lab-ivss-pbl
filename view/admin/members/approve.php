@@ -1,199 +1,260 @@
 <?php 
-/**
- * View Approval Member
- * 
- * Halaman ini menampilkan daftar pendaftar baru yang menunggu persetujuan.
- * Menggunakan sistem approval bertingkat (Dosen -> Ketua Lab).
- * 
- * @package View
- * @subpackage Admin/Members
- */
-
 ob_start(); 
 
-// Cek hak akses approval
+// Get user role
 $userRole = $_SESSION['user']['role'] ?? 'member';
 $canApprove = ($userRole === 'dosen' || $userRole === 'ketua_lab');
 ?>
 
-<!-- Alert Feedback -->
+<!-- Alert Messages -->
 <?php if (isset($_SESSION['success'])): ?>
-<div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center shadow-sm animate-fade-in-down">
-    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-    <p class="text-sm font-medium"><?= $_SESSION['success'] ?></p>
+<div class="mb-3 bg-green-50 border-l-4 border-green-500 p-3 rounded-lg">
+    <div class="flex items-center">
+        <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <p class="text-xs text-green-700 font-medium"><?= $_SESSION['success'] ?></p>
+    </div>
 </div>
-<?php unset($_SESSION['success']); endif; ?>
+<?php unset($_SESSION['success']); ?>
+<?php endif; ?>
 
 <?php if (isset($_SESSION['error'])): ?>
-<div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center shadow-sm animate-fade-in-down">
-    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-    <p class="text-sm font-medium"><?= $_SESSION['error'] ?></p>
-</div>
-<?php unset($_SESSION['error']); endif; ?>
-
-
-<!-- Grid Layout Utama -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
-    <!-- Kolom Kiri: Daftar Pendaftar (Lebih Lebar) -->
-    <div class="lg:col-span-2 space-y-6">
-        
-        <!-- Tabel Card -->
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-                <div>
-                    <h3 class="font-bold text-slate-800">Daftar Pendaftar Baru</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Menampilkan pendaftar yang perlu review</p>
-                </div>
-                <!-- Badge Count -->
-                <span class="inline-flex items-center justify-center px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
-                    <?= count($registrations ?? []) ?> Pending
-                </span>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200 uppercase tracking-wider text-xs">
-                        <tr>
-                            <th class="px-5 py-3 text-center">#</th>
-                            <th class="px-5 py-3">Nama Pendaftar</th>
-                            <th class="px-5 py-3 hidden md:table-cell">Judul Riset</th>
-                            <th class="px-5 py-3">Status</th>
-                            <th class="px-5 py-3 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        <?php if (empty($registrations)): ?>
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
-                                <svg class="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <p class="text-sm font-medium">Tidak ada pendaftaran pending.</p>
-                            </td>
-                        </tr>
-                        <?php else: ?>
-                            <?php foreach ($registrations as $index => $reg): ?>
-                            <tr class="hover:bg-slate-50 transition-colors group">
-                                <td class="px-5 py-4 text-center text-xs text-slate-500"><?= $index + 1 ?></td>
-                                <td class="px-5 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
-                                            <?= strtoupper(substr($reg['name'], 0, 1)) ?>
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-slate-800 text-sm"><?= htmlspecialchars($reg['name']) ?></p>
-                                            <p class="text-xs text-slate-500"><?= htmlspecialchars($reg['email']) ?></p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-4 hidden md:table-cell">
-                                    <p class="text-xs text-slate-600 line-clamp-2 max-w-[200px]" title="<?= htmlspecialchars($reg['research_title']) ?>">
-                                        <?= htmlspecialchars($reg['research_title'] ?? '-') ?>
-                                    </p>
-                                </td>
-                                <td class="px-5 py-4">
-                                    <?php 
-                                    $statusKeys = [
-                                        'pending_supervisor' => ['bg'=>'bg-amber-100', 'text'=>'text-amber-700', 'label'=>'Menunggu Dosen'],
-                                        'pending_lab_head'   => ['bg'=>'bg-blue-100', 'text'=>'text-blue-700', 'label'=>'Menunggu Ka.Lab'],
-                                    ];
-                                    $currStatus = $reg['status'] ?? 'pending_supervisor';
-                                    $s = $statusKeys[$currStatus] ?? ['bg'=>'bg-gray-100', 'text'=>'text-gray-600', 'label'=>$currStatus];
-                                    ?>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium <?= $s['bg'] ?> <?= $s['text'] ?>">
-                                        <?= $s['label'] ?>
-                                    </span>
-                                </td>
-                                <td class="px-5 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <!-- Detail Button -->
-                                        <a href="index.php?page=admin-registrations&action=view&id=<?= $reg['id'] ?>" 
-                                           class="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Lihat Detail">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                        </a>
-
-                                        <?php if ($canApprove): ?>
-                                            <!-- Approve -->
-                                            <a href="index.php?page=admin-registrations&action=approve&id=<?= $reg['id'] ?>" onclick="return confirm('Setujui pendaftar ini?')"
-                                               class="p-1.5 text-slate-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors" title="Setujui">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                            </a>
-                                            <!-- Reject -->
-                                            <a href="index.php?page=admin-registrations&action=reject&id=<?= $reg['id'] ?>" onclick="return confirm('Tolak pendaftar ini?')"
-                                               class="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Tolak">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                            </a>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<div class="mb-3 bg-red-50 border-l-4 border-red-500 p-3 rounded-lg">
+    <div class="flex items-center">
+        <svg class="w-4 h-4 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+        <p class="text-xs text-red-700 font-medium"><?= $_SESSION['error'] ?></p>
     </div>
-    
-    <!-- Kolom Kanan: Info Panel -->
-    <div class="space-y-6">
-        
-        <!-- Info Khusus Role -->
-        <?php if ($userRole === 'admin'): ?>
-        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 shadow-sm">
-            <h4 class="flex items-center text-indigo-900 font-bold mb-3">
-                <span class="text-xl mr-2">ℹ️</span> Informasi Admin
-            </h4>
-            <p class="text-sm text-indigo-800 leading-relaxed mb-3">
-                Anda login sebagai <strong>Administrator</strong>. Anda memiliki akses untuk melihat seluruh proses, namun tidak memiliki wewenang untuk melakukan approval langsung.
+</div>
+<?php unset($_SESSION['error']); ?>
+<?php endif; ?>
+
+<!-- Info Box for Admin -->
+<?php if ($userRole === 'admin'): ?>
+<div class="mb-4 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+    <div class="flex items-start">
+        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <div class="flex-1">
+            <h4 class="text-sm font-semibold text-blue-900 mb-1">ℹ️ Info untuk Admin</h4>
+            <p class="text-xs text-blue-800 mb-2">
+                Sebagai Admin, Anda <strong>hanya dapat melihat dan memonitor</strong> status approval pendaftar. 
+                Anda <strong>tidak dapat approve atau reject</strong> pendaftar.
             </p>
-            <div class="text-xs text-indigo-700 bg-white/50 p-2 rounded border border-indigo-100">
-                Persetujuan dilakukan berjenjang oleh <strong>Dosen Pembimbing</strong> kemudian <strong>Ketua Lab</strong>.
+            <div class="text-xs text-blue-700 space-y-1">
+                <p>📋 <strong>Workflow Approval:</strong></p>
+                <p class="ml-4">1️⃣ Dosen Pembimbing → Review & Approve mahasiswa bimbingannya</p>
+                <p class="ml-4">2️⃣ Ketua Lab → Final approval & Create account</p>
+                <p class="ml-4">3️⃣ Member → Jadi resmi & dapat login</p>
             </div>
         </div>
+    </div>
+</div>
+<?php endif; ?>
+
+<!-- Table Card -->
+<div class="bg-white border border-slate-200 rounded-xl overflow-hidden">
+    
+    <!-- Table Header -->
+    <div class="p-3 border-b border-slate-200 bg-slate-50">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="font-semibold text-slate-800 text-sm">Daftar Pendaftar</h3>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Total: <span class="font-medium text-slate-700"><?= count($registrations ?? []) ?></span> pendaftar menunggu approval
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Table Content -->
+    <div class="overflow-x-auto">
+        <?php if (empty($registrations)): ?>
+            <!-- Empty State -->
+            <div class="p-8 text-center">
+                <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h3 class="text-sm font-medium text-slate-700 mb-1">Tidak ada pendaftar baru</h3>
+                <p class="text-xs text-slate-500">Semua pendaftar sudah di-review atau belum ada yang mendaftar.</p>
+            </div>
+        <?php else: ?>
+            <!-- Table -->
+            <table class="w-full text-xs">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                        <th class="text-left px-3 py-2 font-medium text-slate-600 text-xs">#</th>
+                        <th class="text-left px-3 py-2 font-medium text-slate-600 text-xs">Nama</th>
+                        <th class="text-left px-3 py-2 font-medium text-slate-600 text-xs hidden md:table-cell">Judul Penelitian</th>
+                        <th class="text-left px-3 py-2 font-medium text-slate-600 text-xs hidden lg:table-cell">Asal</th>
+                        <th class="text-left px-3 py-2 font-medium text-slate-600 text-xs">Status Approval</th>
+                        <th class="text-center px-3 py-2 font-medium text-slate-600 text-xs">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    <?php foreach ($registrations as $index => $reg): ?>
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-3 py-2.5 text-slate-500 text-xs"><?= $index + 1 ?></td>
+                        <td class="px-3 py-2.5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-xs font-semibold text-blue-700">
+                                        <?= strtoupper(substr($reg['name'], 0, 1)) ?>
+                                    </span>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-slate-800 text-xs"><?= htmlspecialchars($reg['name']) ?></p>
+                                    <p class="text-xs text-slate-500"><?= htmlspecialchars($reg['email']) ?></p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2.5 text-slate-600 text-xs hidden md:table-cell">
+                            <?= htmlspecialchars($reg['research_title'] ?? '-') ?>
+                        </td>
+                        <td class="px-3 py-2.5 text-slate-600 text-xs hidden lg:table-cell">
+                            <?= htmlspecialchars($reg['origin'] ?? '-') ?>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <?php 
+                            $status = $reg['status'] ?? 'pending_supervisor';
+                            $statusConfig = [
+                                'pending_supervisor' => [
+                                    'label' => 'Menunggu Approval Dosen',
+                                    'icon' => '⏱️',
+                                    'bg' => 'bg-amber-100',
+                                    'text' => 'text-amber-700',
+                                    'border' => 'border-amber-200'
+                                ],
+                                'pending_lab_head' => [
+                                    'label' => 'Menunggu Approval Ketua Lab',
+                                    'icon' => '✓',
+                                    'bg' => 'bg-blue-100',
+                                    'text' => 'text-blue-700',
+                                    'border' => 'border-blue-200'
+                                ],
+                                'approved' => [
+                                    'label' => 'Disetujui - Member Aktif',
+                                    'icon' => '✓✓',
+                                    'bg' => 'bg-emerald-100',
+                                    'text' => 'text-emerald-700',
+                                    'border' => 'border-emerald-200'
+                                ],
+                                'rejected_supervisor' => [
+                                    'label' => 'Ditolak Dosen',
+                                    'icon' => '✗',
+                                    'bg' => 'bg-red-100',
+                                    'text' => 'text-red-700',
+                                    'border' => 'border-red-200'
+                                ],
+                                'rejected_lab_head' => [
+                                    'label' => 'Ditolak Ketua Lab',
+                                    'icon' => '✗',
+                                    'bg' => 'bg-red-100',
+                                    'text' => 'text-red-700',
+                                    'border' => 'border-red-200'
+                                ]
+                            ];
+                            
+                            $config = $statusConfig[$status] ?? $statusConfig['pending_supervisor'];
+                            ?>
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium border <?= $config['bg'] ?> <?= $config['text'] ?> <?= $config['border'] ?>">
+                                <span><?= $config['icon'] ?></span>
+                                <span class="hidden sm:inline"><?= $config['label'] ?></span>
+                            </span>
+                        </td>
+                        <td class="px-3 py-2.5">
+                            <div class="flex items-center justify-center gap-1">
+                                <!-- Lihat Detail -->
+                                <a href="index.php?page=admin-registrations&action=view&id=<?= $reg['id'] ?>" 
+                                   class="inline-flex items-center justify-center w-7 h-7 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded transition-colors"
+                                   title="Lihat Detail">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </a>
+                                
+                                <?php if (($status === 'pending_supervisor' || $status === 'pending_lab_head') && $canApprove): ?>
+                                <!-- Approve Button (Dosen & Ketua Lab only) -->
+                                <a href="index.php?page=admin-registrations&action=approve&id=<?= $reg['id'] ?>" 
+                                   onclick="return confirm('Approve pendaftar ini?')"
+                                   class="inline-flex items-center justify-center w-7 h-7 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors"
+                                   title="Approve">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </a>
+                                
+                                <!-- Reject Button (Dosen & Ketua Lab only) -->
+                                <a href="index.php?page=admin-registrations&action=reject&id=<?= $reg['id'] ?>" 
+                                   onclick="return confirm('Tolak pendaftar ini?')"
+                                   class="inline-flex items-center justify-center w-7 h-7 bg-red-100 hover:bg-red-200 text-red-700 rounded transition-colors"
+                                   title="Tolak">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </a>
+                                <?php endif; ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         <?php endif; ?>
+    </div>
+    
+</div>
 
-        <!-- Alur Approval Legend -->
-        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <h4 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Alur Pendaftaran</h4>
-            
-            <div class="relative pl-4 border-l-2 border-slate-200 space-y-6">
+<!-- Info Card - Alur Approval -->
+<div class="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+    <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <div class="flex-1">
+            <h4 class="text-sm font-bold text-blue-900 mb-2">🔄 Alur Approval Bertingkat</h4>
+            <div class="space-y-2">
                 <!-- Step 1 -->
-                <div class="relative">
-                    <span class="absolute -left-[21px] top-0 w-4 h-4 rounded-full bg-slate-200 border-2 border-white"></span>
-                    <h5 class="text-sm font-semibold text-slate-700">1. Registrasi Online</h5>
-                    <p class="text-xs text-slate-500 mt-1">Mahasiswa mengisi form dan memilih dosen pembimbing.</p>
+                <div class="flex items-start gap-2">
+                    <div class="w-6 h-6 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">1</div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Mahasiswa Mendaftar</p>
+                        <p class="text-xs text-slate-600">Mengisi form + pilih dosen pengampu → Status: <strong class="text-amber-700">Menunggu Approval Dosen</strong></p>
+                    </div>
                 </div>
-
+                
                 <!-- Step 2 -->
-                <div class="relative">
-                    <span class="absolute -left-[21px] top-0 w-4 h-4 rounded-full bg-amber-400 border-2 border-white ring-2 ring-amber-100"></span>
-                    <h5 class="text-sm font-semibold text-slate-700">2. Review Dosen</h5>
-                    <p class="text-xs text-slate-500 mt-1">Dosen memverifikasi judul dan kesediaan membimbing.</p>
-                    <span class="inline-block mt-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] rounded font-medium">Pending Dosen</span>
+                <div class="flex items-start gap-2">
+                    <div class="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">2</div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Dosen Review & Approve</p>
+                        <p class="text-xs text-slate-600">Dosen melihat pendaftar yang pilih dia → Approve → Status: <strong class="text-blue-700">Menunggu Approval Ketua Lab</strong></p>
+                    </div>
                 </div>
-
+                
                 <!-- Step 3 -->
-                <div class="relative">
-                    <span class="absolute -left-[21px] top-0 w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></span>
-                    <h5 class="text-sm font-semibold text-slate-700">3. Review Ketua Lab</h5>
-                    <p class="text-xs text-slate-500 mt-1">Final check administrasi oleh Ketua Lab.</p>
-                    <span class="inline-block mt-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] rounded font-medium">Pending Ka.Lab</span>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="relative">
-                    <span class="absolute -left-[21px] top-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white"></span>
-                    <h5 class="text-sm font-semibold text-slate-700">4. Resmi Bergabung</h5>
-                    <p class="text-xs text-slate-500 mt-1">Akun aktif dan member dapat login.</p>
+                <div class="flex items-start gap-2">
+                    <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">3</div>
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Ketua Lab Final Approval</p>
+                        <p class="text-xs text-slate-600">Ketua Lab review yang sudah lolos dosen → Approve → Status: <strong class="text-emerald-700">Member Aktif</strong> ✓</p>
+                    </div>
                 </div>
             </div>
+            
+            <div class="mt-3 pt-3 border-t border-blue-200">
+                <p class="text-xs text-blue-900"><strong>Note:</strong> Jika ditolak di salah satu tahap, status berubah menjadi "Ditolak" dan email notifikasi otomatis terkirim.</p>
+            </div>
         </div>
-        
     </div>
 </div>
 
-<?php 
-$content = ob_get_clean(); 
-$title = "Approval Pendaftar";
-include __DIR__ . "/../../layouts/admin.php"; 
+<?php
+$content = ob_get_clean();
+$title = "Approve Pendaftar";
+include __DIR__ . "/../../layouts/admin.php";
 ?>

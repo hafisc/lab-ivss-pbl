@@ -1,185 +1,225 @@
-<?php
-/**
- * View Partial Header Admin
- * 
- * Header bagian atas untuk panel admin.
- * Memuat toggle sidebar (mobile), indikator role, dan notifikasi dropdown.
- * 
- * @package View
- * @subpackage Admin/Partials
- */
-?>
-<!-- Header Wrapper -->
-<header class="bg-white/90 backdrop-blur-sm border-b border-slate-200 px-4 md:px-6 h-16 flex items-center justify-between sticky top-0 z-20 shadow-sm transition-all duration-300">
+<!-- Header/Topbar -->
+<header class="bg-white border-b border-slate-200 px-4 md:px-6 h-14 flex items-center justify-between">
     
-    <!-- Bagian Kiri: Hamburger & Judul Halaman -->
-    <div class="flex items-center gap-4">
-        <!-- Tombol Toggle Sidebar (Hanya Mobile) -->
-        <button id="sidebarToggle" class="lg:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-blue-600 transition-all duration-200" aria-label="Toggle Sidebar">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Left Section: Hamburger + Title -->
+    <div class="flex items-center gap-3">
+        <!-- Hamburger Menu Button (Mobile Only) -->
+        <button id="sidebarToggle" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 active:bg-slate-200 transition-all duration-200" aria-label="Toggle Sidebar">
+            <svg class="w-6 h-6 text-slate-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
         </button>
         
-        <!-- Logika Badge Role -->
+        <!-- Page Title with Role Badge -->
         <?php 
         $userRole = $_SESSION['user']['role'] ?? $_SESSION['role'] ?? 'member';
-        $roleLabel = 'Member';
-        $roleClass = 'bg-gray-100 text-gray-700';
+        $roleLabel = '';
+        $roleColor = '';
         
         switch($userRole) {
             case 'admin':
-                $roleLabel = 'Administrator';
-                $roleClass = 'bg-blue-100 text-blue-700 border border-blue-200';
+                $roleLabel = 'Admin';
+                $roleColor = 'bg-blue-100 text-blue-800';
                 break;
             case 'ketua_lab':
                 $roleLabel = 'Ketua Lab';
-                $roleClass = 'bg-orange-100 text-orange-700 border border-orange-200';
+                $roleColor = 'bg-orange-100 text-orange-800';
                 break;
             case 'dosen':
-                $roleLabel = 'Dosen Pembimbing';
-                $roleClass = 'bg-purple-100 text-purple-700 border border-purple-200';
+                $roleLabel = 'Dosen';
+                $roleColor = 'bg-purple-100 text-purple-800';
                 break;
+            default:
+                $roleLabel = 'Member';
+                $roleColor = 'bg-gray-100 text-gray-800';
         }
         ?>
-
-        <!-- Judul Halaman & Badge -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-            <h1 class="text-lg font-bold text-slate-800 tracking-tight"><?= $title ?? 'Admin Panel' ?></h1>
-            <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $roleClass ?>">
+        <div class="flex items-center gap-2">
+            <h1 class="text-base md:text-lg font-semibold text-slate-800"><?= $title ?? 'Dashboard' ?></h1>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-xs font-medium <?= $roleColor ?>">
                 <?= $roleLabel ?>
             </span>
         </div>
     </div>
     
-    <!-- Bagian Kanan: User & Notifikasi -->
-    <div class="flex items-center gap-4">
-        
-        <!-- Dropdown Notifikasi -->
+    <!-- User Info & Notifications -->
+    <div class="flex items-center gap-3">
+        <!-- Notification Bell -->
         <?php
-        // Menggunakan variabel global $notificationCount dan $notifications dari layout utama
+        // Gunakan data yang sudah di-prepare di layout
         $notifCount = $notificationCount ?? 0;
         $notifList = $notifications ?? [];
         ?>
+        
+        <!-- Notification Dropdown -->
         <div class="relative">
-            <button id="notificationBtn" class="relative p-2 rounded-full text-slate-500 hover:bg-slate-100 hover:text-blue-600 transition-colors focus:outline-none" title="Notifikasi">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button id="notificationBtn" class="relative p-2 rounded-lg hover:bg-slate-100 transition-colors group" title="Notifikasi">
+                <svg class="w-5 h-5 text-slate-600 group-hover:text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                 </svg>
-                
-                <!-- Badge Hitungan Notifikasi -->
                 <?php if ($notifCount > 0): ?>
-                    <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                    <span class="absolute top-0 right-0 flex items-center justify-center min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full px-1">
                         <?= $notifCount > 9 ? '9+' : $notifCount ?>
                     </span>
                 <?php endif; ?>
             </button>
             
-            <!-- Isi Dropdown Notifikasi -->
-            <div id="notificationDropdown" class="hidden absolute right-0 mt-3 w-80 md:w-96 bg-white rounded-xl shadow-2xl border border-slate-100 z-50 transform origin-top-right transition-all">
-                
-                <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
+            <!-- Dropdown Menu -->
+            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-xl border border-slate-200 z-50 max-h-[500px] overflow-hidden">
+                <!-- Header -->
+                <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50">
                     <h3 class="text-sm font-bold text-slate-800">Notifikasi</h3>
-                    <span class="text-xs text-blue-600 hover:underline cursor-pointer">Tandai sudah dibaca</span>
+                    <button class="p-1 hover:bg-slate-200 rounded transition-colors" title="Pengaturan">
+                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </button>
                 </div>
                 
-                <div class="max-h-[350px] overflow-y-auto py-1">
+                <!-- Tabs -->
+                <div class="flex border-b border-slate-200 bg-white">
+                    <button class="flex-1 px-4 py-2 text-xs font-medium text-slate-700 border-b-2 border-blue-600 bg-blue-50">
+                        Penting
+                    </button>
+                    <button class="flex-1 px-4 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50 transition-colors">
+                        Notifikasi Lainnya
+                    </button>
+                </div>
+                
+                <!-- Notification List -->
+                <div class="overflow-y-auto max-h-[400px]">
                     <?php if ($notifCount > 0 && !empty($notifList)): ?>
-                        <?php foreach ($notifList as $notif): ?>
-                            <!-- Item Notifikasi -->
-                            <a href="index.php?page=admin-registrations&action=view&id=<?= $notif['id'] ?>" class="block px-4 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-colors group">
-                                <div class="flex gap-3">
-                                    <div class="flex-shrink-0 mt-1">
-                                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs ring-2 ring-white shadow-sm">
-                                            <?= strtoupper(substr($notif['name'], 0, 1)) ?>
-                                        </div>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-semibold text-slate-800 group-hover:text-blue-600 truncate transition-colors">
-                                            <?= htmlspecialchars($notif['name']) ?>
-                                        </p>
-                                        <p class="text-xs text-slate-500 mt-0.5 truncate">
-                                            <?= htmlspecialchars($notif['research_title'] ?? 'Registrasi baru menunggu approval') ?>
-                                        </p>
-                                        <p class="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            Baru saja
-                                        </p>
-                                    </div>
-                                    <div class="flex-shrink-0 self-center">
-                                        <span class="w-2 h-2 bg-blue-500 rounded-full block"></span>
-                                    </div>
+                        
+                        <?php 
+                        // Icon & color config per role
+                        $iconConfig = [
+                            'admin' => [
+                                'bg' => 'bg-blue-100',
+                                'text' => 'text-blue-600',
+                                'title' => 'Pendaftar Member Baru'
+                            ],
+                            'dosen' => [
+                                'bg' => 'bg-purple-100',
+                                'text' => 'text-purple-600',
+                                'title' => 'Mahasiswa Memilih Anda Sebagai Pembimbing'
+                            ],
+                            'ketua_lab' => [
+                                'bg' => 'bg-orange-100',
+                                'text' => 'text-orange-600',
+                                'title' => 'Pending Final Approval'
+                            ]
+                        ];
+                        
+                        $config = $iconConfig[$userRole] ?? $iconConfig['admin'];
+                        
+                        // Loop through real notifications from database
+                        foreach ($notifList as $notif):
+                            $timeAgo = 'baru saja';
+                            if (!empty($notif['created_at'])) {
+                                $created = strtotime($notif['created_at']);
+                                $now = time();
+                                $diff = $now - $created;
+                                
+                                // Handle jika timestamp invalid atau di masa depan
+                                if ($diff < 0) {
+                                    $timeAgo = 'baru saja';
+                                } elseif ($diff < 60) {
+                                    // Kurang dari 1 menit
+                                    $timeAgo = 'baru saja';
+                                } elseif ($diff < 3600) {
+                                    // Kurang dari 1 jam - tampilkan menit
+                                    $minutes = floor($diff / 60);
+                                    $timeAgo = $minutes . ' menit yang lalu';
+                                } elseif ($diff < 86400) {
+                                    // Kurang dari 1 hari - tampilkan jam
+                                    $hours = floor($diff / 3600);
+                                    $timeAgo = $hours . ' jam yang lalu';
+                                } else {
+                                    // 1 hari atau lebih - tampilkan hari
+                                    $days = floor($diff / 86400);
+                                    $timeAgo = $days . ' hari yang lalu';
+                                }
+                            }
+                        ?>
+                        <a href="index.php?page=admin-registrations&action=view&id=<?= $notif['id'] ?>" class="block px-4 py-3 hover:bg-slate-50 border-b border-slate-100 transition-colors">
+                            <div class="flex gap-3">
+                                <div class="w-10 h-10 <?= $config['bg'] ?> rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="<?= $config['text'] ?> text-sm font-bold">
+                                        <?= strtoupper(substr($notif['name'], 0, 1)) ?>
+                                    </span>
                                 </div>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <!-- State Kosong -->
-                        <div class="px-4 py-8 text-center">
-                            <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-2">
-                                <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-semibold text-slate-900 leading-tight"><?= htmlspecialchars($notif['name']) ?></p>
+                                    <p class="text-xs text-slate-600 mt-0.5 truncate"><?= htmlspecialchars($notif['research_title'] ?? 'Menunggu approval') ?></p>
+                                    <p class="text-xs text-slate-400 mt-1"><?= $timeAgo ?></p>
+                                </div>
+                                <button class="text-slate-400 hover:text-slate-600">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                    </svg>
+                                </button>
                             </div>
-                            <p class="text-sm text-slate-500 font-medium">Tidak ada notifikasi baru</p>
+                        </a>
+                        <?php endforeach; ?>
+                        
+                    <?php else: ?>
+                        <!-- Empty State -->
+                        <div class="px-4 py-8 text-center">
+                            <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            <p class="text-sm text-slate-600 font-medium">Tidak ada notifikasi</p>
+                            <p class="text-xs text-slate-500 mt-1">Semua notifikasi sudah dibaca</p>
                         </div>
                     <?php endif; ?>
                 </div>
-
+                
+                <!-- Footer -->
                 <?php if ($notifCount > 0): ?>
-                <div class="px-4 py-2 border-t border-slate-100 bg-slate-50/50 rounded-b-xl text-center">
-                    <a href="index.php?page=admin-registrations" class="text-xs font-bold text-blue-600 hover:text-blue-800">Lihat Semua</a>
+                <div class="px-4 py-2 border-t border-slate-200 bg-slate-50">
+                    <a href="index.php?page=admin-notifications" class="block text-center text-xs font-medium text-blue-600 hover:text-blue-800 py-1">
+                        Lihat Semua Notifikasi
+                    </a>
                 </div>
                 <?php endif; ?>
             </div>
         </div>
         
-        <!-- Divider Vertical -->
-        <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
-
-        <!-- Profil User -->
-        <div class="flex items-center gap-3 pl-1">
-            <div class="hidden md:block text-right">
-                <p class="text-sm font-bold text-slate-700 leading-tight">
-                    <?= htmlspecialchars($_SESSION['user']['name'] ?? 'Admin') ?>
-                </p>
-                <p class="text-xs text-slate-500 font-medium truncate max-w-[120px]">
-                    <?= htmlspecialchars($_SESSION['user']['email'] ?? '') ?>
-                </p>
-            </div>
-            <div class="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 p-0.5 shadow-md">
-                <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                     <!-- Jika ada foto profil, gunakan img. Jika tidak, inisial. -->
-                     <span class="text-blue-700 font-bold text-sm md:text-base">
-                        <?= strtoupper(substr($_SESSION['user']['name'] ?? 'A', 0, 1)) ?>
-                     </span>
-                </div>
-            </div>
+        <p class="text-xs md:text-sm text-slate-500 hidden sm:block">
+            Halo, <span class="font-medium text-slate-700"><?= $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'Admin' ?></span>
+        </p>
+        <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-200 flex items-center justify-center">
+            <span class="text-sm font-semibold text-slate-600">
+                <?= strtoupper(substr($_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'A', 0, 1)) ?>
+            </span>
         </div>
-        
     </div>
     
 </header>
 
-<!-- Script Logic Dropdown Notifikasi -->
+<!-- Notification Dropdown Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('notificationBtn');
-    const dropdown = document.getElementById('notificationDropdown');
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
     
-    if (btn && dropdown) {
-        // Toggle Dropdown
-        btn.addEventListener('click', function(e) {
+    if (notificationBtn && notificationDropdown) {
+        // Toggle dropdown saat button diklik
+        notificationBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            dropdown.classList.toggle('hidden');
+            notificationDropdown.classList.toggle('hidden');
         });
         
-        // Tutup jika klik di luar
+        // Close dropdown saat click di luar
         document.addEventListener('click', function(e) {
-            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.add('hidden');
+            if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                notificationDropdown.classList.add('hidden');
             }
         });
         
-        // Mencegah penutupan jika klik di dalam dropdown
-        dropdown.addEventListener('click', function(e) {
+        // Prevent dropdown close saat click di dalam dropdown
+        notificationDropdown.addEventListener('click', function(e) {
             e.stopPropagation();
         });
     }

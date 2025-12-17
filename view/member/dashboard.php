@@ -1,31 +1,18 @@
 <?php 
-/**
- * View Dashboard Member
- * 
- * Halaman utama (dashboard) untuk member yang menampilkan ringkasan aktivitas,
- * statistik riset, dan informasi penting lainnya.
- * 
- * @package View
- * @subpackage Member
- */
-
 ob_start();
 
-// Mengambil data user dari session dengan fallback
+// Get user info
 $userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'Member';
 $userNIM = $_SESSION['user']['nim'] ?? $_SESSION['nim'] ?? '-';
 $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
 ?>
 
-<!-- Bagian: Banner Selamat Datang -->
+<!-- Welcome Banner -->
 <div class="mb-6 bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl p-6 text-white shadow-lg">
     <div class="flex items-start justify-between">
         <div>
-            <!-- Sapaan Personal -->
             <h1 class="text-2xl font-bold mb-2">👋 Halo, <?= htmlspecialchars(explode(' ', $userName)[0]) ?>!</h1>
             <p class="text-blue-100 text-sm mb-1">Selamat datang di Dashboard Member Lab IVSS</p>
-            
-            <!-- Info Singkat User -->
             <div class="flex items-center gap-4 text-xs text-blue-200 mt-3">
                 <span class="flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,8 +28,6 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
                 </span>
             </div>
         </div>
-        
-        <!-- Avatar Inisial (Hidden pada mobile) -->
         <div class="hidden md:block">
             <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
                 <span class="text-2xl font-bold"><?= strtoupper(substr($userName, 0, 1)) ?></span>
@@ -51,13 +36,13 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
     </div>
 </div>
 
-<!-- Bagian: Statistik Card -->
+<!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
     
-    <!-- Statistik 1: Riset yang Diikuti -->
-    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 group">
+    <!-- Card 1: Riset Saya -->
+    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
         <div class="flex items-center justify-between mb-3">
-            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
@@ -68,10 +53,10 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
         <p class="text-xs text-slate-600 font-medium">Riset yang Diikuti</p>
     </div>
     
-    <!-- Statistik 2: Publikasi Saya -->
-    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 group">
+    <!-- Card 2: Publikasi -->
+    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
         <div class="flex items-center justify-between mb-3">
-            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
                 <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                 </svg>
@@ -82,10 +67,10 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
         <p class="text-xs text-slate-600 font-medium">Publikasi Saya</p>
     </div>
     
-    <!-- Statistik 3: Status Member -->
-    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300 group">
+    <!-- Card 3: Status Member -->
+    <div class="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg transition-all duration-300">
         <div class="flex items-center justify-between mb-3">
-            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                 <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
@@ -98,13 +83,13 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
     
 </div>
 
-<!-- Grid Layout Utama -->
+<!-- Main Content Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     
-    <!-- Kolom Kiri: Info Utama (Riset & Pembimbing) -->
+    <!-- Left Column: Riset & Pembimbing -->
     <div class="lg:col-span-2 space-y-4">
         
-        <!-- Info Dosen Pembimbing -->
+        <!-- Info Pembimbing -->
         <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm">
             <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -146,7 +131,7 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
             </div>
         </div>
         
-        <!-- Tabel Riset yang Diikuti -->
+        <!-- Riset Saya -->
         <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm">
             <div class="px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
                 <div class="flex items-center justify-between">
@@ -159,14 +144,13 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
                         </h3>
                         <p class="text-xs text-slate-500 mt-0.5">Daftar riset aktif kamu</p>
                     </div>
-                    <a href="index.php?page=member-research" class="text-xs text-blue-600 hover:text-blue-700 font-medium hover:underline">Lihat Semua →</a>
+                    <a href="index.php?page=member-research" class="text-xs text-blue-600 hover:text-blue-700 font-medium">Lihat Semua →</a>
                 </div>
             </div>
         
-        <!-- Tabel Scrollable -->
         <div class="overflow-x-auto">
             <?php if (empty($myResearches)): ?>
-                <!-- Empty State jika tidak ada riset -->
+                <!-- Empty State -->
                 <div class="p-6 text-center">
                     <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-2">
                         <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,7 +161,7 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
                     <p class="text-xs text-slate-500">Kamu belum terdaftar di riset manapun</p>
                 </div>
             <?php else: ?>
-                <!-- Tabel Daftar Riset -->
+                <!-- Table -->
                 <table class="w-full text-xs">
                     <thead class="bg-slate-50 border-b border-slate-200">
                         <tr>
@@ -214,10 +198,10 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
     
     </div>
     
-    <!-- Kolom Kanan: Quick Links & Aktivitas -->
+    <!-- Right Sidebar: Quick Links & Activity -->
     <div class="space-y-4">
         
-        <!-- Panel Aksi Cepat -->
+        <!-- Quick Links -->
         <div class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm">
             <div class="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
                 <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
@@ -229,7 +213,7 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
             </div>
             
             <div class="p-3 space-y-2">
-                <!-- Link: Kelola Riset Saya -->
+                <!-- Riset Saya -->
                 <a href="index.php?page=member-research" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group">
                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-200 transition-colors">
                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,7 +229,7 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
                     </svg>
                 </a>
                 
-                <!-- Link: Kelola Publikasi -->
+                <!-- Publikasi -->
                 <a href="index.php?page=member-publications" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group">
                     <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-purple-200 transition-colors">
                         <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -261,7 +245,7 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
                     </svg>
                 </a>
                 
-                <!-- Link: Profil Saya -->
+                <!-- Profil -->
                 <a href="index.php?page=member-profile" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group">
                     <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-slate-200 transition-colors">
                         <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,7 +261,7 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
                     </svg>
                 </a>
                 
-                <!-- Link: Berita & Event -->
+                <!-- Berita & Event -->
                 <a href="index.php?page=member-news" class="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors group">
                     <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-orange-200 transition-colors">
                         <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,7 +283,6 @@ $userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
 </div>
 
 <?php
-// Mengakhiri buffer output dan memuat layout utama
 $content = ob_get_clean();
 $title = "Dashboard Member";
 include __DIR__ . "/../layouts/member.php";

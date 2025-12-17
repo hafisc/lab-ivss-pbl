@@ -1,49 +1,29 @@
 <?php
-/**
- * Layout Utama Panel Admin
- * 
- * Layout ini digunakan sebagai pembungkus utama seluruh halaman dashboard admin.
- * Menangani pengecekan sesi, koneksi database, notifikasi, dan struktur HTML dasar.
- * Memuat sidebar dan header secara dinamis.
- * 
- * @package View
- * @subpackage Layouts
- */
-
-// Pastikan sesi sudah dimulai di index.php, namun cek sebagai fallback
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Cek autentikasi user
+// Session sudah di-start di index.php
 if (!isset($_SESSION['user_id'])) {
     header('Location: ./index.php?page=login');
     exit;
 }
 
-// Cek otorisasi akses admin (admin, ketua_lab, dosen)
-// Member biasa tidak boleh masuk ke area ini
+// Check if user has admin access (admin, ketua_lab, dosen)
 if ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'dosen' && $_SESSION['role'] !== 'ketua_lab') {
     header('Location: ./index.php?page=home');
     exit;
 }
 
-// Koneksi Database untuk Data Real-time (Notifikasi)
- require_once __DIR__ . '/../../app/config/database.php';
-$db = getDb(); 
+// Get database connection untuk notification data
+require_once __DIR__ . '/../../app/config/database.php';
+$db = getDb(); // PgSql\Connection
 
-// Ambil data user untuk keperluan tampilan layout
 $userRole = $_SESSION['user']['role'] ?? $_SESSION['role'] ?? 'member';
 $userId   = $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0;
 
-// Inisialisasi variabel notifikasi
 $notificationCount = 0;
 $notifications = [];
 
-// Logika Notifikasi Berdasarkan Role
 try {
     if ($userRole === 'dosen') {
-        // Dosen: Hitung pendaftar yang memilih dia sebagai supervisor (pending)
+        // Dosen: count pendaftar yang memilih dia sebagai supervisor
         $result = pg_query_params($db, "
             SELECT COUNT(*) AS count
             FROM member_registrations
@@ -52,7 +32,7 @@ try {
         $row = $result ? pg_fetch_assoc($result) : null;
         $notificationCount = (int)($row['count'] ?? 0);
 
-        // Ambil data notifikasi terbaru (limit 3)
+        // Get latest notifications
         $result = pg_query_params($db, "
             SELECT mr.*, u.username AS supervisor_name
             FROM member_registrations mr
@@ -61,15 +41,14 @@ try {
             ORDER BY mr.created_at DESC
             LIMIT 3
         ", [$userId]);
-        
+        $notifications = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
             }
         }
-
     } elseif ($userRole === 'ketua_lab') {
-        // Ketua Lab: Hitung yang sudah approve dosen, menunggu final approval ketua lab
+        // Ketua Lab: count yang sudah approve dosen
         $result = pg_query($db, "
             SELECT COUNT(*) AS count
             FROM member_registrations
@@ -78,7 +57,7 @@ try {
         $row = $result ? pg_fetch_assoc($result) : null;
         $notificationCount = (int)($row['count'] ?? 0);
 
-        // Ambil data notifikasi terbaru (limit 3)
+        // Get latest notifications
         $result = pg_query($db, "
             SELECT mr.*, u.username AS supervisor_name
             FROM member_registrations mr
@@ -87,15 +66,14 @@ try {
             ORDER BY mr.created_at DESC
             LIMIT 3
         ");
-        
+        $notifications = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
             }
         }
-
     } elseif ($userRole === 'admin') {
-        // Admin: Melihat semua yang pending (supervisor atau lab head)
+        // Admin: count all pending registrations
         $result = pg_query($db, "
             SELECT COUNT(*) AS count
             FROM member_registrations
@@ -104,7 +82,7 @@ try {
         $row = $result ? pg_fetch_assoc($result) : null;
         $notificationCount = (int)($row['count'] ?? 0);
 
-        // Ambil data notifikasi terbaru (limit 3)
+        // Get latest notifications
         $result = pg_query($db, "
             SELECT mr.*, u.username AS supervisor_name
             FROM member_registrations mr
@@ -113,7 +91,7 @@ try {
             ORDER BY mr.created_at DESC
             LIMIT 3
         ");
-        
+        $notifications = [];
         if ($result) {
             while ($row = pg_fetch_assoc($result)) {
                 $notifications[] = $row;
@@ -121,136 +99,142 @@ try {
         }
     }
 } catch (Exception $e) {
-    // Fail-safe jika terjadi error query
     $notificationCount = 0;
     $notifications = [];
 }
 ?>
 <!doctype html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Dashboard Admin' ?> - Lab IVSS</title>
+    <title><?= $title ?? 'Dashboard Admin' ?> - IVSS Lab</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Inter -->
+    <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="./assets/images/logo1.png">
 
-    <!-- Custom Style -->
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* Scrollbar Halus */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
 
-<body class="bg-slate-50 min-h-screen text-slate-800 antialiased overflow-x-hidden">
+<body class="bg-slate-100 min-h-screen">
 
-    <!-- Sidebar Layout -->
+    <!-- Sidebar -->
     <?php include __DIR__ . '/../admin/partials/sidebar.php'; ?>
 
-    <!-- Wrapper Konten Utama -->
+    <!-- Main Content Area -->
     <div class="flex flex-col lg:ml-60 min-h-screen transition-all duration-300">
 
-        <!-- Header / Topbar Layout -->
+        <!-- Header/Topbar -->
         <?php include __DIR__ . '/../admin/partials/header.php'; ?>
 
-        <!-- Konten Halaman Dinamis -->
-        <main class="p-4 md:p-6 lg:p-8 flex-1 w-full max-w-7xl mx-auto">
+        <!-- Main Content -->
+        <main class="p-4 md:p-6 flex-1">
             <?= $content ?? '' ?>
         </main>
-        
-        <!-- Footer Sederhana (Opsional) -->
-        <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center lg:text-left text-xs text-slate-500">
-            &copy; <?= date('Y') ?> Laboratorium IVSS Polinema. All rights reserved.
-        </footer>
 
     </div>
 
-    <!-- Script: Sidebar Interaction for Mobile -->
+    <!-- Mobile Sidebar Toggle Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('sidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-            // Fungsi Toggle Sidebar
+            // Toggle sidebar on mobile
             function toggleSidebar() {
                 const isHidden = sidebar.classList.contains('-translate-x-full');
 
                 if (isHidden) {
-                    // Buka Sidebar
+                    // Open sidebar
                     sidebar.classList.remove('-translate-x-full');
                     sidebarOverlay.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden'; // Kunci scroll body
+                    document.body.style.overflow = 'hidden';
 
-                    // Efek Fade-in Overlay
+                    // Force reflow untuk smooth transition
                     setTimeout(() => {
                         sidebarOverlay.style.opacity = '1';
                     }, 10);
                 } else {
-                    // Tutup Sidebar
+                    // Close sidebar
                     sidebar.classList.add('-translate-x-full');
                     sidebarOverlay.style.opacity = '0';
-                    document.body.style.overflow = ''; // Lepas kunci scroll
+                    document.body.style.overflow = '';
 
-                    // Tunggu transisi selesai sebelum hidden
+                    // Tunggu transition selesai baru hide
                     setTimeout(() => {
                         sidebarOverlay.classList.add('hidden');
                     }, 300);
                 }
             }
 
-            // Event Listener Hamburger Menu
+            // Open sidebar when hamburger clicked
             if (sidebarToggle) {
-                sidebarToggle.addEventListener('click', function(e) {
-                    e.stopPropagation();
+                sidebarToggle.addEventListener('click', function() {
                     toggleSidebar();
                 });
             }
 
-            // Event Listener Klik Overlay (Tutup Sidebar)
+            // Close sidebar when overlay clicked
             if (sidebarOverlay) {
                 sidebarOverlay.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    console.log('Overlay clicked - closing sidebar');
                     toggleSidebar();
                 }, true);
+
+                // Juga tambahkan touch event untuk mobile
+                sidebarOverlay.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Overlay touched - closing sidebar');
+                    toggleSidebar();
+                }, {
+                    passive: false
+                });
             }
 
-            // Event Listener Tombol ESC
+            // Close sidebar on escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
                     toggleSidebar();
                 }
             });
 
-            // Reset Tampilan saat Resize ke Desktop
+            // Close sidebar when clicking menu link on mobile
+            const menuLinks = sidebar.querySelectorAll('a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 1024) { // lg breakpoint
+                        toggleSidebar();
+                    }
+                });
+            });
+
+            // Reset on window resize
             window.addEventListener('resize', function() {
                 if (window.innerWidth >= 1024) {
+                    // Desktop view - reset everything
                     sidebar.classList.remove('-translate-x-full');
                     sidebarOverlay.classList.add('hidden');
                     document.body.style.overflow = '';
-                } else {
-                    // Saat resize ke mobile, pastikan sidebar tertutup default jika user tidak sedang membukanya
-                    if (sidebarOverlay.classList.contains('hidden')) {
-                         sidebar.classList.add('-translate-x-full');
-                    }
                 }
             });
         });
     </script>
 
 </body>
+
 </html>
