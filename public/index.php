@@ -91,6 +91,10 @@ switch ($page) {
     case 'admin-navbar':
         include __DIR__ . '/../view/admin/navbar/index.php';
         break;
+    
+    case 'admin-profile-settings':
+        include __DIR__ . '/../view/admin/profile/index.php';
+        break;
 
     // User AJAX Actions
     case 'user-store':

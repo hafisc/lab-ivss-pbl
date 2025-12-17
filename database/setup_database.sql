@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS roles (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
 INSERT INTO roles (role_name, role_description) VALUES
 ('admin', 'Administrator sistem dengan akses penuh'),
 ('ketua_lab', 'Ketua laboratorium yang mengelola lab'),
@@ -1305,8 +1304,6 @@ $$ LANGUAGE plpgsql;
 -- - 3 Publikasi mahasiswa
 -- ========================================
 
-
-
 -- ========================================
 -- 15. TABEL TEAM_MEMBERS
 -- ========================================
@@ -1411,62 +1408,37 @@ CREATE TABLE IF NOT EXISTS footer_settings (
 -- Create index for faster queries
 CREATE INDEX idx_footer_settings_id ON footer_settings(id);
 
--- ========================================
--- 18. TABEL NAVBAR_SETTINGS
--- ========================================
--- Untuk menyimpan pengaturan navigasi dinamis
 CREATE TABLE IF NOT EXISTS navbar_settings (
     id SERIAL PRIMARY KEY,
-    brand_name VARCHAR(100) DEFAULT 'Lab IVSS',
-    brand_logo VARCHAR(255) DEFAULT 'assets/images/logo-polinema.png',
-    menu_items JSONB DEFAULT '[]', -- Menyimpan struktur menu dalam format JSON
-    is_active BOOLEAN DEFAULT TRUE,
+    topbar_text VARCHAR(255),
+    institution_name VARCHAR(255),
+    lab_name VARCHAR(255),
+    logo_url VARCHAR(255),
+    login_url VARCHAR(255),
+    menu_items JSONB DEFAULT '[]',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Trigger untuk auto update timestamp
-CREATE OR REPLACE TRIGGER trigger_navbar_settings_updated_at
-    BEFORE UPDATE ON navbar_settings
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
--- Insert default navbar settings
-INSERT INTO navbar_settings (brand_name, brand_logo, menu_items) VALUES
-('Lab IVSS', 'assets/images/logo-polinema.png', 
-'[
-    {"label": "Home", "url": "index.php", "order": 1},
-    {"label": "Profil", "url": "index.php?page=profil", "order": 2, "children": [
-        {"label": "Sejarah", "url": "index.php?page=sejarah"},
-        {"label": "Visi Misi", "url": "index.php?page=visi-misi"}
-    ]},
-    {"label": "Riset", "url": "index.php?page=riset", "order": 3},
-    {"label": "Publikasi", "url": "index.php?page=publikasi", "order": 4},
-    {"label": "Kontak", "url": "index.php?page=kontak", "order": 5}
-]'::jsonb
 );
 
 CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id);
 
--- ========================================
--- 19. TABEL VISIMISI
--- ========================================
--- Untuk menyimpan visi dan misi lab
-CREATE TABLE IF NOT EXISTS visimisi (
-    id SERIAL PRIMARY KEY,
-    visi TEXT,
-    misi TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTs profile_lab (
+    id INT PRIMARY KEY DEFAULT 1,
+    nama_lab VARCHAR(255) NOT NULL,
+    singkatan VARCHAR(50),
+    deskripsi_singkat TEXT,
+    -- Visi dan Misi DIHAPUS
+    lokasi_ruangan VARCHAR(255),
+    riset_fitur_judul VARCHAR(100) DEFAULT 'Riset Inovatif',
+    riset_fitur_desk TEXT DEFAULT 'Penelitian berkelas dunia',
+    fasilitas_fitur_judul VARCHAR(100) DEFAULT 'Fasilitas Modern',
+    fasilitas_fitur_desk TEXT DEFAULT 'Peralatan canggih',
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Trigger untuk auto update timestamp
-CREATE TRIGGER trigger_visimisi_updated_at
-    BEFORE UPDATE ON visimisi
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
-
--- Insert default data
-INSERT INTO visimisi (visi, misi) VALUES 
-('Menjadi laboratorium unggulan di bidang Intelligent Vision System yang diakui secara nasional maupun internasional.', 
-'1. Menyelenggarakan kegiatan penelitian berkualitas di bidang computer vision.\n2. Mengembangkan solusi cerdas untuk permasalahan industri dan masyarakat.\n3. Membina mahasiswa untuk memiliki kompetensi tinggi di bidang AI dan Vision System.');
+-- Masukkan baris data awal (Hanya data yang tersisa)
+INSERT INTO profile_lab (id, nama_lab, singkatan, deskripsi_singkat, lokasi_ruangan)
+VALUES (1, 'Laboratorium Intelligent Vision and Smart System (IVSS)', 'IVSS', 
+        'Laboratorium Intelligent Vision and Smart System (IVSS) merupakan pusat riset dan pengembangan di bidang Computer Vision, Artificial Intelligence, dan Smart System...', 
+        'Gedung Jurusan Teknologi Informasi — Lantai 8 Barat')
+ON CONFLICT (id) DO NOTHING;
