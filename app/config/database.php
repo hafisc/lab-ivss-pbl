@@ -1,15 +1,29 @@
 <?php
 /**
- * Database Connection Handler
- * Singleton pattern untuk efficient connection management
+ * Handler Koneksi Database
+ * Menerapkan pola Singleton untuk manajemen koneksi yang efisien.
+ * Mengelola koneksi ke database PostgreSQL menggunakan PDO dan pg_connect.
+ * 
+ * @package App\Config
  */
 class Database
 {
+    /**
+     * @var Database|null Instance singleton
+     */
     private static $instance = null;
+
+    /**
+     * @var PDO|null Objek koneksi PDO
+     */
     private $pdo = null;
+
+    /**
+     * @var resource|null Resource koneksi PostgreSQL (legacy)
+     */
     private $pg = null;
     
-    // Database config (loaded from .env file)
+    // Konfigurasi database (dimuat dari file .env)
     private $host;
     private $port;
     private $dbname;
@@ -17,14 +31,15 @@ class Database
     private $pass;
 
     /**
-     * Private constructor untuk singleton pattern
+     * Konstruktor privat untuk pola singleton.
+     * Memuat konfigurasi dari file .env saat inisialisasi.
      */
     private function __construct()
     {
-        // Load .env file
+        // Muat file .env
         $this->loadEnv();
         
-        // Load database config dari .env
+        // Atur konfigurasi database dari variabel environment
         $this->host   = $_ENV['DB_HOST'] ?? '127.0.0.1';
         $this->port   = $_ENV['DB_PORT'] ?? '5433';
         $this->dbname = $_ENV['DB_DATABASE'] ?? 'lab_ivss';
@@ -33,34 +48,38 @@ class Database
     }
 
     /**
-     * Load .env file and populate $_ENV
+     * Memuat file .env dan mengisi array global $_ENV.
+     * Parsing sederhana untuk file konfigurasi environment.
+     * 
+     * @return void
      */
     private function loadEnv()
     {
         $envFile = __DIR__ . '/../../.env';
         
         if (!file_exists($envFile)) {
-            return; // Skip jika file tidak ada, gunakan default
+            return; // Lewati jika file tidak ditemukan
         }
 
+        // Baca file baris per baris
         $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         
         foreach ($lines as $line) {
-            // Skip comments
+            // Lewati komentar
             if (strpos(trim($line), '#') === 0) {
                 continue;
             }
 
-            // Parse KEY=VALUE
+            // Parsing format KEY=VALUE
             if (strpos($line, '=') !== false) {
                 list($key, $value) = explode('=', $line, 2);
                 $key = trim($key);
                 $value = trim($value);
                 
-                // Remove quotes if present
+                // Hapus tanda kutip jika ada
                 $value = trim($value, '"\'');
                 
-                // Set to $_ENV
+                // Simpan ke $_ENV dan environment server
                 $_ENV[$key] = $value;
                 putenv("$key=$value");
             }
@@ -68,7 +87,9 @@ class Database
     }
 
     /**
-     * Get singleton instance
+     * Mendapatkan instance singleton dari kelas Database.
+     * 
+     * @return Database
      */
     public static function getInstance()
     {
@@ -79,7 +100,10 @@ class Database
     }
 
     /**
-     * Get PDO connection (modern approach)
+     * Mendapatkan koneksi PDO (Pendekatan Modern).
+     * Disarankan untuk query baru yang menggunakan prepared statements.
+     * 
+     * @return PDO
      */
     public function getConnection()
     {
@@ -90,20 +114,27 @@ class Database
         try {
             $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->dbname}";
             $this->pdo = new PDO($dsn, $this->user, $this->pass);
+            
+            // Atur mode error ke Exception agar mudah didebug
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+            // Atur default fetch mode ke Associative Array
             $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             
-            // Set timezone
+            // Set timezone ke WIB
             $this->pdo->exec("SET TIME ZONE 'Asia/Jakarta'");
             
             return $this->pdo;
         } catch (PDOException $e) {
-            die("Database connection error: " . $e->getMessage());
+            die("Kesalahan koneksi database: " . $e->getMessage());
         }
     }
 
     /**
-     * Get pg_connect resource (legacy support)
+     * Mendapatkan resource koneksi pg_connect (Dukungan Legacy).
+     * Digunakan untuk kode lama yang masih menggunakan fungsi pg_*.
+     * 
+     * @return resource|false
      */
     public function getPgConnection()
     {
@@ -116,33 +147,37 @@ class Database
 
         if ($this->pg === false) {
             $error = error_get_last();
-            $msg = $error['message'] ?? 'Unable to connect to PostgreSQL.';
-            die('Database connection error: ' . $msg);
+            $msg = $error['message'] ?? 'Tidak dapat terhubung ke PostgreSQL.';
+            die('Kesalahan koneksi database: ' . $msg);
         }
 
-        // Set timezone
+        // Set timezone koneksi
         pg_query($this->pg, "SET TIME ZONE 'Asia/Jakarta'");
 
         return $this->pg;
     }
 
     /**
-     * Prevent cloning
+     * Mencegah cloning instance (Singleton).
      */
     private function __clone() {}
 
     /**
-     * Prevent unserialization
+     * Mencegah unserialize instance (Singleton).
+     * 
+     * @throws Exception
      */
     public function __wakeup()
     {
-        throw new Exception("Cannot unserialize singleton");
+        throw new Exception("Tidak dapat melakukan unserialize pada singleton.");
     }
 }
 
 /**
- * Helper function untuk backward compatibility
- * @return resource PostgreSQL connection
+ * Fungsi Helper Global untuk mendapatkan koneksi database.
+ * Memudahkan akses koneksi tanpa memanggil Database::getInstance() berulang kali.
+ * 
+ * @return resource Koneksi PostgreSQL (pg_connect resource)
  */
 function getDb()
 {
