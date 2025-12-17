@@ -26,7 +26,7 @@ ob_start();
 
 <div class="max-w-4xl mx-auto">
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-        <form action="index.php?page=admin-publications&action=store" method="POST" class="p-6 space-y-6">
+        <form action="index.php?page=admin-publications&action=store" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
             
             <!-- Judul -->
             <div>
@@ -92,6 +92,20 @@ ob_start();
                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                            placeholder="https://...">
                 </div>
+            </div>
+
+            <!-- Upload File -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Upload File (PDF/Doc) <span class="text-xs text-slate-400 font-normal">(Opsional)</span></label>
+                <input type="file" name="file_path" accept=".pdf,.doc,.docx,.zip"
+                       class="w-full block text-sm text-slate-500
+                              file:mr-4 file:py-2 file:px-4
+                              file:rounded-full file:border-0
+                              file:text-xs file:font-semibold
+                              file:bg-blue-50 file:text-blue-700
+                              hover:file:bg-blue-100
+                              cursor-pointer border border-slate-300 rounded-lg">
+                <p class="text-xs text-slate-500 mt-1">Maksimum 10MB. Format: PDF, Word, atau ZIP.</p>
             </div>
 
             <!-- Volume/Issue/Pages (Opsional, digabung dalam satu baris grid 3) -->

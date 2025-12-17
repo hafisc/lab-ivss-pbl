@@ -111,9 +111,9 @@ class HomeController {
         require_once __DIR__ . '/../models/Gallery.php';
         $galleryModel = new Gallery($this->db);
         $galleryItems = $galleryModel->getAll();
-        require_once __DIR__ . '/../models/visimisi.php';
+        require_once __DIR__ . '/../models/VisiMisi.php';
         $visimisiModel = new Visimisi($this->db);
-        $visimisiData = $visimisiModel->get();
+        $visimisi = $visimisiModel->get();
         // Muat view dengan layout pages
         require_once __DIR__ . '/../../view/layouts/pages.php';
 

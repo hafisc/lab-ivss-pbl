@@ -574,13 +574,19 @@ class AdminController
             $image = $this->uploadImage($_FILES['image'], 'news');
         }
 
+        // Handle file upload
+        $file_path = null;
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+            $file_path = $this->uploadFile($_FILES['file_path'], 'news_files');
+        }
+
         // Set author_id and published_at
         $author_id = $_SESSION['user_id'] ?? 1;
         $published_at = ($status === 'published') ? 'NOW()' : null;
 
-        $query = "INSERT INTO news (title, slug, excerpt, content, image, category, tags, author_id, status, published_at, created_at) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, " . ($published_at ? $published_at : 'NULL') . ", NOW()) RETURNING id";
-        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $category, $tags, $author_id, $status]);
+        $query = "INSERT INTO news (title, slug, excerpt, content, image, file_path, category, tags, author_id, status, published_at, created_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, " . ($published_at ? $published_at : 'NULL') . ", NOW()) RETURNING id";
+        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $file_path, $category, $tags, $author_id, $status]);
 
         if ($result) {
             $_SESSION['success'] = 'Berita berhasil ditambahkan!';
@@ -627,15 +633,34 @@ class AdminController
             $image = $this->uploadImage($_FILES['image'], 'news');
         }
 
+        // Handle file upload
+        $file_path = $existing['file_path'] ?? null;
+        
+         // Check if user wants to remove current file
+        if (isset($_POST['remove_file']) && $_POST['remove_file'] == '1') {
+            $file_path = null;
+            if ($existing && $existing['file_path'] && file_exists(__DIR__ . '/../../public/' . $existing['file_path'])) {
+                @unlink(__DIR__ . '/../../public/' . $existing['file_path']);
+            }
+        }
+
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+             // Delete old file if exists
+            if ($existing && $existing['file_path'] && file_exists(__DIR__ . '/../../public/' . $existing['file_path'])) {
+                @unlink(__DIR__ . '/../../public/' . $existing['file_path']);
+            }
+            $file_path = $this->uploadFile($_FILES['file_path'], 'news_files');
+        }
+
         // Set published_at only when changing from draft to published
         $published_at_clause = '';
         if ($status === 'published' && $existing['status'] === 'draft') {
             $published_at_clause = ', published_at = NOW()';
         }
 
-        $query = "UPDATE news SET title = $1, slug = $2, excerpt = $3, content = $4, image = $5, category = $6, 
-                  tags = $7, status = $8, updated_at = NOW()" . $published_at_clause . " WHERE id = $9";
-        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $category, $tags, $status, $id]);
+        $query = "UPDATE news SET title = $1, slug = $2, excerpt = $3, content = $4, image = $5, file_path = $6, category = $7, 
+                  tags = $8, status = $9, updated_at = NOW()" . $published_at_clause . " WHERE id = $10";
+        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $file_path, $category, $tags, $status, $id]);
 
         if ($result) {
             $_SESSION['success'] = 'Berita berhasil diupdate!';
@@ -968,16 +993,22 @@ class AdminController
         $citation_count = intval($_POST['citation_count'] ?? 0);
         $abstract = $_POST['abstract'] ?? '';
 
+        // Handle PDF/Document upload
+        $file_path = null;
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+            $file_path = $this->uploadFile($_FILES['file_path'], 'publications');
+        }
+
         // Tentukan kolom mana yang diisi berdasarkan tipe
         $journal = ($type === 'journal' || $type === 'book' || $type === 'other') ? $publisher : null;
         $conference = ($type === 'conference' || $type === 'prosiding') ? $publisher : null;
 
-        $query = "INSERT INTO publications (title, authors, year, type, journal, conference, doi, url, volume, issue, pages, indexed, citation_count, abstract, created_at, updated_at) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW(), NOW())";
+        $query = "INSERT INTO publications (title, authors, year, type, journal, conference, doi, url, file_path, volume, issue, pages, indexed, citation_count, abstract, created_at, updated_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW(), NOW())";
                   
         $params = [
             $title, $authors, $year, $type, $journal, $conference, 
-            $doi, $url, $volume, $issue, $pages, $indexed, $citation_count, $abstract
+            $doi, $url, $file_path, $volume, $issue, $pages, $indexed, $citation_count, $abstract
         ];
 
         $result = @pg_query_params($this->db, $query, $params);
@@ -1398,6 +1429,48 @@ class AdminController
 
         if (!in_array($file['type'], $allowed_types)) {
             return null;
+        }
+
+        if ($file['size'] > $max_size) {
+            return null;
+        }
+
+        $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $new_filename = uniqid() . '_' . time() . '.' . $file_ext;
+        $file_path = $upload_dir . $new_filename;
+
+        if (move_uploaded_file($file['tmp_name'], $file_path)) {
+            return 'uploads/' . $folder . '/' . $new_filename;
+        }
+
+        return null;
+    }
+
+    private function uploadFile($file, $folder = 'documents')
+    {
+        $upload_dir = __DIR__ . '/../../public/uploads/' . $folder . '/';
+
+        // Buat direktori jika belum ada
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        $allowed_types = [
+            'application/pdf', 
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip',
+            'application/x-rar-compressed'
+        ];
+        $max_size = 10 * 1024 * 1024; // 10MB
+
+        if (!in_array($file['type'], $allowed_types)) {
+            // Fallback check by extension if mime type fails or differs
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowed_exts = ['pdf', 'doc', 'docx', 'zip', 'rar'];
+            if (!in_array($ext, $allowed_exts)) {
+                return null;
+            }
         }
 
         if ($file['size'] > $max_size) {

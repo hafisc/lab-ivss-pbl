@@ -76,6 +76,37 @@
             </div>
         </div>
 
+        <!-- Document Upload -->
+        <div>
+            <label class="block text-xs font-medium text-slate-700 mb-1.5">File Lampiran (PDF/Doc) <span class="text-slate-400 font-normal">(Opsional)</span></label>
+            
+            <?php if (!empty($newsItem['file_path'])): ?>
+            <!-- Current File -->
+            <div class="mb-2 flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium text-slate-900 truncate"><?= basename($newsItem['file_path']) ?></p>
+                    <a href="<?= htmlspecialchars($newsItem['file_path']) ?>" target="_blank" class="text-xs text-blue-600 hover:text-blue-700">Lihat File</a>
+                </div>
+                <label class="flex items-center text-xs text-red-600 cursor-pointer">
+                    <input type="checkbox" name="remove_file" value="1" class="mr-1.5 w-3.5 h-3.5 text-red-600 rounded">
+                    <span>Hapus</span>
+                </label>
+            </div>
+            <?php endif; ?>
+
+            <input type="file" name="file_path" accept=".pdf,.doc,.docx,.zip"
+                   class="w-full block text-xs text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-xs file:font-semibold
+                          file:bg-blue-50 file:text-blue-700
+                          hover:file:bg-blue-100
+                          cursor-pointer border border-slate-300 rounded-lg">
+        </div>
+
         <div class="grid md:grid-cols-2 gap-3">
             <div>
                 <label for="category" class="block text-xs font-medium text-slate-700 mb-1.5">Kategori</label>
