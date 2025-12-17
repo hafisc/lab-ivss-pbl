@@ -23,6 +23,10 @@ switch ($page) {
         (new HomeController($pg))->index();
         break;
 
+    case 'news':
+        (new HomeController($pg))->news();
+        break;
+
     case 'login':
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->login();

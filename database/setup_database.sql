@@ -1422,7 +1422,7 @@ CREATE TABLE IF NOT EXISTS navbar_settings (
 
 CREATE INDEX IF NOT EXISTS idx_navbar_settings_id ON navbar_settings(id);
 
-CREATE TABLE IF NOT EXISTs profile_lab (
+CREATE TABLE IF NOT EXISTS profile_lab (
     id INT PRIMARY KEY DEFAULT 1,
     nama_lab VARCHAR(255) NOT NULL,
     singkatan VARCHAR(50),
@@ -1442,3 +1442,14 @@ VALUES (1, 'Laboratorium Intelligent Vision and Smart System (IVSS)', 'IVSS',
         'Laboratorium Intelligent Vision and Smart System (IVSS) merupakan pusat riset dan pengembangan di bidang Computer Vision, Artificial Intelligence, dan Smart System...', 
         'Gedung Jurusan Teknologi Informasi — Lantai 8 Barat')
 ON CONFLICT (id) DO NOTHING;
+
+-- ========================================
+-- 18. TABEL VISIMISI
+-- ========================================
+CREATE TABLE IF NOT EXISTS visimisi (
+    id SERIAL PRIMARY KEY,
+    visi TEXT,
+    misi TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

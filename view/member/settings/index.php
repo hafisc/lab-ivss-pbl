@@ -1,24 +1,37 @@
-<?php ob_start(); ?>
+<?php 
+/**
+ * View Index Pengaturan Profil
+ * 
+ * Halaman utama untuk pengaturan profil member, menampilkan ringkasan data diri
+ * dan menu navigasi untuk edit profil atau ganti password.
+ * 
+ * @package View
+ * @subpackage Member/Settings
+ */
 
-<!-- Page Header -->
+ob_start(); 
+?>
+
+<!-- Header Halaman -->
 <div class="mb-4">
     <h2 class="text-lg font-bold text-slate-800">Profil Saya</h2>
     <p class="text-xs text-slate-500 mt-0.5">Informasi dan pengaturan akun kamu</p>
 </div>
 
-<!-- Alert Messages -->
+<!-- Pesan Notifikasi Sukses -->
 <?php if (isset($_SESSION['success'])): ?>
-<div class="mb-3 bg-green-50 border-l-4 border-green-500 p-3 rounded-lg">
-    <p class="text-xs text-green-700"><?= $_SESSION['success'] ?></p>
+<div class="mb-3 bg-green-50 border-l-4 border-green-500 p-3 rounded-lg animate-fade-in-down">
+    <p class="text-xs text-green-700 font-medium"><?= $_SESSION['success'] ?></p>
 </div>
 <?php unset($_SESSION['success']); ?>
 <?php endif; ?>
 
-<!-- Main Content -->
+<!-- Konten Utama: Grid Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     
-    <!-- Profile Card -->
-    <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl overflow-hidden">
+    <!-- Kartu Profil: Menampilkan info utama -->
+    <div class="lg:col-span-2 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+        <!-- Header Profil -->
         <div class="p-4 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-purple-50">
             <div class="flex items-center gap-3">
                 <div class="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 border-4 border-white shadow-lg">
@@ -31,6 +44,7 @@
                     <p class="text-xs text-slate-600"><?= htmlspecialchars($me['email'] ?? '-') ?></p>
                     <div class="mt-1.5">
                         <?php
+                        // Menentukan warna badge berdasarkan status
                         $statusLab = $me['status_lab'] ?? 'aktif';
                         $statusColor = $statusLab === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700';
                         ?>
@@ -42,12 +56,12 @@
             </div>
         </div>
         
-        <!-- Profile Details -->
+        <!-- Detail Informasi Profil -->
         <div class="p-4">
             <h4 class="text-sm font-semibold text-slate-800 mb-3">Informasi Detail</h4>
             <div class="space-y-3">
                 
-                <!-- NIM -->
+                <!-- Info: NIM -->
                 <div class="flex items-start gap-2 pb-3 border-b border-slate-100">
                     <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +74,7 @@
                     </div>
                 </div>
                 
-                <!-- Email -->
+                <!-- Info: Email -->
                 <div class="flex items-start gap-2 pb-3 border-b border-slate-100">
                     <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
                         <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +87,7 @@
                     </div>
                 </div>
                 
-                <!-- Angkatan -->
+                <!-- Info: Angkatan -->
                 <div class="flex items-start gap-2 pb-3 border-b border-slate-100">
                     <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
                         <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +100,7 @@
                     </div>
                 </div>
                 
-                <!-- Status Lab -->
+                <!-- Info: Status Lab -->
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
                         <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,11 +117,11 @@
         </div>
     </div>
     
-    <!-- Actions Card -->
+    <!-- Kartu Aksi: Edit & Keamanan -->
     <div class="space-y-4">
         
-        <!-- Edit Profil -->
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
+        <!-- Menu: Edit Profil -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,13 +134,13 @@
                 </div>
             </div>
             <a href="index.php?page=member-settings-edit" 
-               class="block w-full px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium text-center rounded-lg transition-colors">
+               class="block w-full px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-medium text-center rounded-lg transition-colors shadow-sm">
                 Edit Profil
             </a>
         </div>
         
-        <!-- Ubah Password -->
-        <div class="bg-white border border-slate-200 rounded-xl p-5">
+        <!-- Menu: Ubah Password -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,19 +153,17 @@
                 </div>
             </div>
             <a href="index.php?page=member-change-password" 
-               class="block w-full px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium text-center rounded-lg transition-colors">
+               class="block w-full px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-medium text-center rounded-lg transition-colors shadow-sm">
                 Ubah Password
             </a>
         </div>
-        
-       
-       
         
     </div>
     
 </div>
 
 <?php
+// Mengakhiri buffer output dan memuat layout member
 $content = ob_get_clean();
 $title = "Profil Saya";
 include __DIR__ . "/../../layouts/member.php";

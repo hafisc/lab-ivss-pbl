@@ -956,9 +956,38 @@ class AdminController
                 $this->storePublication();
                 break;
 
+            case 'edit':
+                $id = intval($_GET['id'] ?? 0);
+                $query = "SELECT * FROM publications WHERE id = $1";
+                $res = @pg_query_params($this->db, $query, [$id]);
+                $publication = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
+
+                if ($publication) {
+                    include __DIR__ . '/../../view/admin/publications/edit.php';
+                } else {
+                    $_SESSION['error'] = 'Publikasi tidak ditemukan';
+                    header('Location: index.php?page=admin-publications');
+                    exit;
+                }
+                break;
+
+            case 'update':
+                $this->updatePublication();
+                break;
+
             case 'delete':
                 if (isset($_GET['id'])) {
                     $id = intval($_GET['id']);
+                    // Get file path to delete file
+                    $q = "SELECT file_path FROM publications WHERE id = $1";
+                    $r = @pg_query_params($this->db, $q, [$id]);
+                    if ($r && pg_num_rows($r) > 0) {
+                        $row = pg_fetch_assoc($r);
+                        if ($row['file_path'] && file_exists(__DIR__ . '/../../public/' . $row['file_path'])) {
+                            @unlink(__DIR__ . '/../../public/' . $row['file_path']);
+                        }
+                    }
+
                     @pg_query_params($this->db, "DELETE FROM publications WHERE id = $1", [$id]);
                     $_SESSION['success'] = 'Publikasi berhasil dihapus';
                 }
@@ -1017,6 +1046,82 @@ class AdminController
             $_SESSION['success'] = 'Publikasi berhasil ditambahkan!';
         } else {
             $_SESSION['error'] = 'Gagal menambahkan publikasi: ' . pg_last_error($this->db);
+        }
+        
+        header('Location: index.php?page=admin-publications');
+        exit;
+    }
+
+    private function updatePublication()
+    {
+        $id = intval($_GET['id'] ?? 0);
+        
+        // Get existing data
+        $query = "SELECT * FROM publications WHERE id = $1";
+        $res = @pg_query_params($this->db, $query, [$id]);
+        $existing = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
+        
+        if (!$existing) {
+             $_SESSION['error'] = 'Publikasi tidak ditemukan';
+             header('Location: index.php?page=admin-publications');
+             exit;
+        }
+
+        $title = $_POST['title'] ?? '';
+        $authors = $_POST['authors'] ?? '';
+        $year = intval($_POST['year'] ?? date('Y'));
+        $type = $_POST['type'] ?? 'journal';
+        $publisher = $_POST['publisher'] ?? '';
+        $doi = $_POST['doi'] ?? '';
+        $url = $_POST['url'] ?? '';
+
+        // Opsional fields
+        $volume = $_POST['volume'] ?? '';
+        $issue = $_POST['issue'] ?? '';
+        $pages = $_POST['pages'] ?? '';
+        $indexed = $_POST['indexed'] ?? '';
+        $citation_count = intval($_POST['citation_count'] ?? 0);
+        $abstract = $_POST['abstract'] ?? '';
+
+        // Handle File
+        $file_path = $existing['file_path'];
+        
+        // Check if remove requested
+        if (isset($_POST['remove_file']) && $_POST['remove_file'] == '1') {
+            if ($file_path && file_exists(__DIR__ . '/../../public/' . $file_path)) {
+                @unlink(__DIR__ . '/../../public/' . $file_path);
+            }
+            $file_path = null;
+        }
+
+        // Handle upload
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+             // Delete old if exists
+            if ($file_path && file_exists(__DIR__ . '/../../public/' . $file_path)) {
+                @unlink(__DIR__ . '/../../public/' . $file_path);
+            }
+            $file_path = $this->uploadFile($_FILES['file_path'], 'publications');
+        }
+
+        // Tentukan kolom mana yang diisi berdasarkan tipe
+        $journal = ($type === 'journal' || $type === 'book' || $type === 'other') ? $publisher : null;
+        $conference = ($type === 'conference' || $type === 'prosiding') ? $publisher : null;
+
+        $query = "UPDATE publications SET title = $1, authors = $2, year = $3, type = $4, journal = $5, conference = $6, 
+                  doi = $7, url = $8, file_path = $9, volume = $10, issue = $11, pages = $12, indexed = $13, 
+                  citation_count = $14, abstract = $15, updated_at = NOW() WHERE id = $16";
+                  
+        $params = [
+            $title, $authors, $year, $type, $journal, $conference, 
+            $doi, $url, $file_path, $volume, $issue, $pages, $indexed, $citation_count, $abstract, $id
+        ];
+
+        $result = @pg_query_params($this->db, $query, $params);
+
+        if ($result) {
+            $_SESSION['success'] = 'Publikasi berhasil diupdate!';
+        } else {
+            $_SESSION['error'] = 'Gagal mengupdate publikasi: ' . pg_last_error($this->db);
         }
         
         header('Location: index.php?page=admin-publications');

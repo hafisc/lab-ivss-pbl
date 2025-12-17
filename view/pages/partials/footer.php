@@ -1,19 +1,24 @@
 <?php
-// Fetch footer settings from database
-// Try to get database connection from global scope or create new one
-$db = null;
+/**
+ * Footer (Kaki Halaman)
+ * 
+ * Bagian ini menampilkan informasi kontak, link cepat, dan hak cipta.
+ * Pengaturan diambil secara dinamis dari database.
+ */
 
-// Check if $db exists in global scope
+// Coba dapatkan koneksi database dari scope global
+$db = null;
 if (isset($GLOBALS['db'])) {
     $db = $GLOBALS['db'];
 }
 
-// If not found, try to get connection from required config
+// Jika tidak ada, coba buat koneksi baru (fallback)
 if (!$db) {
     require_once __DIR__ . '/../../app/config/database.php';
     $db = getDb();
 }
 
+// Mengambil pengaturan footer dari database
 $footerSettings = [];
 if ($db) {
     $query = "SELECT * FROM footer_settings LIMIT 1";
@@ -21,13 +26,13 @@ if ($db) {
     if ($result && pg_num_rows($result) > 0) {
         $row = pg_fetch_assoc($result);
         $footerSettings = $row;
-        // Decode JSON fields
+        // Dekode field JSON
         $footerSettings['quick_links'] = !empty($row['quick_links']) ? json_decode($row['quick_links'], true) : [];
         $footerSettings['resources'] = !empty($row['resources']) ? json_decode($row['resources'], true) : [];
     }
 }
 
-// Default values if settings not available
+// Menentukan nilai default jika pengaturan tidak tersedia
 $footer_desc = $footerSettings['description'] ?? 'Laboratorium Intelligent Vision and Smart System - Pusat riset Computer Vision, AI, dan IoT di Politeknik Negeri Malang.';
 $footer_email = $footerSettings['email'] ?? 'ivss@polinema.ac.id';
 $footer_phone = $footerSettings['phone'] ?? '(0341) 404424';
@@ -40,19 +45,22 @@ $footer_youtube = $footerSettings['youtube'] ?? '';
 $quick_links = $footerSettings['quick_links'] ?? [];
 $resources = $footerSettings['resources'] ?? [];
 
-// Bottom bar fields
+// Pengaturan Baris Bawah (Copyright & Links)
 $footer_copyright = $footerSettings['copyright_text'] ?? 'Lab IVSS - Jurusan Teknologi Informasi, Politeknik Negeri Malang';
 $footer_privacy_url = $footerSettings['privacy_url'] ?? '';
 $footer_terms_url = $footerSettings['terms_url'] ?? '';
 $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<br>08:00 - 16:00 WIB';
 ?>
-<!-- Footer Modern -->
+
+<!-- ==========================================
+     FOOTER MODERN
+     ========================================== -->
 <footer class="bg-gray-900 text-white mt-auto">
-    <!-- Main Footer Content -->
+    <!-- Konten Utama Footer -->
     <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
 
-            <!-- Kolom 1: About Lab -->
+            <!-- Kolom 1: Tentang Lab & Sosmed -->
             <div class="space-y-4">
                 <div class="flex items-center space-x-3 mb-4">
                     <div class="w-12 h-12 bg-white bg-opacity-5 border-2 border-white border-opacity-10 rounded-xl flex items-center justify-center shadow-lg">
@@ -69,7 +77,7 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                 <p class="text-sm text-gray-400 leading-relaxed">
                     <?= htmlspecialchars($footer_desc) ?>
                 </p>
-                <!-- Social Media -->
+                <!-- Ikon Media Sosial -->
                 <div class="flex items-center space-x-3 pt-2">
                     <?php if (!empty($footer_instagram)): ?>
                         <a href="<?= htmlspecialchars($footer_instagram) ?>" target="_blank" class="w-10 h-10 bg-white bg-opacity-10 border border-white border-opacity-30 hover:bg-white hover:bg-opacity-20 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110">
@@ -109,7 +117,7 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                 </div>
             </div>
 
-            <!-- Kolom 2: Quick Links (Dynamic) -->
+            <!-- Kolom 2: Link Cepat (Dinamis dari Database) -->
             <div>
                 <h4 class="font-bold text-lg mb-4 text-white flex items-center">
                     <span class="w-1 h-6 bg-blue-500 mr-3 rounded-full"></span>
@@ -128,6 +136,7 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                             </li>
                         <?php endforeach; ?>
                     <?php else: ?>
+                        <!-- Fallback Static Links -->
                         <li>
                             <a href="#profil" class="text-gray-300 hover:text-white transition-colors duration-200 flex items-center group text-sm">
                                 <svg class="w-4 h-4 mr-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +157,7 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                 </ul>
             </div>
 
-            <!-- Kolom 3: Contact Info (Dynamic) -->
+            <!-- Kolom 3: Informasi Kontak (Dinamis) -->
             <div>
                 <h4 class="font-bold text-lg mb-4 text-white flex items-center">
                     <span class="w-1 h-6 bg-blue-500 mr-3 rounded-full"></span>
@@ -198,7 +207,7 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                 </ul>
             </div>
 
-            <!-- Kolom 4: Newsletter/CTA -->
+            <!-- Kolom 4: Call to Action (CTA) / Jam Operasional -->
             <div>
                 <h4 class="font-bold text-lg mb-4 text-white flex items-center">
                     <span class="w-1 h-6 bg-blue-500 mr-3 rounded-full"></span>
@@ -225,13 +234,16 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
         </div>
     </div>
 
-    <!-- Bottom Bar -->
+    <!-- Baris Bawah: Hak Cipta & Disclaimer -->
     <div class="border-t border-gray-800 bg-black">
         <div class="container mx-auto px-4 py-4">
             <div class="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+                <!-- Teks Hak Cipta -->
                 <p class="text-sm text-gray-400 text-center md:text-left">
                     &copy; <?= date('Y') ?> <span class="text-white font-semibold"><?= htmlspecialchars($footer_copyright) ?></span>
                 </p>
+                
+                <!-- Link Legal -->
                 <div class="flex items-center space-x-4 text-sm">
                     <?php if (!empty($footer_privacy_url)): ?>
                         <a href="<?= htmlspecialchars($footer_privacy_url) ?>" class="text-gray-400 hover:text-white transition-colors">Privacy</a>
@@ -240,10 +252,6 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                     <?php if (!empty($footer_terms_url)): ?>
                         <a href="<?= htmlspecialchars($footer_terms_url) ?>" class="text-gray-400 hover:text-white transition-colors">Terms</a>
                     <?php endif; ?>
-                <div class="flex items-center space-x-4 text-sm">
-                    <a href="#" class="text-gray-500 hover:text-white transition-colors">Privacy</a>
-                    <span class="text-gray-700">•</span>
-                    <a href="#" class="text-gray-500 hover:text-white transition-colors">Terms</a>
                 </div>
             </div>
         </div>
