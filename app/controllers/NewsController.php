@@ -52,6 +52,46 @@ class NewsController {
         return ['success' => false, 'message' => 'Gagal mengupload file'];
     }
 
+    // Helper function untuk upload file (PDF/Doc)
+    private function uploadFile($file) {
+        $upload_dir = __DIR__ . '/../../public/uploads/news/files/';
+        
+        // Buat direktori jika belum ada
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        $allowed_types = [
+            'application/pdf', 
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip',
+            'application/x-zip-compressed',
+            'application/octet-stream' // fallback logic often needed
+        ];
+        $max_size = 10 * 1024 * 1024; // 10MB
+
+        if ($file['size'] > $max_size) {
+            return ['success' => false, 'message' => 'Ukuran file terlalu besar. Maksimal 10MB'];
+        }
+        
+        // Check extension backup
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed_exts = ['pdf', 'doc', 'docx', 'zip'];
+        if (!in_array($ext, $allowed_exts)) {
+             return ['success' => false, 'message' => 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, atau ZIP'];
+        }
+
+        $new_filename = uniqid() . '_' . time() . '.' . $ext;
+        $file_path = $upload_dir . $new_filename;
+
+        if (move_uploaded_file($file['tmp_name'], $file_path)) {
+            return ['success' => true, 'filename' => 'uploads/news/files/' . $new_filename];
+        }
+
+        return ['success' => false, 'message' => 'Gagal mengupload file'];
+    }
+
     // Action: Store (Create new news)
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -79,12 +119,26 @@ class NewsController {
             }
         }
 
+        // Handle file upload (PDF/Doc)
+        $file_path = null;
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+            $upload_file_result = $this->uploadFile($_FILES['file_path']);
+            if ($upload_file_result['success']) {
+                $file_path = $upload_file_result['filename'];
+            } else {
+                 $_SESSION['error'] = $upload_file_result['message'];
+                 header('Location: index.php?page=admin-news&action=create');
+                 exit;
+            }
+        }
+
         // Set properties
         $this->news->title = trim($_POST['title']);
         $this->news->slug = $this->generateSlug($_POST['title']);
         $this->news->content = trim($_POST['content']);
         $this->news->excerpt = !empty($_POST['excerpt']) ? trim($_POST['excerpt']) : null;
         $this->news->image = $image_path;
+        $this->news->file_path = $file_path;
         $this->news->category = !empty($_POST['category']) ? $_POST['category'] : null;
         $this->news->tags = !empty($_POST['tags']) ? trim($_POST['tags']) : null;
         $this->news->author_id = $_SESSION['user_id'];
@@ -161,6 +215,34 @@ class NewsController {
             }
         }
 
+        // Handle file upload or removal
+        $file_path_val = isset($existing_news['file_path']) ? $existing_news['file_path'] : null;
+        
+        // Check if user wants to remove current file
+        if (isset($_POST['remove_file']) && $_POST['remove_file'] == '1') {
+            $file_path_val = null;
+            // Delete old file if exists
+            if (!empty($existing_news['file_path']) && file_exists(__DIR__ . '/../../public/' . $existing_news['file_path'])) {
+                unlink(__DIR__ . '/../../public/' . $existing_news['file_path']);
+            }
+        }
+
+        // Handle new file upload
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+            $upload_file_result = $this->uploadFile($_FILES['file_path']);
+            if ($upload_file_result['success']) {
+                // Delete old file if exists
+                if (!empty($existing_news['file_path']) && file_exists(__DIR__ . '/../../public/' . $existing_news['file_path'])) {
+                     unlink(__DIR__ . '/../../public/' . $existing_news['file_path']);
+                }
+                $file_path_val = $upload_file_result['filename'];
+            } else {
+                $_SESSION['error'] = $upload_file_result['message'];
+                header('Location: index.php?page=admin-news&action=edit&id=' . $id);
+                exit;
+            }
+        }
+
         // Set properties
         $this->news->id = $id;
         $this->news->title = trim($_POST['title']);
@@ -168,6 +250,7 @@ class NewsController {
         $this->news->content = trim($_POST['content']);
         $this->news->excerpt = !empty($_POST['excerpt']) ? trim($_POST['excerpt']) : null;
         $this->news->image = $image_path;
+        $this->news->file_path = $file_path_val;
         $this->news->category = !empty($_POST['category']) ? $_POST['category'] : null;
         $this->news->tags = !empty($_POST['tags']) ? trim($_POST['tags']) : null;
         $this->news->status = $_POST['status'];
@@ -207,6 +290,10 @@ class NewsController {
             // Delete image file if exists
             if ($existing_news && $existing_news['image'] && file_exists(__DIR__ . '/../../public/' . $existing_news['image'])) {
                 unlink(__DIR__ . '/../../public/' . $existing_news['image']);
+            }
+            // Delete associated file if exists
+            if ($existing_news && !empty($existing_news['file_path']) && file_exists(__DIR__ . '/../../public/' . $existing_news['file_path'])) {
+                unlink(__DIR__ . '/../../public/' . $existing_news['file_path']);
             }
             
             $_SESSION['success'] = 'Berita berhasil dihapus';

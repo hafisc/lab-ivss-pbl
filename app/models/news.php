@@ -10,6 +10,7 @@ class News {
     public $content;
     public $excerpt;
     public $image;
+    public $file_path;
     public $category;
     public $tags;
     public $author_id;
@@ -197,8 +198,8 @@ class News {
     // Create new news
     public function create() {
         $query = "INSERT INTO " . $this->table . " 
-                  (title, slug, content, excerpt, image, category, tags, author_id, status, published_at) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) 
+                  (title, slug, content, excerpt, image, file_path, category, tags, author_id, status, published_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
                   RETURNING id";
 
         $result = pg_query_params($this->conn, $query, array(
@@ -207,6 +208,7 @@ class News {
             $this->content, 
             $this->excerpt, 
             $this->image,
+            $this->file_path,
             $this->category,
             $this->tags, 
             $this->author_id, 
@@ -226,8 +228,8 @@ class News {
     public function update() {
         $query = "UPDATE " . $this->table . " 
                   SET title = $1, slug = $2, content = $3, excerpt = $4, 
-                      image = $5, category = $6, tags = $7, status = $8, published_at = $9, updated_at = CURRENT_TIMESTAMP 
-                  WHERE id = $10";
+                      image = $5, file_path = $6, category = $7, tags = $8, status = $9, published_at = $10, updated_at = CURRENT_TIMESTAMP 
+                  WHERE id = $11";
 
         $result = pg_query_params($this->conn, $query, array(
             $this->title, 
@@ -235,6 +237,7 @@ class News {
             $this->content, 
             $this->excerpt, 
             $this->image,
+            $this->file_path,
             $this->category,
             $this->tags, 
             $this->status, 

@@ -28,3 +28,9 @@
 {"time":"2025-12-10T23:50:48+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
 {"time":"2025-12-10T23:52:02+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
 {"time":"2025-12-11T00:39:07+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
+{"time":"2025-12-17T19:11:05+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
+{"time":"2025-12-17T19:33:40+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
+{"time":"2025-12-18T10:46:22+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
+{"time":"2025-12-18T11:01:54+07:00","event":"login_success","email":"admin@ivss.polinema.ac.id","user_id":"1","role":"admin"}
+{"time":"2025-12-18T11:02:21+07:00","event":"login_success","email":"ketualab@ivss.polinema.ac.id","user_id":"2","role":"ketua_lab"}
+{"time":"2025-12-18T11:03:06+07:00","event":"login_success","email":"budi.dosen@polinema.ac.id","user_id":"3","role":"dosen"}

@@ -57,9 +57,16 @@
                                 </span>
                                 
                                 <!-- Link Baca Selengkapnya -->
-                                <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>" class="text-blue-900 font-semibold text-sm hover:underline">
-                                    Baca Selengkapnya &rarr;
-                                </a>
+                                <!-- Link Baca Selengkapnya / Download -->
+                                <?php if (!empty($news['file_path'])): ?>
+                                    <a href="<?= htmlspecialchars($news['file_path']) ?>" target="_blank" download class="text-green-700 font-semibold text-sm hover:underline flex items-center gap-1">
+                                        Download PDF <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                    </a>
+                                <?php else: ?>
+                                    <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>" class="text-blue-900 font-semibold text-sm hover:underline">
+                                        Baca Selengkapnya &rarr;
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

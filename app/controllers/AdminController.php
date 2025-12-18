@@ -765,19 +765,21 @@ class AdminController
             'funding' => !empty($_POST['funding']) ? $_POST['funding'] : null,
             'team_members' => !empty($_POST['team_members']) ? $_POST['team_members'] : null,
             'publications' => !empty($_POST['publications']) ? $_POST['publications'] : null,
-            'leader_id' => $_SESSION['user_id'] ?? null
+            'leader_id' => $_SESSION['user']['id'] ?? null
         ];
 
-        // Handle image upload
         $data['image'] = null;
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $data['image'] = $this->uploadImage($_FILES['image'], 'research');
         }
 
+        // Add URL (Link Penelitian)
+        $data['url'] = $_POST['url'] ?? null;
+
         if ($model->create($data)) {
             $_SESSION['success'] = 'Riset berhasil ditambahkan!';
         } else {
-            $_SESSION['error'] = 'Gagal menambahkan riset.';
+            $_SESSION['error'] = 'Gagal menambahkan riset: ' . pg_last_error($this->db);
         }
 
         header('Location: index.php?page=admin-research');
@@ -804,7 +806,8 @@ class AdminController
             'end_date' => !empty($_POST['end_date']) ? $_POST['end_date'] : null,
             'funding' => !empty($_POST['funding']) ? $_POST['funding'] : null,
             'team_members' => !empty($_POST['team_members']) ? $_POST['team_members'] : null,
-            'publications' => !empty($_POST['publications']) ? $_POST['publications'] : null
+            'publications' => !empty($_POST['publications']) ? $_POST['publications'] : null,
+            'url' => !empty($_POST['url']) ? $_POST['url'] : null
         ];
 
         $data['image'] = $existing['image'];
@@ -956,6 +959,24 @@ class AdminController
                 $this->storePublication();
                 break;
 
+            case 'edit':
+                $id = intval($_GET['id'] ?? 0);
+                $query = "SELECT * FROM publications WHERE id = $1";
+                $result = @pg_query_params($this->db, $query, [$id]);
+                if ($result && pg_num_rows($result) > 0) {
+                    $publication = pg_fetch_assoc($result);
+                    include __DIR__ . '/../../view/admin/publications/edit.php';
+                } else {
+                    $_SESSION['error'] = 'Publikasi tidak ditemukan';
+                    header('Location: index.php?page=admin-publications');
+                    exit;
+                }
+                break;
+
+            case 'update':
+                $this->updatePublication();
+                break;
+
             case 'delete':
                 if (isset($_GET['id'])) {
                     $id = intval($_GET['id']);
@@ -1017,6 +1038,75 @@ class AdminController
             $_SESSION['success'] = 'Publikasi berhasil ditambahkan!';
         } else {
             $_SESSION['error'] = 'Gagal menambahkan publikasi: ' . pg_last_error($this->db);
+        }
+        
+        header('Location: index.php?page=admin-publications');
+        exit;
+        header('Location: index.php?page=admin-publications');
+        exit;
+    }
+
+    private function updatePublication()
+    {
+        $id = intval($_GET['id'] ?? 0);
+        $title = $_POST['title'] ?? '';
+        $authors = $_POST['authors'] ?? '';
+        $year = intval($_POST['year'] ?? date('Y'));
+        $type = $_POST['type'] ?? 'journal';
+        $publisher = $_POST['publisher'] ?? '';
+        $doi = $_POST['doi'] ?? '';
+        $url = $_POST['url'] ?? '';
+
+        // Opsional fields
+        $volume = $_POST['volume'] ?? '';
+        $issue = $_POST['issue'] ?? '';
+        $pages = $_POST['pages'] ?? '';
+        $indexed = $_POST['indexed'] ?? '';
+        $abstract = $_POST['abstract'] ?? '';
+
+        // Handle PDF/Document upload
+        $file_path = null;
+        if (isset($_POST['remove_file']) && $_POST['remove_file'] == '1') {
+             // Logic to remove old file if needed
+             $file_path = null; 
+             // Ideally we should unlink old file but let's keep it simple or fetch old path to unlink
+        }
+        
+        // If has new file
+        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+            $file_path = $this->uploadFile($_FILES['file_path'], 'publications');
+        }
+
+        // Tentukan kolom mana yang diisi berdasarkan tipe
+        $journal = ($type === 'journal' || $type === 'book' || $type === 'other') ? $publisher : null;
+        $conference = ($type === 'conference' || $type === 'prosiding') ? $publisher : null;
+
+        // Build Query
+        $sql = "UPDATE publications SET title=$1, authors=$2, year=$3, type=$4, journal=$5, conference=$6, 
+                doi=$7, url=$8, volume=$9, issue=$10, pages=$11, indexed=$12, abstract=$13, updated_at=NOW()";
+        
+        $params = [
+            $title, $authors, $year, $type, $journal, $conference, 
+            $doi, $url, $volume, $issue, $pages, $indexed, $abstract
+        ];
+        
+        $paramIndex = 14;
+
+        if ($file_path !== null || (isset($_POST['remove_file']) && $_POST['remove_file'] == '1')) {
+            $sql .= ", file_path=$" . $paramIndex;
+            $params[] = $file_path;
+            $paramIndex++;
+        }
+
+        $sql .= " WHERE id=$" . $paramIndex;
+        $params[] = $id;
+
+        $result = @pg_query_params($this->db, $sql, $params);
+
+        if ($result) {
+            $_SESSION['success'] = 'Publikasi berhasil diperbarui!';
+        } else {
+            $_SESSION['error'] = 'Gagal memperbarui publikasi: ' . pg_last_error($this->db);
         }
         
         header('Location: index.php?page=admin-publications');

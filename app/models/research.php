@@ -102,8 +102,8 @@ class Research {
     // CRUD Methods
     public function create($data) {
         $query = "INSERT INTO " . $this->table . " 
-                  (title, description, category, image, leader_id, status, start_date, end_date, funding, team_members, publications, created_at) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW()) RETURNING id";
+                  (title, description, category, image, leader_id, status, start_date, end_date, funding, team_members, publications, url, created_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW()) RETURNING id";
         
         $params = [
             $data['title'],
@@ -116,7 +116,8 @@ class Research {
             $data['end_date'] ?? null,
             $data['funding'] ?? null,
             $data['team_members'] ?? null,
-            $data['publications'] ?? null
+            $data['publications'] ?? null,
+            $data['url'] ?? null
         ];
 
         $result = pg_query_params($this->conn, $query, $params);
@@ -132,8 +133,8 @@ class Research {
         $query = "UPDATE " . $this->table . " 
                   SET title = $1, description = $2, category = $3, image = $4, status = $5, 
                       start_date = $6, end_date = $7, funding = $8, team_members = $9, 
-                      publications = $10, updated_at = NOW() 
-                  WHERE id = $11";
+                      publications = $10, url = $11, updated_at = NOW() 
+                  WHERE id = $12";
         
         $params = [
             $data['title'],
@@ -146,6 +147,7 @@ class Research {
             $data['funding'] ?? null,
             $data['team_members'] ?? null,
             $data['publications'] ?? null,
+            $data['url'] ?? null,
             $id
         ];
 
