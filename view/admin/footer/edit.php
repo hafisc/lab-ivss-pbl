@@ -21,10 +21,6 @@ if (empty($footerSettings)) {
         'resources' => []
     ];
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> bfc729b4c8a02e5a31b1975ed7df1463e110b231
 ?>
 
 <div class="max-w-5xl mx-auto py-8">

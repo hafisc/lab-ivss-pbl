@@ -218,7 +218,7 @@ $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<b
                         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <?= $footer_operating_hours ?>
+                        <?= nl2br ($footer_operating_hours) ?>
                     </p>
                 </div>
             </div>
