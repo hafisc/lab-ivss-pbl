@@ -25,6 +25,8 @@ if ($action === 'edit') {
     $content = $controller->index();
 }
 
+
+
 // --- Set page title ---
 $title = 'Manajemen Navbar';
 
