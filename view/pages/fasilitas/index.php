@@ -38,13 +38,13 @@
                                         <p class="text-sm text-gray-600 mb-4 line-clamp-3">
                                             <?= htmlspecialchars($facility['description']) ?>
                                         </p>
-                                        <span onclick='openModal(<?= json_encode($facility["name"]) ?>, <?= json_encode($facility["description"]) ?>, <?= json_encode($facility["image"]) ?>)' 
-                                              class="mt-auto inline-flex items-center text-sm font-semibold text-blue-900 cursor-pointer hover:text-blue-600 transition-colors">
+                                        <a href="index.php?page=facility&id=<?= $facility['id'] ?>" 
+                                           class="mt-auto inline-flex items-center text-sm font-semibold text-blue-900 cursor-pointer hover:text-blue-600 transition-colors">
                                             Lihat Detail
                                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                                             </svg>
-                                        </span>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

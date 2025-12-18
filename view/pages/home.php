@@ -53,36 +53,33 @@
 <!-- Visi & Misi Section -->
 <?php include __DIR__ . '/visimisi/index.php'; ?>
 
+<!-- Berita & Artikel Section (Pindah ke atas agar terlihat aktif) -->
+<?php include __DIR__ . '/berita/index.php'; ?>
+
 <!-- Galeri Kegiatan Section -->
 <?php include __DIR__ . '/galeri/index.php'; ?>
 
+<!-- Riset Unggulan Section (Added) -->
+<?php include __DIR__ . '/riset/index.php'; ?>
 
 <!-- Fasilitas Lab Section -->
 <?php include __DIR__ . '/fasilitas/index.php'; ?>
 
-
 <!-- Daftar Peralatan -->
 <?php include __DIR__ . '/peralatan/index.php'; ?>
 
-<!-- Sorotan Publikasi Section -->
+<!-- Anggota Tim Section (Humanize lab sebelum hasil riset) -->
+<?php include __DIR__ . '/tim/index.php'; ?>
+
+<!-- Sorotan Publikasi Section (Output/Hasil Kerja) -->
 <?php include __DIR__ . '/publikasi/index.php'; ?>
 
-<!-- Berita & Artikel Section -->
-<?php include __DIR__ . '/berita/index.php'; ?>
-
-
+<!-- Perkuliahan Terkait Section -->
+<?php include __DIR__ . '/perkuliahan/index.php'; ?>
 
 <!-- Home Page Scripts -->
 <?php include __DIR__ . '/home_scripts.php'; ?>
 
-
-<!-- Anggota Tim Section -->
-<?php include __DIR__ . '/tim/index.php'; ?>
-
-
-
-<!-- Perkuliahan Terkait Section -->
-<?php include __DIR__ . '/perkuliahan/index.php'; ?>
 
 
 

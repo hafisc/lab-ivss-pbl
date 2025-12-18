@@ -140,37 +140,91 @@ class ProfileController
             exit;
         }
 
-        // Query UPDATE menggunakan placeholder $1, $2, dst.
-        $sql = "UPDATE {$this->tableName} SET
-        nama_lab = $1, singkatan = $2, deskripsi_singkat = $3, 
-        lokasi_ruangan = $4,
-        riset_fitur_judul = $5, riset_fitur_desk = $6,
-        fasilitas_fitur_judul = $7, fasilitas_fitur_desk = $8,
-        last_updated = CURRENT_TIMESTAMP
-        WHERE id = $9"; // <--- Menggunakan $9 sebagai placeholder untuk ID
+        $imagePath = null;
+        
+        // Handle File Upload
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $fileType = mime_content_type($_FILES['image']['tmp_name']);
+            
+            if (in_array($fileType, $allowedTypes)) {
+                // Determine upload directory
+                $uploadDir = __DIR__ . '/../../public/uploads/profile/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
+                $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $fileName = 'logo_' . time() . '.' . $extension;
+                $targetFile = $uploadDir . $fileName;
+                
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+                    $imagePath = 'uploads/profile/' . $fileName;
+                } else {
+                    $_SESSION['error'] = 'Gagal mengupload file gambar.';
+                }
+            } else {
+                $_SESSION['error'] = 'Format file tidak diizinkan. Gunakan JPG, PNG, GIF, atau WEBP.';
+            }
+        }
 
-        // Array parameter (Harus ada 9 elemen karena ada 9 placeholder: $1 sampai $9)
-        $params = [
-            $_POST['nama_lab'] ?? '',
-            $_POST['singkatan'] ?? '',
-            $_POST['deskripsi_singkat'] ?? '',
-            $_POST['lokasi_ruangan'] ?? '',
-            $_POST['riset_fitur_judul'] ?? '',
-            $_POST['riset_fitur_desk'] ?? '',
-            $_POST['fasilitas_fitur_judul'] ?? '',
-            $_POST['fasilitas_fitur_desk'] ?? '',
-            1 // <--- Nilai untuk $9 (ID yang akan diupdate, yaitu 1)
-        ];
+        // Prepare Query
+        // If image uploaded, update image column too. Otherwise keep old one.
+        if ($imagePath) {
+             $sql = "UPDATE {$this->tableName} SET
+                nama_lab = $1, singkatan = $2, deskripsi_singkat = $3, 
+                lokasi_ruangan = $4,
+                riset_fitur_judul = $5, riset_fitur_desk = $6,
+                fasilitas_fitur_judul = $7, fasilitas_fitur_desk = $8,
+                image = $9,
+                last_updated = CURRENT_TIMESTAMP
+                WHERE id = $10";
+                
+             $params = [
+                $_POST['nama_lab'] ?? '',
+                $_POST['singkatan'] ?? '',
+                $_POST['deskripsi_singkat'] ?? '',
+                $_POST['lokasi_ruangan'] ?? '',
+                $_POST['riset_fitur_judul'] ?? '',
+                $_POST['riset_fitur_desk'] ?? '',
+                $_POST['fasilitas_fitur_judul'] ?? '',
+                $_POST['fasilitas_fitur_desk'] ?? '',
+                $imagePath,
+                1 // ID
+            ];
+        } else {
+            // No new image, don't update image column
+             $sql = "UPDATE {$this->tableName} SET
+                nama_lab = $1, singkatan = $2, deskripsi_singkat = $3, 
+                lokasi_ruangan = $4,
+                riset_fitur_judul = $5, riset_fitur_desk = $6,
+                fasilitas_fitur_judul = $7, fasilitas_fitur_desk = $8,
+                last_updated = CURRENT_TIMESTAMP
+                WHERE id = $9";
+                
+             $params = [
+                $_POST['nama_lab'] ?? '',
+                $_POST['singkatan'] ?? '',
+                $_POST['deskripsi_singkat'] ?? '',
+                $_POST['lokasi_ruangan'] ?? '',
+                $_POST['riset_fitur_judul'] ?? '',
+                $_POST['riset_fitur_desk'] ?? '',
+                $_POST['fasilitas_fitur_judul'] ?? '',
+                $_POST['fasilitas_fitur_desk'] ?? '',
+                1 // ID
+            ];
+        }
 
         try {
             $result = pg_query_params($this->pgConnection, $sql, $params);
 
             if ($result === false) {
-                // Pastikan untuk mencatat error lengkap, bukan hanya pesan default
                 throw new Exception(pg_last_error($this->pgConnection));
             }
 
-            $_SESSION['success'] = 'Profil Laboratorium berhasil diperbarui!';
+            if (!isset($_SESSION['error'])) {
+                $_SESSION['success'] = 'Profil Laboratorium berhasil diperbarui!';
+            }
         } catch (Exception $e) {
             error_log("Update DB Error: " . $e->getMessage());
             $_SESSION['error'] = "Gagal memperbarui database: " . $e->getMessage();

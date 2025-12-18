@@ -26,8 +26,6 @@
             include __DIR__ . '/profile.php';
         } elseif ($tab === 'security') {
             include __DIR__ . '/security.php';
-        } elseif ($tab === 'system') {
-            include __DIR__ . '/system.php';
         }
         ?>
     </div>

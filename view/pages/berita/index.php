@@ -86,15 +86,6 @@
 
                                         <!-- Read More Button -->
                                         <!-- Read More or Download Button -->
-                                        <?php if (!empty($news['file_path'])): ?>
-                                        <a href="<?= htmlspecialchars($news['file_path']) ?>" target="_blank" download
-                                           class="inline-flex items-center gap-2 text-green-700 font-semibold text-sm hover:gap-3 transition-all mt-auto">
-                                            Download Selengkapnya
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                            </svg>
-                                        </a>
-                                        <?php else: ?>
                                         <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>"
                                            class="inline-flex items-center gap-2 text-blue-900 font-semibold text-sm hover:gap-3 transition-all mt-auto">
                                             Baca Selengkapnya
@@ -102,7 +93,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                                             </svg>
                                         </a>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>

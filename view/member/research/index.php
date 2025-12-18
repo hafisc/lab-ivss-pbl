@@ -2,8 +2,31 @@
 ob_start();
 
 // Get user info
-$userId = $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0;
-$userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'Member';
+$userId = $_SESSION['user_id'] ?? 0;
+
+// Fetch research data from database
+require_once __DIR__ . '/../../../app/config/Database.php';
+$db = Database::getInstance()->getPgConnection();
+
+// Get researches where user is the leader
+$query = "SELECT r.*, u.username as leader_name 
+          FROM research r 
+          LEFT JOIN users u ON r.leader_id = u.id 
+          WHERE r.leader_id = $1 
+          ORDER BY r.created_at DESC";
+$result = pg_query_params($db, $query, [$userId]);
+
+$myResearches = [];
+$totalDocuments = 0;
+
+if ($result) {
+    while ($row = pg_fetch_assoc($result)) {
+        $myResearches[] = $row;
+        // Count documents if needed (placeholder for now)
+        $totalDocuments += 0; // TODO: implement document counting
+    }
+    pg_free_result($result);
+}
 ?>
 
 <!-- Page Header -->

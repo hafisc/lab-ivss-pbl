@@ -15,7 +15,7 @@
                     <img src="<?= htmlspecialchars($currentUser['photo']) ?>" alt="Profile" class="w-20 h-20 rounded-full object-cover border-2 border-slate-200">
                 <?php else: ?>
                     <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-700">
-                        <?= strtoupper(substr($currentUser['name'] ?? 'A', 0, 1)) ?>
+                        <?= strtoupper(substr($currentUser['username'] ?? 'A', 0, 1)) ?>
                     </div>
                 <?php endif; ?>
                 <div>
@@ -58,7 +58,7 @@
         <div>
             <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap *</label>
             <input type="text" id="name" name="name" required
-                   value="<?= htmlspecialchars($currentUser['name'] ?? '') ?>"
+                   value="<?= htmlspecialchars($currentUser['username'] ?? '') ?>"
                    class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         </div>
 

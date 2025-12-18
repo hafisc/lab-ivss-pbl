@@ -249,7 +249,27 @@ switch ($page) {
 
     // Member Publications
     case 'member-publications':
-        require __DIR__ . '/../view/member/publications/index.php';
+        require __DIR__ . '/../app/controllers/MemberController.php';
+        (new MemberController($pg))->publications();
+        break;
+    case 'member-publication-create':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require __DIR__ . '/../app/controllers/MemberController.php';
+            (new MemberController($pg))->createPublication();
+        } else {
+            require __DIR__ . '/../view/member/publications/create.php';
+        }
+        break;
+    case 'member-publication-edit':
+        require __DIR__ . '/../view/member/publications/edit.php';
+        break;
+    case 'member-publication-update':
+        require __DIR__ . '/../app/controllers/MemberController.php';
+        (new MemberController($pg))->updatePublication();
+        break;
+    case 'member-publication-delete':
+        require __DIR__ . '/../app/controllers/MemberController.php';
+        (new MemberController($pg))->deletePublication();
         break;
 
     // Member Profile & Settings
@@ -331,6 +351,23 @@ switch ($page) {
         require __DIR__ . '/../app/controllers/GalleryController.php';
         (new GalleryController($pg))->delete();
         break;
+
+    // Public News Route
+    case 'news':
+        $slug = $_GET['slug'] ?? null;
+        if ($slug) {
+            require __DIR__ . '/../view/pages/berita/show.php';
+        } else {
+            header('Location: index.php#berita');
+            exit;
+        }
+        break;
+
+    // Public Facility Route
+    case 'facility':
+        require __DIR__ . '/../view/pages/fasilitas/show.php';
+        break;
+
 
     default:
         http_response_code(404);

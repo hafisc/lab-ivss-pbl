@@ -10,7 +10,7 @@ if (isset($GLOBALS['db'])) {
 
 // If not found, try to get connection from required config
 if (!$db) {
-    require_once __DIR__ . '/../../app/config/database.php';
+    require_once __DIR__ . '/../../../app/config/Database.php';
     $db = getDb();
 }
 

@@ -10,7 +10,7 @@
         <p class="mt-2 text-gray-600">Perbarui semua informasi yang relevan dengan profil Lab Anda.</p>
     </div>
 
-    <form action="index.php?page=admin-profile-settings&action=edit" method="POST" class="bg-white rounded-lg shadow p-8 space-y-6">
+    <form action="index.php?page=admin-profile-settings&action=edit" method="POST" enctype="multipart/form-data" class="bg-white rounded-lg shadow p-8 space-y-6">
 
         <div class="grid md:grid-cols-2 gap-6">
             <div>
@@ -31,6 +31,23 @@
         <div>
             <label for="deskripsi_singkat" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat (Body Text)</label>
             <textarea id="deskripsi_singkat" name="deskripsi_singkat" rows="5" class="w-full border-gray-300 rounded-md shadow-sm p-2"><?= htmlspecialchars($profileData['deskripsi_singkat'] ?? '') ?></textarea>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Logo / Gambar Profil Lab</label>
+            <div class="mt-1 flex items-center space-x-4">
+                 <?php if (!empty($profileData['image'])): ?>
+                    <img src="<?= htmlspecialchars($profileData['image']) ?>" alt="Current Logo" class="w-20 h-20 object-contain border rounded-md">
+                <?php endif; ?>
+                <input type="file" id="image" name="image" accept="image/*" class="block w-full text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100
+                "/>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">Format: JPG, PNG. Maks 2MB.</p>
         </div>
 
         <hr class="border-gray-200">

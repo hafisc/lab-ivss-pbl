@@ -3,8 +3,8 @@
     "subtitle": "Mata kuliah yang berkaitan dengan Lab IVSS",
     "items": [
         {
-            "title": "Kecerdasan Artifisial (AI)",
-            "description": "Teknologi yang fokus pada pembelajaran tugas-tugas berbasis manusia seperti pengenalan pola"
+            "title": "\\a",
+            "description": "a"
         },
         {
             "title": "Machine Learning",
@@ -25,6 +25,10 @@
         {
             "title": "Robotics",
             "description": "bla bla"
+        },
+        {
+            "title": "da",
+            "description": "da"
         }
     ]
 }

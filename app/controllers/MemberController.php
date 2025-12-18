@@ -292,4 +292,152 @@ class MemberController
         header('Location: index.php?page=member-profile');
         exit;
     }
+
+    // Publication Methods
+    public function publications()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        require_once __DIR__ . '/../models/MemberPublication.php';
+        $pubModel = new MemberPublication($this->db);
+        $myPublications = $pubModel->getByUserId($userId);
+
+        include __DIR__ . '/../../view/member/publications/index.php';
+    }
+
+    public function createPublication()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        require_once __DIR__ . '/../models/MemberPublication.php';
+        $pubModel = new MemberPublication($this->db);
+
+        $data = [
+            'user_id' => $userId,
+            'title' => $_POST['title'],
+            'authors' => $_POST['authors'],
+            'journal' => $_POST['journal'],
+            'year' => $_POST['year'],
+            'doi' => $_POST['doi'] ?? null,
+            'status' => $_POST['status'] ?? 'draft'
+        ];
+
+        // Handle File Upload
+        if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . '/../../public/uploads/publications/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $fileName = time() . '_' . basename($_FILES['file']['name']);
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
+                $data['file_path'] = 'uploads/publications/' . $fileName;
+            }
+        }
+
+        if ($pubModel->create($data)) {
+            $_SESSION['success'] = 'Publikasi berhasil ditambahkan.';
+        } else {
+            $_SESSION['error'] = 'Gagal menambahkan publikasi.';
+        }
+
+        header('Location: index.php?page=member-publications');
+        exit;
+    }
+
+    public function updatePublication()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        $id = $_POST['id'];
+        require_once __DIR__ . '/../models/MemberPublication.php';
+        $pubModel = new MemberPublication($this->db);
+        
+        // Verify ownership
+        $pub = $pubModel->getById($id);
+        if (!$pub || $pub['user_id'] != $userId) {
+            $_SESSION['error'] = 'Unauthorized access.';
+            header('Location: index.php?page=member-publications');
+            exit;
+        }
+
+        $data = [
+            'title' => $_POST['title'],
+            'authors' => $_POST['authors'],
+            'journal' => $_POST['journal'],
+            'year' => $_POST['year'],
+            'doi' => $_POST['doi'] ?? null,
+            'status' => $_POST['status']
+        ];
+
+        if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = __DIR__ . '/../../public/uploads/publications/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $fileName = time() . '_' . basename($_FILES['file']['name']);
+            $targetPath = $uploadDir . $fileName;
+            
+            if (move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
+                $data['file_path'] = 'uploads/publications/' . $fileName;
+            }
+        }
+
+        if ($pubModel->update($id, $data)) {
+            $_SESSION['success'] = 'Publikasi berhasil diperbarui.';
+        } else {
+            $_SESSION['error'] = 'Gagal memperbarui publikasi.';
+        }
+
+        header('Location: index.php?page=member-publications');
+        exit;
+    }
+
+    public function deletePublication()
+    {
+        $userId = $_SESSION['user_id'] ?? null;
+        $id = $_GET['id'] ?? null;
+        
+        if (!$userId || !$id) {
+            return;
+        }
+
+        require_once __DIR__ . '/../models/MemberPublication.php';
+        $pubModel = new MemberPublication($this->db);
+        
+        // Verify ownership
+        $pub = $pubModel->getById($id);
+        if (!$pub || $pub['user_id'] != $userId) {
+            $_SESSION['error'] = 'Unauthorized access.';
+        } else {
+            if ($pubModel->delete($id)) {
+                // Delete file if exists
+                if (!empty($pub['file_path'])) {
+                    $filePath = __DIR__ . '/../../public/' . $pub['file_path'];
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                }
+                $_SESSION['success'] = 'Publikasi berhasil dihapus.';
+            } else {
+                $_SESSION['error'] = 'Gagal menghapus publikasi.';
+            }
+        }
+
+        header('Location: index.php?page=member-publications');
+        exit;
+    }
 }

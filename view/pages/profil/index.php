@@ -46,7 +46,11 @@ $profileData = array_replace_recursive($defaultData, $profileData);
                 <div class="space-y-4">
                     <div class="relative group bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-blue-900 transition-all duration-300 hover:shadow-2xl">
                         <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
-                            <img src="assets/images/IVSS LOGO.png" alt="Lab Logo" class="w-full max-w-xs h-auto">
+                            <?php if (!empty($profileData['image'])): ?>
+                                <img src="<?= htmlspecialchars($profileData['image']) ?>" alt="Lab Logo" class="w-full max-w-xs h-auto object-contain">
+                            <?php else: ?>
+                                <img src="assets/images/IVSS LOGO.png" alt="Lab Logo" class="w-full max-w-xs h-auto">
+                            <?php endif; ?>
                             <div class="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
                                 <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($profileData['lokasi_ruangan'] ?? 'Lokasi Belum Ditetapkan') ?></span>
                             </div>

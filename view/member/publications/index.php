@@ -1,37 +1,21 @@
 <?php 
 ob_start();
-
-$userId = $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0;
-$userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'Member';
-
-// TODO: Fetch from database
-$myPublications = [
-    [
-        'id' => 1,
-        'title' => 'Deep Learning for Face Recognition: A Comprehensive Study',
-        'authors' => 'Ahmad Fauzi, Dr. Budi Santoso, Siti Aminah',
-        'journal' => 'IEEE Transactions on Pattern Analysis',
-        'year' => 2024,
-        'status' => 'published',
-        'doi' => '10.1109/TPAMI.2024.1234567',
-        'citation_count' => 15,
-        'file' => 'paper_face_recognition.pdf',
-        'published_date' => '2024-03-15'
-    ],
-    [
-        'id' => 2,
-        'title' => 'Optimization Techniques in Neural Networks',
-        'authors' => 'Ahmad Fauzi, Budi Santoso',
-        'journal' => 'Journal of Machine Learning Research',
-        'year' => 2024,
-        'status' => 'draft',
-        'doi' => null,
-        'citation_count' => 0,
-        'file' => null,
-        'published_date' => null
-    ]
-];
+// $myPublications is passed from controller
 ?>
+
+
+<?php if (isset($_SESSION['success'])): ?>
+    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline"><?= $_SESSION['success'] ?></span>
+    </div>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <span class="block sm:inline"><?= $_SESSION['error'] ?></span>
+    </div>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
 
 <!-- Header -->
 <div class="mb-6">
@@ -40,12 +24,12 @@ $myPublications = [
             <h1 class="text-2xl font-bold text-slate-800 mb-1">Publikasi Saya</h1>
             <p class="text-sm text-slate-500">Kelola paper dan jurnal penelitian kamu</p>
         </div>
-        <button onclick="showAddModal()" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
+        <a href="index.php?page=member-publication-create" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
             Tambah Publikasi
-        </button>
+        </a>
     </div>
 </div>
 
@@ -121,12 +105,12 @@ $myPublications = [
     </div>
     <h3 class="text-lg font-semibold text-slate-800 mb-2">Belum Ada Publikasi</h3>
     <p class="text-sm text-slate-500 mb-6">Tambahkan publikasi pertama kamu</p>
-    <button onclick="showAddModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
+    <a href="index.php?page=member-publication-create" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
         Tambah Publikasi
-    </button>
+    </a>
 </div>
 <?php else: ?>
 <div class="space-y-4">
@@ -195,20 +179,20 @@ $myPublications = [
             </div>
             
             <div class="flex items-center gap-2 pt-4 border-t border-slate-200">
-                <?php if ($pub['file']): ?>
-                <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                <?php if ($pub['file_path']): ?>
+                <a href="<?= htmlspecialchars($pub['file_path']) ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors" target="_blank" download>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                     </svg>
                     Download PDF
                 </a>
                 <?php endif; ?>
-                <button onclick="editPublication(<?= $pub['id'] ?>)" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm rounded-lg hover:bg-slate-200 transition-colors">
+                <a href="index.php?page=member-publication-edit&id=<?= $pub['id'] ?>" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm rounded-lg hover:bg-slate-200 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
                     Edit
-                </button>
+                </a>
                 <button onclick="deletePublication(<?= $pub['id'] ?>)" class="inline-flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 text-sm rounded-lg transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -221,65 +205,6 @@ $myPublications = [
     <?php endforeach; ?>
 </div>
 <?php endif; ?>
-
-<!-- Add/Edit Modal -->
-<div id="publicationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-slate-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-bold text-slate-800" id="modalTitle">Tambah Publikasi</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <form id="publicationForm" class="p-6 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Judul Publikasi *</label>
-                    <input type="text" name="title" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Authors *</label>
-                    <input type="text" name="authors" placeholder="John Doe, Jane Smith" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Journal/Conference *</label>
-                    <input type="text" name="journal" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Tahun *</label>
-                    <input type="number" name="year" min="2000" max="2100" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">DOI</label>
-                    <input type="text" name="doi" placeholder="10.1109/..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Status *</label>
-                    <select name="status" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Upload PDF</label>
-                    <input type="file" accept=".pdf" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                </div>
-            </div>
-            <div class="flex items-center gap-3 pt-4">
-                <button type="submit" class="flex-1 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700">
-                    Simpan
-                </button>
-                <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200">
-                    Batal
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <script>
 function showTab(tab) {
@@ -300,33 +225,11 @@ function showTab(tab) {
     });
 }
 
-function showAddModal() {
-    document.getElementById('modalTitle').textContent = 'Tambah Publikasi';
-    document.getElementById('publicationForm').reset();
-    document.getElementById('publicationModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-    document.getElementById('publicationModal').classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-function editPublication(id) {
-    document.getElementById('modalTitle').textContent = 'Edit Publikasi';
-    document.getElementById('publicationModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
 function deletePublication(id) {
     if (confirm('Yakin hapus publikasi ini?')) {
-        alert('Delete publication ID: ' + id);
+        window.location.href = 'index.php?page=member-publication-delete&id=' + id;
     }
 }
-
-document.getElementById('publicationModal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
-});
 </script>
 
 <?php

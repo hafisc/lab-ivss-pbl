@@ -1342,18 +1342,14 @@ class AdminController
             $this->updateProfile();
         } elseif ($action === 'change-password') {
             $this->changePassword();
-        } elseif ($action === 'update-system') {
-            $this->updateSystemSettings();
         }
+
 
         // Ambil data user saat ini
         $userId = $_SESSION['user_id'] ?? 0;
         $currentUser = $this->getUserById($userId);
 
-        // Ambil system settings
-        require_once __DIR__ . '/../models/SystemSettings.php';
-        $settingsModel = new SystemSettings($this->db);
-        $settings = $settingsModel->getAll();
+
 
         include __DIR__ . '/../../view/admin/settings/index.php';
     }
@@ -1415,7 +1411,7 @@ class AdminController
             $_SESSION['error'] = 'Gagal mengupdate profil: ' . pg_last_error($this->db);
         }
 
-        header('Location: index.php?page=admin-settings&tab=profile');
+        header('Location: ?page=admin-settings&tab=profile');
         exit;
     }
 
@@ -1458,42 +1454,7 @@ class AdminController
         exit;
     }
 
-    private function updateSystemSettings()
-    {
-        require_once __DIR__ . '/../models/SystemSettings.php';
-        
-        $settings = [
-            'site_name' => $_POST['site_name'] ?? '',
-            'site_description' => $_POST['site_description'] ?? '',
-            'topbar_text' => $_POST['topbar_text'] ?? '',
-            'institution_name' => $_POST['institution_name'] ?? '',
-            'lab_name' => $_POST['lab_name'] ?? '',
-            'contact_email' => $_POST['contact_email'] ?? '',
-            'contact_phone' => $_POST['contact_phone'] ?? '',
-            'logo_url' => $_POST['logo_url'] ?? ''
-        ];
 
-        // Handle logo upload if provided
-        if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-             $logoPath = $this->uploadImage($_FILES['logo'], 'settings');
-             if ($logoPath) {
-                 $settings['logo_url'] = $logoPath;
-             }
-        }
-        
-        foreach ($settings as $key => $value) {
-            // Upsert setting using Postgres ON CONFLICT
-            $query = "INSERT INTO system_settings (setting_key, setting_value, updated_at, updated_by)
-                      VALUES ($1, $2, NOW(), $3)
-                      ON CONFLICT (setting_key) 
-                      DO UPDATE SET setting_value = EXCLUDED.setting_value, updated_at = NOW(), updated_by = EXCLUDED.updated_by";
-            @pg_query_params($this->db, $query, [$key, $value, $_SESSION['user_id']]);
-        }
-
-        $_SESSION['success'] = 'Pengaturan sistem berhasil diupdate!';
-        header('Location: index.php?page=admin-settings&tab=system');
-        exit;
-    }
 
     // Helper Methods
     private function generateSlug($title)
