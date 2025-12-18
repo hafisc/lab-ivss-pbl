@@ -56,8 +56,10 @@
 <!-- Galeri Kegiatan Section -->
 <?php include __DIR__ . '/galeri/index.php'; ?>
 
+
 <!-- Fasilitas Lab Section -->
 <?php include __DIR__ . '/fasilitas/index.php'; ?>
+
 
 <!-- Daftar Peralatan -->
 <?php include __DIR__ . '/peralatan/index.php'; ?>
