@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   initFasilitasSwiper();
   initEquipmentSwiper();
+    initEquipmentLightbox();
 
   
   // Filter buttons functionality
@@ -125,6 +126,61 @@ function initEquipmentSwiper() {
       1024: { slidesPerView: 3, spaceBetween: 30 },
     },
   });
+}
+
+function initEquipmentLightbox() {
+    const modal = document.getElementById('equipment-image-modal');
+    if (!modal) return;
+
+    const modalImg = document.getElementById('equipment-image-modal-img');
+    const caption = document.getElementById('equipment-image-modal-caption');
+    const closeBtn = document.getElementById('equipment-image-modal-close');
+
+    const hideModal = () => {
+        modal.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        if (modalImg) {
+            modalImg.src = '';
+            modalImg.alt = '';
+        }
+        if (caption) {
+            caption.textContent = '';
+        }
+    };
+
+    document.querySelectorAll('.equipment-image-thumb').forEach(img => {
+        img.addEventListener('click', () => {
+            const src = img.getAttribute('data-image') || img.src;
+            const name = img.getAttribute('data-name') || img.alt || '';
+
+            if (modalImg) {
+                modalImg.src = src;
+                modalImg.alt = name;
+            }
+            if (caption) {
+                caption.textContent = name;
+            }
+
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        });
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', hideModal);
+    }
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            hideModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            hideModal();
+        }
+    });
 }
 
     function filterPublications(filterType) {
