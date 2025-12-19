@@ -23,7 +23,7 @@
                             <?php foreach ($equipmentForLanding as $equip): ?>
                                 <div class="swiper-slide">
                                     <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col items-center justify-start">
-                                        <div class="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden bg-blue-900 flex items-center justify-center">
+                                        <div class="w-64 h-64 mx-auto mb-4 rounded-2xl overflow-hidden bg-blue-900 flex items-center justify-center">
                                                 <?php if (!empty($equip['image'])): ?>
                                                     <img 
                                                         src="<?= htmlspecialchars($equip['image']) ?>" 
