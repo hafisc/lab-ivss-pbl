@@ -4,18 +4,7 @@ ob_start();
 ?>
 
 
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-        <span class="block sm:inline"><?= $_SESSION['success'] ?></span>
-    </div>
-    <?php unset($_SESSION['success']); ?>
-<?php endif; ?>
-<?php if (isset($_SESSION['error'])): ?>
-    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <span class="block sm:inline"><?= $_SESSION['error'] ?></span>
-    </div>
-    <?php unset($_SESSION['error']); ?>
-<?php endif; ?>
+
 
 <!-- Header -->
 <div class="mb-6">
@@ -73,7 +62,9 @@ ob_start();
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
             </svg>
         </div>
-        <h3 class="text-xl font-bold text-slate-800"><?= array_sum(array_column($myPublications, 'citation_count')) ?></h3>
+        <h3 class="text-xl font-bold text-slate-800">
+            <?= array_sum(array_column($myPublications, 'citation_count') ?? []) ?>
+        </h3>
         <p class="text-xs text-slate-600">Total Citations</p>
     </div>
 </div>
@@ -149,7 +140,7 @@ ob_start();
                                     DOI: <?= htmlspecialchars($pub['doi']) ?>
                                 </span>
                                 <?php endif; ?>
-                                <?php if ($pub['citation_count'] > 0): ?>
+                                <?php if (isset($pub['citation_count']) && $pub['citation_count'] > 0): ?>
                                 <span class="flex items-center gap-1 text-blue-600 font-medium">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
