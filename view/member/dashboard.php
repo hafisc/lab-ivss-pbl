@@ -2,9 +2,72 @@
 ob_start();
 
 // Get user info
-$userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'Member';
-$userNIM = $_SESSION['user']['nim'] ?? $_SESSION['nim'] ?? '-';
-$userAngkatan = $_SESSION['user']['angkatan'] ?? $_SESSION['angkatan'] ?? '-';
+$userId = $_SESSION['user_id'] ?? 0;
+
+// Fetch user data from database
+require_once __DIR__ . '/../../app/config/Database.php';
+$db = Database::getInstance()->getPgConnection();
+
+// Get user basic info
+$query = "SELECT u.id, u.username, u.email, u.status, u.photo, u.created_at
+          FROM users u WHERE u.id = $1 LIMIT 1";
+$res = @pg_query_params($db, $query, array($userId));
+$user = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
+
+// Get additional member data
+$extra = null;
+if (!empty($user['email'])) {
+    $q2 = "SELECT * FROM member_registrations WHERE email = $1 LIMIT 1";
+    $r2 = @pg_query_params($db, $q2, array($user['email']));
+    if ($r2 && pg_num_rows($r2) > 0) {
+        $extra = pg_fetch_assoc($r2);
+    }
+}
+
+// Build user info
+$userName = $user['username'] ?? $extra['name'] ?? 'Member';
+$userNIM = $extra['nim'] ?? '-';
+$userAngkatan = $extra['angkatan'] ?? '-';
+$currentMemberStatus = $extra['status'] ?? 'aktif';
+
+// Get research count and list
+$queryResearch = "SELECT r.*, u.username as leader_name 
+                  FROM research r 
+                  LEFT JOIN users u ON r.leader_id = u.id 
+                  WHERE r.leader_id = $1 
+                  ORDER BY r.created_at DESC 
+                  LIMIT 5";
+$resResearch = pg_query_params($db, $queryResearch, [$userId]);
+
+$myResearches = [];
+if ($resResearch) {
+    while ($row = pg_fetch_assoc($resResearch)) {
+        $myResearches[] = $row;
+    }
+    pg_free_result($resResearch);
+}
+$totalMyResearch = count($myResearches);
+
+// Get publications count
+$queryPubCount = "SELECT COUNT(*) as total FROM member_publications WHERE user_id = $1";
+$resPubCount = @pg_query_params($db, $queryPubCount, [$userId]);
+$totalMyPublications = 0;
+if ($resPubCount && pg_num_rows($resPubCount) > 0) {
+    $pubCountRow = pg_fetch_assoc($resPubCount);
+    $totalMyPublications = (int)$pubCountRow['total'];
+    pg_free_result($resPubCount);
+}
+
+// Get supervisor info (if exists in member_registrations)
+$supervisorInfo = null;
+if ($extra && !empty($extra['supervisor_email'])) {
+    $querySupervisor = "SELECT username as name, email FROM users WHERE email = $1 LIMIT 1";
+    $resSupervisor = pg_query_params($db, $querySupervisor, [$extra['supervisor_email']]);
+    if ($resSupervisor && pg_num_rows($resSupervisor) > 0) {
+        $supervisorInfo = pg_fetch_assoc($resSupervisor);
+        pg_free_result($resSupervisor);
+    }
+}
 ?>
 
 <!-- Welcome Banner -->

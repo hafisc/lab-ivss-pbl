@@ -182,19 +182,35 @@ class MemberController
             exit;
         }
 
-        $query = "SELECT id, username, email, photo FROM users WHERE id = $1 LIMIT 1";
+        // Ambil data user dasar
+        $query = "SELECT u.id, u.username, u.email, u.status, u.photo, u.created_at
+                  FROM users u WHERE u.id = $1 LIMIT 1";
         $res = @pg_query_params($this->db, $query, array($userId));
         $user = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
 
-        // Prepare $me for the view
-        $me = [
-            'name' => $user['username'] ?? '',
-            'email' => $user['email'] ?? '',
-            'nim' => $user['nim'] ?? '',
-            'phone' => $user['phone'] ?? '',
-            'angkatan' => $user['angkatan'] ?? '',
-            'origin' => $user['origin'] ?? ''
-        ];
+        // Jika ada data tambahan di member_registrations, ambil juga
+        $extra = null;
+        if (!empty($user['email'])) {
+            $q2 = "SELECT * FROM member_registrations WHERE email = $1 LIMIT 1";
+            $r2 = @pg_query_params($this->db, $q2, array($user['email']));
+            if ($r2 && pg_num_rows($r2) > 0) {
+                $extra = pg_fetch_assoc($r2);
+            }
+        }
+
+        $profileUser = $user ?: [];
+        $profileExtra = $extra ?: [];
+
+        // Build $me array expected by the view
+        $me = array_merge([
+            'name' => $profileUser['username'] ?? $profileExtra['name'] ?? '',
+            'email' => $profileUser['email'] ?? $profileExtra['email'] ?? '',
+            'nim' => $profileExtra['nim'] ?? $profileUser['nim'] ?? '',
+            'angkatan' => $profileExtra['angkatan'] ?? $profileUser['angkatan'] ?? '',
+            'origin' => $profileExtra['origin'] ?? $profileUser['origin'] ?? '',
+            'phone' => $profileExtra['phone'] ?? $profileUser['phone'] ?? '',
+            'status_lab' => $profileExtra['status'] ?? $profileUser['status'] ?? 'aktif'
+        ], $profileExtra);
 
         include __DIR__ . '/../../view/member/settings/edit.php';
     }
@@ -241,6 +257,37 @@ class MemberController
             header('Location: index.php?page=login');
             exit;
         }
+
+        // Ambil data user untuk ditampilkan di sidebar
+        $query = "SELECT u.id, u.username, u.email, u.status, u.photo, u.created_at
+                  FROM users u WHERE u.id = $1 LIMIT 1";
+        $res = @pg_query_params($this->db, $query, array($userId));
+        $user = ($res && pg_num_rows($res) > 0) ? pg_fetch_assoc($res) : null;
+
+        // Jika ada data tambahan di member_registrations, ambil juga
+        $extra = null;
+        if (!empty($user['email'])) {
+            $q2 = "SELECT * FROM member_registrations WHERE email = $1 LIMIT 1";
+            $r2 = @pg_query_params($this->db, $q2, array($user['email']));
+            if ($r2 && pg_num_rows($r2) > 0) {
+                $extra = pg_fetch_assoc($r2);
+            }
+        }
+
+        $profileUser = $user ?: [];
+        $profileExtra = $extra ?: [];
+
+        // Build $me array expected by the view
+        $me = array_merge([
+            'name' => $profileUser['username'] ?? $profileExtra['name'] ?? '',
+            'email' => $profileUser['email'] ?? $profileExtra['email'] ?? '',
+            'nim' => $profileExtra['nim'] ?? $profileUser['nim'] ?? '',
+            'angkatan' => $profileExtra['angkatan'] ?? $profileUser['angkatan'] ?? '',
+            'origin' => $profileExtra['origin'] ?? $profileUser['origin'] ?? '',
+            'phone' => $profileExtra['phone'] ?? $profileUser['phone'] ?? '',
+            'status_lab' => $profileExtra['status'] ?? $profileUser['status'] ?? 'aktif'
+        ], $profileExtra);
+
         include __DIR__ . '/../../view/member/settings/change-password.php';
     }
 

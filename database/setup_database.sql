@@ -143,8 +143,38 @@ INSERT INTO mahasiswa (user_id, nim, nama, angkatan, research_title, no_phone, s
 (7, '2131720001', 'Agus Prasetyo', '2021', 'Object Detection untuk Smart City', '081234567896', 2);     -- Supervisor: Dr. Andi
 
 -- ========================================
+-- 4A. TABEL STUDENT_NOTES
+-- ========================================
+-- Untuk menyimpan catatan bimbingan mahasiswa oleh dosen
+CREATE TABLE IF NOT EXISTS student_notes (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER NOT NULL REFERENCES mahasiswa(id) ON DELETE CASCADE,
+    type VARCHAR(50) DEFAULT 'lainnya',  -- 'bimbingan', 'progress', 'peringatan', 'lainnya'
+    title VARCHAR(255),
+    content TEXT NOT NULL,
+    created_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index
+CREATE INDEX idx_student_notes_student ON student_notes(student_id);
+CREATE INDEX idx_student_notes_created_by ON student_notes(created_by);
+CREATE INDEX idx_student_notes_type ON student_notes(type);
+CREATE INDEX idx_student_notes_created_at ON student_notes(created_at DESC);
+
+-- Insert sample data catatan bimbingan
+INSERT INTO student_notes (student_id, type, title, content, created_by) VALUES
+(1, 'bimbingan', 'Pertemuan Awal Bimbingan', 'Diskusi awal tentang topik riset face recognition. Mahasiswa menunjukkan antusiasme tinggi dan sudah membaca beberapa paper terkait.', 3),
+(1, 'progress', 'Progress Minggu 1', 'Mahasiswa sudah berhasil setup environment dan mulai eksplorasi dataset. Perlu bimbingan lebih lanjut untuk preprocessing data.', 3),
+(1, 'bimbingan', 'Diskusi Metodologi', 'Membahas arsitektur CNN yang akan digunakan. Disarankan untuk mencoba ResNet dan MobileNet untuk perbandingan.', 3),
+(2, 'bimbingan', 'Pertemuan Pertama', 'Diskusi topik object detection untuk smart city. Mahasiswa sudah familiar dengan YOLO dan ingin mengimplementasikannya.', 4),
+(2, 'peringatan', 'Reminder Deadline', 'Mengingatkan mahasiswa untuk submit progress report sebelum akhir bulan. Jangan lupa dokumentasi eksperimen.', 4);
+
+-- ========================================
 -- 5. TABEL RESEARCH (OPTIMIZED)
 -- ========================================
+
 -- Untuk menyimpan data riset/penelitian
 CREATE TABLE IF NOT EXISTS research (
     id SERIAL PRIMARY KEY,
@@ -654,6 +684,12 @@ CREATE TRIGGER trigger_research_updated_at
 -- Trigger untuk tabel news
 CREATE TRIGGER trigger_news_updated_at
     BEFORE UPDATE ON news
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger untuk tabel student_notes
+CREATE TRIGGER trigger_student_notes_updated_at
+    BEFORE UPDATE ON student_notes
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
@@ -1484,3 +1520,23 @@ VALUES (1, 'Laboratorium Intelligent Vision and Smart System (IVSS)', 'IVSS',
 ON CONFLICT (id) DO NOTHING;
 
 ALTER TABLE public.profile_lab ADD image varchar NULL;
+
+-- ========================================
+-- 18. TABEL MEMBER_PUBLICATIONS
+-- ========================================
+-- Untuk menyimpan publikasi yang diinput oleh member secara mandiri
+CREATE TABLE IF NOT EXISTS member_publications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    authors TEXT,
+    journal VARCHAR(255),
+    year INTEGER,
+    doi VARCHAR(255),
+    status VARCHAR(50) DEFAULT 'draft',
+    file_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_member_publications_user ON member_publications(user_id);

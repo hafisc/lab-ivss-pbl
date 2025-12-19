@@ -5,56 +5,44 @@ ob_start();
 $researchId = $_GET['id'] ?? 0;
 
 // Get user info
-$userId = $_SESSION['user']['id'] ?? $_SESSION['user_id'] ?? 0;
-$userName = $_SESSION['user']['name'] ?? $_SESSION['name'] ?? 'Member';
+$userId = $_SESSION['user_id'] ?? 0;
 
-// TODO: Fetch research detail from database
-// For now, using dummy data
-$research = [
-    'id' => $researchId,
-    'title' => 'Face Recognition dengan Deep Learning',
-    'description' => 'Riset pengembangan sistem face recognition menggunakan Convolutional Neural Network (CNN) untuk aplikasi keamanan dan absensi. Penelitian ini fokus pada akurasi deteksi wajah dalam berbagai kondisi pencahayaan dan posisi.',
-    'category' => 'Riset Utama',
-    'status' => 'active',
-    'start_date' => '2024-01-15',
-    'end_date' => '2024-12-31',
-    'leader_id' => 3,
-    'leader_name' => 'Dr. Budi Santoso',
-    'team_members' => 'Ahmad Fauzi, Budi Santoso, Siti Aminah',
-    'funding' => 'Hibah Dikti 2024',
-    'publications' => 'IEEE Trans. 2024'
-];
+// Fetch research detail from database
+require_once __DIR__ . '/../../../app/config/Database.php';
+$db = Database::getInstance()->getPgConnection();
+
+// Get research detail with leader info
+$query = "SELECT r.*, u.username as leader_name 
+          FROM research r 
+          LEFT JOIN users u ON r.leader_id = u.id 
+          WHERE r.id = $1 
+          LIMIT 1";
+$result = pg_query_params($db, $query, [$researchId]);
+
+$research = null;
+if ($result && pg_num_rows($result) > 0) {
+    $research = pg_fetch_assoc($result);
+    pg_free_result($result);
+}
+
+// If research not found or user doesn't have access, redirect
+if (!$research) {
+    $_SESSION['error'] = 'Riset tidak ditemukan.';
+    header('Location: index.php?page=member-research');
+    exit;
+}
+
+// Verify access - user should be the leader or team member
+// For now, we only check if user is the leader
+if ($research['leader_id'] != $userId) {
+    $_SESSION['error'] = 'Anda tidak memiliki akses ke riset ini.';
+    header('Location: index.php?page=member-research');
+    exit;
+}
 
 // TODO: Fetch documents from database
-$documents = [
-    [
-        'id' => 1,
-        'title' => 'Proposal Penelitian - Face Recognition',
-        'description' => 'Proposal lengkap penelitian face recognition',
-        'file_name' => 'proposal_face_recognition.pdf',
-        'file_size' => 2457600, // bytes
-        'uploaded_by' => 'Ahmad Fauzi',
-        'uploaded_at' => '2024-01-20 10:30:00'
-    ],
-    [
-        'id' => 2,
-        'title' => 'Laporan Progress Bulan 1',
-        'description' => 'Progress penelitian bulan pertama',
-        'file_name' => 'progress_month_1.pdf',
-        'file_size' => 1843200,
-        'uploaded_by' => 'Ahmad Fauzi',
-        'uploaded_at' => '2024-02-15 14:20:00'
-    ],
-    [
-        'id' => 3,
-        'title' => 'Dataset Training Model',
-        'description' => 'Dataset wajah untuk training CNN model',
-        'file_name' => 'dataset_faces.zip',
-        'file_size' => 52428800,
-        'uploaded_by' => 'Budi Santoso',
-        'uploaded_at' => '2024-03-01 09:15:00'
-    ]
-];
+// For now using empty array as documents table doesn't exist yet
+$documents = [];
 
 // Helper function to format file size
 function formatFileSize($bytes) {

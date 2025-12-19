@@ -4,6 +4,21 @@ ob_start();
 // Get user role
 $userRole = $_SESSION['user']['role'] ?? 'member';
 $userId = $_SESSION['user']['id'] ?? 0;
+
+// Calculate statistics from $students data
+$totalStudents = count($students);
+$activeStudents = count(array_filter($students, fn($s) => ($s['status'] ?? 'active') === 'active'));
+$currentYear = date('Y');
+$students2024 = count(array_filter($students, fn($s) => ($s['angkatan'] ?? '') == $currentYear));
+$alumniStudents = count(array_filter($students, fn($s) => ($s['status'] ?? 'active') !== 'active'));
+
+// Count students with active research
+$activeResearch = 0;
+foreach ($students as $student) {
+    if (!empty($student['research_title']) && ($student['status'] ?? 'active') === 'active') {
+        $activeResearch++;
+    }
+}
 ?>
 
 <!-- Page Header -->
@@ -31,7 +46,7 @@ $userId = $_SESSION['user']['id'] ?? 0;
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-90 mb-1">Total Mahasiswa</p>
-                <p class="text-3xl font-bold">12</p>
+                <p class="text-3xl font-bold"><?= $totalStudents ?></p>
             </div>
             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +61,7 @@ $userId = $_SESSION['user']['id'] ?? 0;
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-90 mb-1">Aktif Riset</p>
-                <p class="text-3xl font-bold">8</p>
+                <p class="text-3xl font-bold"><?= $activeResearch ?></p>
             </div>
             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,8 +75,8 @@ $userId = $_SESSION['user']['id'] ?? 0;
     <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-5 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm opacity-90 mb-1">Angkatan 2024</p>
-                <p class="text-3xl font-bold">5</p>
+                <p class="text-sm opacity-90 mb-1">Angkatan <?= $currentYear ?></p>
+                <p class="text-3xl font-bold"><?= $students2024 ?></p>
             </div>
             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,7 +91,7 @@ $userId = $_SESSION['user']['id'] ?? 0;
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm opacity-90 mb-1">Alumni</p>
-                <p class="text-3xl font-bold">4</p>
+                <p class="text-3xl font-bold"><?= $alumniStudents ?></p>
             </div>
             <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,20 +274,65 @@ $userId = $_SESSION['user']['id'] ?? 0;
 
 <script>
 function viewDetail(id) {
-    alert('Lihat detail mahasiswa ID: ' + id);
+    // Redirect to student detail page
+    window.location.href = 'index.php?page=admin-students&action=detail&id=' + id;
 }
 
 function addNote(id) {
-    alert('Tambah catatan untuk mahasiswa ID: ' + id);
+    // Redirect to add note page or open modal
+    window.location.href = 'index.php?page=admin-students&action=notes&id=' + id;
 }
 
 function exportData() {
-    alert('Export data mahasiswa akan segera tersedia');
+    // Create CSV content
+    const students = <?= json_encode($students) ?>;
+    
+    if (students.length === 0) {
+        alert('Tidak ada data untuk diexport');
+        return;
+    }
+    
+    // CSV Headers
+    let csv = 'No,Nama,NIM,Email,Angkatan,Topik Riset,Status,Telepon\n';
+    
+    // Add data rows
+    students.forEach((student, index) => {
+        const name = (student.display_name || student.nama || student.username || '-').replace(/,/g, ';');
+        const nim = student.nim || '-';
+        const email = student.email || '-';
+        const angkatan = student.angkatan || '-';
+        const topic = (student.research_title || '-').replace(/,/g, ';');
+        const status = student.status === 'active' ? 'Aktif' : 'Alumni';
+        const phone = student.phone || '-';
+        
+        csv += `${index + 1},"${name}",${nim},${email},${angkatan},"${topic}",${status},${phone}\n`;
+    });
+    
+    // Create download link
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    const now = new Date();
+    const filename = `Mahasiswa_Bimbingan_${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Search functionality
 document.getElementById('searchInput')?.addEventListener('input', function(e) {
-    console.log('Search:', e.target.value);
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
 });
 </script>
 

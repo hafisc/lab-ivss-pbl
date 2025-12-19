@@ -72,7 +72,7 @@
             </div>
         </div>
 
-        <!-- Document Upload -->
+        <!-- Document Upload (Disabled: DB column missing) 
         <div>
             <label class="block text-xs font-medium text-slate-700 mb-1.5">File Lampiran (PDF/Doc) <span class="text-slate-400 font-normal">(Opsional)</span></label>
             <input type="file" name="file_path" accept=".pdf,.doc,.docx,.zip"
@@ -85,6 +85,7 @@
                           cursor-pointer border border-slate-300 rounded-lg">
             <p class="mt-1 text-xs text-slate-500">Upload file jika berita ini merupakan pengumuman atau memiliki lampiran.</p>
         </div>
+        -->
 
         <!-- Category/Tags -->
         <div class="grid md:grid-cols-2 gap-3">

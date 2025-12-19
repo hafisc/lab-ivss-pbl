@@ -574,19 +574,19 @@ class AdminController
             $image = $this->uploadImage($_FILES['image'], 'news');
         }
 
-        // Handle file upload
-        $file_path = null;
-        if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
-            $file_path = $this->uploadFile($_FILES['file_path'], 'news_files');
-        }
+        // file_path removed as functionality not supported by DB schema yet
+        // $file_path = null;
+        // if (isset($_FILES['file_path']) && $_FILES['file_path']['error'] === UPLOAD_ERR_OK) {
+        //     $file_path = $this->uploadFile($_FILES['file_path'], 'news_files');
+        // }
 
         // Set author_id and published_at
         $author_id = $_SESSION['user_id'] ?? 1;
         $published_at = ($status === 'published') ? 'NOW()' : null;
 
-        $query = "INSERT INTO news (title, slug, excerpt, content, image, file_path, category, tags, author_id, status, published_at, created_at) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, " . ($published_at ? $published_at : 'NULL') . ", NOW()) RETURNING id";
-        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $file_path, $category, $tags, $author_id, $status]);
+        $query = "INSERT INTO news (title, slug, excerpt, content, image, category, tags, author_id, status, published_at, created_at) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, " . ($published_at ? $published_at : 'NULL') . ", NOW()) RETURNING id";
+        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $category, $tags, $author_id, $status]);
 
         if ($result) {
             $_SESSION['success'] = 'Berita berhasil ditambahkan!';
@@ -633,6 +633,7 @@ class AdminController
             $image = $this->uploadImage($_FILES['image'], 'news');
         }
 
+        /* File path feature disabled - column missing in DB
         // Handle file upload
         $file_path = $existing['file_path'] ?? null;
         
@@ -651,6 +652,7 @@ class AdminController
             }
             $file_path = $this->uploadFile($_FILES['file_path'], 'news_files');
         }
+        */
 
         // Set published_at only when changing from draft to published
         $published_at_clause = '';
@@ -658,9 +660,9 @@ class AdminController
             $published_at_clause = ', published_at = NOW()';
         }
 
-        $query = "UPDATE news SET title = $1, slug = $2, excerpt = $3, content = $4, image = $5, file_path = $6, category = $7, 
-                  tags = $8, status = $9, updated_at = NOW()" . $published_at_clause . " WHERE id = $10";
-        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $file_path, $category, $tags, $status, $id]);
+        $query = "UPDATE news SET title = $1, slug = $2, excerpt = $3, content = $4, image = $5, category = $6, 
+                  tags = $7, status = $8, updated_at = NOW()" . $published_at_clause . " WHERE id = $9";
+        $result = @pg_query_params($this->db, $query, [$title, $slug, $excerpt, $content, $image, $category, $tags, $status, $id]);
 
         if ($result) {
             $_SESSION['success'] = 'Berita berhasil diupdate!';
@@ -734,18 +736,33 @@ class AdminController
             default:
                 // Index - daftar semua riset
                 $filter = $_GET['filter'] ?? 'all';
-                $allResearch = $researchModel->getAll();
-
-                if ($filter === 'active') {
-                    $researchList = array_filter($allResearch, function ($r) {
-                        return $r['status'] === 'active';
-                    });
-                } elseif ($filter === 'completed') {
-                    $researchList = array_filter($allResearch, function ($r) {
-                        return $r['status'] === 'completed';
-                    });
-                } else {
-                    $researchList = $allResearch;
+                
+                try {
+                    $allResearch = $researchModel->getAll();
+                    
+                    if (!is_array($allResearch)) {
+                        $allResearch = [];
+                    }
+                    
+                    if ($filter === 'active') {
+                        $researchList = array_filter($allResearch, function ($r) {
+                            return isset($r['status']) && $r['status'] === 'active';
+                        });
+                    } elseif ($filter === 'completed') {
+                        $researchList = array_filter($allResearch, function ($r) {
+                            return isset($r['status']) && $r['status'] === 'completed';
+                        });
+                    } else {
+                        $researchList = $allResearch;
+                    }
+                    
+                    // Re-index array after filter
+                    $researchList = array_values($researchList);
+                    
+                } catch (Exception $e) {
+                    $_SESSION['error'] = 'Gagal mengambil data: ' . $e->getMessage();
+                    $allResearch = [];
+                    $researchList = [];
                 }
 
                 include __DIR__ . '/../../view/admin/research/index.php';
@@ -1114,38 +1131,92 @@ class AdminController
     }
 
     public function students()
-    {
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        $userRole = $_SESSION['user']['role'] ?? 'member';
-        $userId = $_SESSION['user']['id'] ?? 0;
-        
-        $students = [];
-        
-        if ($userRole === 'dosen') {
-             $dosenRes = @pg_query_params($this->db, "SELECT id FROM dosen WHERE user_id = $1", [$userId]);
-             if ($dosenRes && pg_num_rows($dosenRes) > 0) {
-                 $dosenId = pg_fetch_result($dosenRes, 0, 0);
-                 $query = "SELECT m.*, u.email, u.status, u.username, 
+{
+    if (session_status() === PHP_SESSION_NONE) session_start();
+    $userRole = $_SESSION['user']['role'] ?? 'member';
+    $userId = $_SESSION['user']['id'] ?? 0;
+    
+    $action = $_GET['action'] ?? 'index';
+    
+    switch ($action) {
+        case 'detail':
+            // Show student detail page
+            include __DIR__ . '/../../view/admin/students/detail.php';
+            break;
+            
+        case 'notes':
+            // Show notes page
+            include __DIR__ . '/../../view/admin/students/notes.php';
+            break;
+            
+        case 'save-note':
+            // Save student note
+            $studentId = intval($_POST['student_id'] ?? 0);
+            $type = $_POST['type'] ?? 'lainnya';
+            $title = $_POST['title'] ?? '';
+            $content = $_POST['content'] ?? '';
+            $createdBy = $_SESSION['user_id'] ?? 0;
+            
+            if ($studentId && $content) {
+                $query = "INSERT INTO student_notes (student_id, type, title, content, created_by, created_at) 
+                          VALUES ($1, $2, $3, $4, $5, NOW())";
+                $result = @pg_query_params($this->db, $query, [$studentId, $type, $title, $content, $createdBy]);
+                
+                if ($result) {
+                    $_SESSION['success'] = 'Catatan berhasil ditambahkan';
+                } else {
+                    $_SESSION['error'] = 'Gagal menambahkan catatan';
+                }
+            }
+            header('Location: index.php?page=admin-students&action=notes&id=' . $studentId);
+            exit;
+            break;
+            
+        case 'delete-note':
+            // Delete student note
+            $noteId = intval($_GET['id'] ?? 0);
+            $studentId = intval($_GET['student_id'] ?? 0);
+            
+            if ($noteId) {
+                $query = "DELETE FROM student_notes WHERE id = $1";
+                @pg_query_params($this->db, $query, [$noteId]);
+                $_SESSION['success'] = 'Catatan berhasil dihapus';
+            }
+            header('Location: index.php?page=admin-students&action=notes&id=' . $studentId);
+            exit;
+            break;
+            
+        default:
+            // Show students list
+            $students = [];
+            
+            if ($userRole === 'dosen') {
+                 $dosenRes = @pg_query_params($this->db, "SELECT id FROM dosen WHERE user_id = $1", [$userId]);
+                 if ($dosenRes && pg_num_rows($dosenRes) > 0) {
+                     $dosenId = pg_fetch_result($dosenRes, 0, 0);
+                     $query = "SELECT m.*, u.email, u.status, u.username, 
+                               COALESCE(m.nama, u.username) as display_name
+                               FROM mahasiswa m 
+                               JOIN users u ON m.user_id = u.id 
+                               WHERE m.supervisor_id = $1 
+                               ORDER BY m.angkatan DESC";
+                     $result = @pg_query_params($this->db, $query, [$dosenId]);
+                     if ($result) $students = pg_fetch_all($result) ?: [];
+                 }
+            } else {
+                 $query = "SELECT m.*, u.email, u.status, u.username, d.nama as dosen_nama,
                            COALESCE(m.nama, u.username) as display_name
                            FROM mahasiswa m 
                            JOIN users u ON m.user_id = u.id 
-                           WHERE m.supervisor_id = $1 
+                           LEFT JOIN dosen d ON m.supervisor_id = d.id
                            ORDER BY m.angkatan DESC";
-                 $result = @pg_query_params($this->db, $query, [$dosenId]);
+                 $result = @pg_query($this->db, $query);
                  if ($result) $students = pg_fetch_all($result) ?: [];
-             }
-        } else {
-             $query = "SELECT m.*, u.email, u.status, u.username, d.nama as dosen_nama,
-                       COALESCE(m.nama, u.username) as display_name
-                       FROM mahasiswa m 
-                       JOIN users u ON m.user_id = u.id 
-                       LEFT JOIN dosen d ON m.supervisor_id = d.id
-                       ORDER BY m.angkatan DESC";
-             $result = @pg_query($this->db, $query);
-             if ($result) $students = pg_fetch_all($result) ?: [];
-        }
-        include __DIR__ . '/../../view/admin/students/index.php';
+            }
+            include __DIR__ . '/../../view/admin/students/index.php';
+            break;
     }
+}
 
     // Manajemen Peralatan
     public function equipment()
