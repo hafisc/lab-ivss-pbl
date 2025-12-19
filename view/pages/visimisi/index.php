@@ -2,7 +2,7 @@
 // Pastikan variabel $visimisi tersedia.
 ?>
 <!-- Visi & Misi Section -->
-<section class="py-20 bg-white">
+<section class="py-20 bg-white" id="visi-misi">
     <div class="container mx-auto px-4">
         <div class="max-w-6xl mx-auto">
             <!-- Header -->

@@ -3,7 +3,7 @@
 ?>
 
 <!-- Hero Section - Professional & Creative -->
-<section class="relative bg-white overflow-hidden">
+<section class="relative bg-white overflow-hidden" id="home">
     <!-- Background Decorative Elements -->
     <div class="absolute inset-0 overflow-hidden">
         <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-50 rounded-full opacity-60"></div>

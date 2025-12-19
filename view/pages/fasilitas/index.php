@@ -1,7 +1,7 @@
 <?php
 // Pastikan variabel $facilities tersedia.
 ?>
-<section class="py-20 bg-white">
+<section class="py-20 bg-white" id="fasilitas">
     <div class="container mx-auto px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">

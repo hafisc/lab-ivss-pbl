@@ -47,7 +47,7 @@ $footer_terms_url = $footerSettings['terms_url'] ?? '';
 $footer_operating_hours = $footerSettings['operating_hours'] ?? 'Senin - Jumat<br>08:00 - 16:00 WIB';
 ?>
 <!-- Footer Modern -->
-<footer class="bg-gray-900 text-white mt-auto">
+<footer class="bg-gray-900 text-white mt-auto" id="kontak">
     <!-- Main Footer Content -->
     <div class="container mx-auto px-4 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">

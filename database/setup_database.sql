@@ -1482,3 +1482,5 @@ VALUES (1, 'Laboratorium Intelligent Vision and Smart System (IVSS)', 'IVSS',
         'Laboratorium Intelligent Vision and Smart System (IVSS) merupakan pusat riset dan pengembangan di bidang Computer Vision, Artificial Intelligence, dan Smart System...', 
         'Gedung Jurusan Teknologi Informasi — Lantai 8 Barat')
 ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE public.profile_lab ADD image varchar NULL;
