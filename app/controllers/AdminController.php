@@ -289,147 +289,94 @@ class AdminController
         }
     }
     //managemen profil
-    public function profil() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+    public function profileSettings()
+    {
+        // 1. Cek Autorisasi Admin
+        if (($_SESSION['user']['role'] ?? '') !== 'admin') {
+            header('Location: index.php?page=admin-login');
+            exit;
         }
-        
-        // Inisialisasi Model Profil (fallback jika belum di __construct)
-        if (!$this->profilModel) {
-            // Asumsi: AdminController berada di 'controller/admin'
-            require_once __DIR__ . '/../models/Profil.php'; 
-            $this->profilModel = new Profil($this->db);
+
+        // 2. Ambil data profil dari tabel profile_lab
+        $query = "SELECT * FROM profile_lab WHERE id = $1";
+        $result = pg_query_params($this->db, $query, [1]);
+        $profileData = pg_fetch_assoc($result);
+
+        // Jika data kosong, berikan nilai default agar view tidak error
+        if (!$profileData) {
+            $profileData = [
+                'nama_lab' => 'Belum Diatur',
+                'singkatan' => '-',
+                'deskripsi_singkat' => 'Belum ada deskripsi.',
+                'lokasi_ruangan' => '-',
+                'riset_fitur_judul' => 'Riset',
+                'riset_fitur_desk' => '-',
+                'fasilitas_fitur_judul' => 'Fasilitas',
+                'fasilitas_fitur_desk' => '-',
+                'image' => 'default.png'
+            ];
         }
-        
-        $action = $_GET['action'] ?? 'edit'; 
-        
-        switch ($action) {
-            case 'edit':
-                // Gunakan ensureRecordExists() untuk memuat atau membuat data default
-                $profilItem = $this->profilModel->ensureRecordExists();
-                
-                if ($profilItem) {
-                    $data = $profilItem; // Data dikirim ke View
-                    $title = "Edit Profil Laboratorium";
-                    // Memuat View (Asumsi View ada di '../../view/admin/profil/edit.php')
-                    include __DIR__ . '/../../view/admin/profil/edit.php'; 
-                } else {
-                    $_SESSION['error'] = 'Gagal memuat atau membuat data Profil Laboratorium.';
-                    header('Location: index.php?page=admin-dashboard');
-                    exit;
-                }
-                break;
-                
-            case 'update':
-                $this->updateProfil();
-                break;
-                
-            case 'delete':
-                $_SESSION['error'] = 'Aksi penghapusan (delete) tidak diizinkan untuk Profil Laboratorium.';
-                header('Location: index.php?page=admin-profil'); 
-                exit;
-                
-            default:
-                header('Location: index.php?page=admin-profil&action=edit');
-                exit;
-        }
+
+        $title = 'Manajemen Profil Laboratorium';
+        // Sesuaikan path ini dengan struktur folder Anda
+        include __DIR__ . '/../../view/admin/profile/view.php';
     }
 
     /**
-     * Menangani pemrosesan formulir POST untuk update profil.
+     * Menampilkan Halaman Form Edit
      */
-    private function updateProfil() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?page=admin-profil');
-            exit;
-        }
-        
-        $id = 1; 
-        
-        // 1. Sanitasi Input
-        $nama = trim($_POST['nama'] ?? ''); 
-        $deskripsi = trim($_POST['deskripsi'] ?? ''); 
-        
-        // 1.1. VALIDASI WAJIB DIISI
-        if (empty($nama) || empty($deskripsi)) {
-            $_SESSION['error'] = 'Nama dan Deskripsi Laboratorium wajib diisi.';
-            header('Location: index.php?page=admin-profil');
-            exit;
-        }
+    public function editProfile()
+    {
+        $query = "SELECT * FROM profile_lab WHERE id = $1";
+        $result = pg_query_params($this->db, $query, [1]);
+        $profileData = pg_fetch_assoc($result) ?: [];
 
-        // 1.2. Pastikan model Profil sudah tersedia
-        if (!$this->profilModel) {
-            require_once __DIR__ . '/../models/Profil.php';
-            $this->profilModel = new Profil($this->db);
-        }
-
-        // 2. GET DATA LAMA untuk penanganan gambar
-        $existing = $this->profilModel->get(); 
-        
-        if (!$existing) {
-            $_SESSION['error'] = 'Data Profil tidak ditemukan saat mencoba update.';
-            header('Location: index.php?page=admin-profil');
-            exit;
-        }
-        
-        $image = $existing['image'] ?? 'uploads/default.jpg'; 
-        $new_image_uploaded = null; 
-        
-        // 3. HANDLE UPLOAD GAMBAR BARU
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            // Asumsi: $this->uploadImage() tersedia di Controller
-            $new_image_uploaded = $this->uploadImage($_FILES['image'], 'profil'); 
-            
-            if (!$new_image_uploaded) {
-                // Jika uploadImage gagal, ia diasumsikan sudah mengatur $_SESSION['error']
-                header('Location: index.php?page=admin-profil');
-                exit;
-            }
-        }
-        
-        // 4. TENTUKAN PATH GAMBAR FINAL ($image)
-        if ($new_image_uploaded) {
-            // Ada upload baru, gunakan yang baru dan hapus gambar lama
-            if ($existing['image'] && $existing['image'] !== 'uploads/default.jpg') {
-                 $this->deleteOldImage($existing['image']);
-            }
-            $image = $new_image_uploaded;
-        } 
-        // Jika tidak ada upload baru, $image tetap menggunakan path lama ($existing['image'])
-
-        
-        // 5. PANGGIL MODEL DENGAN PARAMETER SKALAR (Sesuai permintaan Anda)
-        if ($this->profilModel->update($id, $nama, $deskripsi, $image)) {
-            $_SESSION['success'] = 'Profil Laboratorium berhasil diupdate!';
-            header('Location: index.php?page=admin-profil');
-        } else {
-            // Rollback: Jika gagal di database, hapus gambar baru yang sudah terupload
-            if ($new_image_uploaded) {
-                $this->deleteOldImage($new_image_uploaded);
-            }
-            $_SESSION['error'] = 'Gagal mengupdate Profil Laboratorium: ' . pg_last_error($this->db);
-            header('Location: index.php?page=admin-profil');
-        }
-        exit;
+        $title = 'Edit Profil Laboratorium';
+        include __DIR__ . '/../../view/admin/profile/edit.php';
     }
 
     /**
-     * Helper untuk menghapus file gambar lama dari server.
+     * Memproses Update Data (Teks & Gambar)
      */
-    private function deleteOldImage($path) {
-        // Cek jika path valid dan bukan default
-        if ($path && $path !== 'uploads/default.jpg') {
-            // Ubah path relatif database menjadi path absolut file system
-            $full_path = __DIR__ . '/../../public/' . $path; 
-            
-            if (file_exists($full_path)) {
-                // Hapus file
-                @unlink($full_path); 
-                return true;
+   public function updateProfil() {
+    require_once __DIR__ . '/../models/profile.php';
+    $model = new profile($this->db);
+    
+    // 1. Pastikan record ada dan ambil data lama
+    $oldData = $model->ensureRecordExists();
+
+    // 2. Siapkan data dari POST
+    $data = [
+        'nama_lab'              => $_POST['nama_lab'] ?? '',
+        'singkatan'             => $_POST['singkatan'] ?? '',
+        'deskripsi_singkat'     => $_POST['deskripsi_singkat'] ?? '',
+        'lokasi_ruangan'        => $_POST['lokasi_ruangan'] ?? '',
+        'riset_fitur_judul'     => $_POST['riset_fitur_judul'] ?? '',
+        'riset_fitur_desk'      => $_POST['riset_fitur_desk'] ?? '',
+        'fasilitas_fitur_judul' => $_POST['fasilitas_fitur_judul'] ?? '',
+        'fasilitas_fitur_desk'  => $_POST['fasilitas_fitur_desk'] ?? '',
+        'image'                 => $oldData['image'] // Default pakai image lama
+    ];
+
+    // 3. Proses Upload Gambar jika ada file baru
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        // Gunakan folder 'profiles'
+        $uploadResult = $this->uploadImage($_FILES['image'], 'profiles');
+        if ($uploadResult) {
+            // Hapus file lama jika bukan default
+            if ($oldData['image'] !== 'default.png') {
+                @unlink(__DIR__ . '/../../public/uploads/profiles/' . $oldData['image']);
             }
+            $data['image'] = basename($uploadResult); 
         }
-        return false;
     }
+
+    if ($model->update(1, $data)) {
+        $_SESSION['success'] = "Berhasil!";
+    }
+    header('Location: index.php?page=admin-profile-settings');
+    exit;
+}
     //managemen visimisi
   public function visimisi()
     {
