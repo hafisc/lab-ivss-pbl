@@ -373,7 +373,11 @@ class MemberController
             'journal' => $_POST['journal'],
             'year' => $_POST['year'],
             'doi' => $_POST['doi'] ?? null,
-            'status' => $_POST['status'] ?? 'draft'
+            'status' => $_POST['status'] ?? 'draft',
+            'volume' => $_POST['volume'] ?? null,
+            'issue' => $_POST['issue'] ?? null,
+            'pages' => $_POST['pages'] ?? null,
+            'url' => $_POST['url'] ?? null
         ];
 
         // Handle File Upload
@@ -426,7 +430,11 @@ class MemberController
             'journal' => $_POST['journal'],
             'year' => $_POST['year'],
             'doi' => $_POST['doi'] ?? null,
-            'status' => $_POST['status']
+            'status' => $_POST['status'],
+            'volume' => $_POST['volume'] ?? null,
+            'issue' => $_POST['issue'] ?? null,
+            'pages' => $_POST['pages'] ?? null,
+            'url' => $_POST['url'] ?? null
         ];
 
         if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {

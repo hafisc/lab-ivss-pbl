@@ -31,10 +31,7 @@ switch ($page) {
     case 'admin-visimisi':
          require __DIR__ . '/../app/controllers/AdminController.php';
          (new AdminController($pg))->visimisi();
-         break;
-         
-
-        
+         break;  
     case 'register':
         require __DIR__ . '/../app/controllers/AuthController.php';
         (new AuthController($pg))->register();

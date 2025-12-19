@@ -104,9 +104,64 @@ ob_start();
                         max="2100" 
                         required 
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="2024"
+                </div>
+            </div>
+
+            <!-- Volume, Issue, Pages -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="volume" class="block text-sm font-medium text-slate-700 mb-2">
+                        Volume
+                    </label>
+                    <input 
+                        type="text" 
+                        name="volume" 
+                        id="volume" 
+                        class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="Vol. 10"
                     >
                 </div>
+
+                <div>
+                    <label for="issue" class="block text-sm font-medium text-slate-700 mb-2">
+                        Issue/Nomor
+                    </label>
+                    <input 
+                        type="text" 
+                        name="issue" 
+                        id="issue" 
+                        class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="No. 2"
+                    >
+                </div>
+
+                <div>
+                    <label for="pages" class="block text-sm font-medium text-slate-700 mb-2">
+                        Halaman
+                    </label>
+                    <input 
+                        type="text" 
+                        name="pages" 
+                        id="pages" 
+                        class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="100-115"
+                    >
+                </div>
+            </div>
+
+            <!-- URL -->
+            <div>
+                <label for="url" class="block text-sm font-medium text-slate-700 mb-2">
+                    URL Link
+                </label>
+                <input 
+                    type="url" 
+                    name="url" 
+                    id="url" 
+                    class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="https://journal.example.com/paper/123"
+                >
+                <p class="mt-1 text-xs text-slate-500">Link ke halaman publikasi resmi</p>
             </div>
 
             <!-- DOI and Status -->

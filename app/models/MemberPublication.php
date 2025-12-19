@@ -21,16 +21,23 @@ class MemberPublication {
     }
 
     public function create($data) {
-        $fields = ['user_id', 'title', 'authors', 'journal', 'year', 'doi', 'status', 'file_path'];
+        $fields = ['user_id', 'title', 'authors', 'journal', 'year', 'doi', 'status', 'file_path', 'volume', 'issue', 'pages', 'url'];
         $placeholders = [];
         $values = [];
         
-        foreach ($fields as $index => $field) {
-            $placeholders[] = '$' . ($index + 1);
-            $values[] = $data[$field] ?? null;
+        $counter = 1;
+        $activeFields = [];
+        
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $data)) {
+                 $activeFields[] = $field;
+                 $placeholders[] = '$' . $counter;
+                 $values[] = $data[$field];
+                 $counter++;
+            }
         }
 
-        $query = "INSERT INTO {$this->table} (" . implode(', ', $fields) . ", created_at) 
+        $query = "INSERT INTO {$this->table} (" . implode(', ', $activeFields) . ", created_at) 
                   VALUES (" . implode(', ', $placeholders) . ", NOW()) RETURNING id";
         
         $result = pg_query_params($this->db, $query, $values);
@@ -38,17 +45,13 @@ class MemberPublication {
     }
     
     public function update($id, $data) {
-        $fields = ['title', 'authors', 'journal', 'year', 'doi', 'status'];
+        $fields = ['title', 'authors', 'journal', 'year', 'doi', 'status', 'file_path', 'volume', 'issue', 'pages', 'url'];
         $setClauses = [];
         $values = [];
         $counter = 1;
         
-        if (isset($data['file_path'])) {
-            $fields[] = 'file_path';
-        }
-
         foreach ($fields as $field) {
-            if (isset($data[$field])) {
+            if (array_key_exists($field, $data)) {
                 $setClauses[] = "$field = $$counter";
                 $values[] = $data[$field];
                 $counter++;
