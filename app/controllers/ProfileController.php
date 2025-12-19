@@ -4,52 +4,32 @@
 // PENTING: Pastikan file database.php mendefinisikan dan mengembalikan objek PDO (misal: $pg)
 require_once __DIR__ . '/../config/database.php';
 
-
 class ProfileController
 {
-    // Properti ini sekarang akan menyimpan resource koneksi PostgreSQL
     private $pgConnection;
-    private $tableName = 'profile_lab';
+    private $tableName = 'profil';
 
-    // Menerima resource koneksi PostgreSQL dari Database::getPgConnection()
     public function __construct($pgConnectionResource)
     {
         $this->pgConnection = $pgConnectionResource;
-        // Tidak ada setAttribute untuk pg_*
     }
 
     public function getProfileData()
     {
         if (!$this->pgConnection) return null;
-
-        error_log("DEBUG: Table Name is '{$this->tableName}'");
-
-        // Menggunakan pg_query_params untuk keamanan
+        
+        // Menggunakan double quotes untuk nama tabel agar aman di PostgreSQL
         $query = "SELECT * FROM \"{$this->tableName}\" WHERE id = $1";
 
         try {
             $result = pg_query_params($this->pgConnection, $query, [1]);
-
-            if ($result === false) {
-                // Jika query gagal (misal salah sintaks/nama tabel), PG error akan dilempar
-                throw new Exception(pg_last_error($this->pgConnection));
-            }
-
-            // Mengambil baris pertama
+            if ($result === false) throw new Exception(pg_last_error($this->pgConnection));
+            
             $data = pg_fetch_assoc($result);
             pg_free_result($result);
-
-            if (empty($data)) {
-                error_log("getProfileData: Query berhasil, tetapi ID=1 tidak ditemukan atau tabel kosong.");
-            }
-
             return $data;
         } catch (Exception $e) {
-            echo "<h1>DATABASE ERROR DITEMUKAN:</h1>";
-            echo "<p>Detail Error: " . htmlspecialchars($e->getMessage()) . "</p>";
-
-            error_log("Database Error in getProfileData: " . $e->getMessage());
-            $_SESSION['error'] = 'Gagal memuat data profil dari database (PG Error).';
+            error_log("Database Error: " . $e->getMessage());
             return null;
         }
     }
@@ -135,21 +115,45 @@ class ProfileController
     public function update()
     {
         if (!$this->pgConnection) {
-            $_SESSION['error'] = 'Gagal menyimpan: Koneksi database tidak tersedia.';
+            $_SESSION['error'] = 'Koneksi database tidak tersedia.';
             header('Location: index.php?page=admin-profile-settings');
             exit;
         }
 
-        // Query UPDATE menggunakan placeholder $1, $2, dst.
-        $sql = "UPDATE {$this->tableName} SET
-        nama_lab = $1, singkatan = $2, deskripsi_singkat = $3, 
-        lokasi_ruangan = $4,
-        riset_fitur_judul = $5, riset_fitur_desk = $6,
-        fasilitas_fitur_judul = $7, fasilitas_fitur_desk = $8,
-        last_updated = CURRENT_TIMESTAMP
-        WHERE id = $9"; // <--- Menggunakan $9 sebagai placeholder untuk ID
+        // 1. Ambil data lama untuk mempertahankan gambar jika tidak ada upload baru
+        $oldData = $this->getProfileData();
+        $imageName = $oldData['image'] ?? 'default.png';
 
-        // Array parameter (Harus ada 9 elemen karena ada 9 placeholder: $1 sampai $9)
+        // 2. Proses Upload Gambar jika ada file baru
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            // Sesuaikan path ke folder upload Anda
+            $uploadDir = __DIR__ . '/../../public/uploads/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+            $fileExtension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $newFileName = 'profile_' . time() . '.' . $fileExtension;
+            $targetPath = $uploadDir . $newFileName;
+
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+                $imageName = $newFileName; // Update variabel nama gambar
+            }
+        }
+
+        // 3. Perbaikan SQL (Hapus duplikasi last_updated dan perbaiki koma)
+        $sql = "UPDATE \"{$this->tableName}\" SET
+            nama_lab = $1, 
+            singkatan = $2, 
+            deskripsi_singkat = $3, 
+            lokasi_ruangan = $4,
+            riset_fitur_judul = $5, 
+            riset_fitur_desk = $6,
+            fasilitas_fitur_judul = $7, 
+            fasilitas_fitur_desk = $8,
+            image = $9,
+            last_updated = CURRENT_TIMESTAMP
+            WHERE id = $10";
+
+        // 4. Perbaikan Parameter (Gunakan variabel $imageName, bukan $_POST['image'])
         $params = [
             $_POST['nama_lab'] ?? '',
             $_POST['singkatan'] ?? '',
@@ -159,17 +163,13 @@ class ProfileController
             $_POST['riset_fitur_desk'] ?? '',
             $_POST['fasilitas_fitur_judul'] ?? '',
             $_POST['fasilitas_fitur_desk'] ?? '',
-            1 // <--- Nilai untuk $9 (ID yang akan diupdate, yaitu 1)
+            $imageName, // Gunakan variabel hasil proses upload di atas
+            1           // ID yang diupdate
         ];
 
         try {
             $result = pg_query_params($this->pgConnection, $sql, $params);
-
-            if ($result === false) {
-                // Pastikan untuk mencatat error lengkap, bukan hanya pesan default
-                throw new Exception(pg_last_error($this->pgConnection));
-            }
-
+            if ($result === false) throw new Exception(pg_last_error($this->pgConnection));
             $_SESSION['success'] = 'Profil Laboratorium berhasil diperbarui!';
         } catch (Exception $e) {
             error_log("Update DB Error: " . $e->getMessage());

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 ?>
 
@@ -63,9 +63,9 @@
 </section>
 
 <?php
-require_once __DIR__ . '/../../app/config/Database.php'; 
+require_once __DIR__ . '/../../app/config/Database.php';
 
-$pgConnection = Database::getInstance()->getPgConnection(); 
+$pgConnection = Database::getInstance()->getPgConnection();
 
 $profileData = [];
 $defaultData = [
@@ -80,9 +80,9 @@ $defaultData = [
 ];
 
 if ($pgConnection) {
-    $query = 'SELECT * FROM "profile_lab" WHERE id = $1'; 
+    $query = 'SELECT * FROM "profile_lab" WHERE id = $1';
     $result = pg_query_params($pgConnection, $query, [1]);
-    
+
     if ($result) {
         $dataFromDb = pg_fetch_assoc($result);
         if ($dataFromDb) {
@@ -102,15 +102,15 @@ $profileData = array_replace_recursive($defaultData, $profileData);
     <div class="container mx-auto px-4">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Profil <?= htmlspecialchars($profileData['nama_lab'] ?? 'Lab Default') ?></h2>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Profil <?= htmlspecialchars($profileData['nama_lab'] ?? '') ?></h2>
                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full"></div>
             </div>
 
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="space-y-4">
                     <div class="relative group bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-blue-900 transition-all duration-300 hover:shadow-2xl">
-                        <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
-                            <img src="assets/images/IVSS LOGO.png" alt="Lab Logo" class="w-full max-w-xs h-auto">
+                    <div class="relative z-10 flex flex-col items-center justify-center space-y-6">
+                            <img src="public/uploads/profiles/<?= htmlspecialchars($profileData['image']) ?>" alt="Gambar Profil Lab" class="w-full max-w-xs h-auto">
                             <div class="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg">
                                 <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($profileData['lokasi_ruangan'] ?? 'Lokasi Belum Ditetapkan') ?></span>
                             </div>
@@ -123,7 +123,7 @@ $profileData = array_replace_recursive($defaultData, $profileData);
                         <span class="text-3xl font-bold text-blue-900 float-left mr-3 leading-none"><?= substr(htmlspecialchars($profileData['nama_lab'] ?? 'D'), 0, 1) ?></span>
                         <?= htmlspecialchars($profileData['deskripsi_singkat'] ?? 'Deskripsi Lab Belum Diisi. Silakan perbarui melalui halaman Admin.') ?>
                     </p>
-                    
+
                     <div class="grid grid-cols-2 gap-4 pt-4">
                         <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
                             <div>
@@ -131,7 +131,7 @@ $profileData = array_replace_recursive($defaultData, $profileData);
                                 <div class="text-sm text-gray-600"><?= htmlspecialchars($profileData['riset_fitur_desk'] ?? 'Penelitian berkelas dunia') ?></div>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-xl">
                             <div>
                                 <div class="font-semibold text-gray-900"><?= htmlspecialchars($profileData['fasilitas_fitur_judul'] ?? 'Fasilitas Modern') ?></div>
@@ -184,7 +184,7 @@ $profileData = array_replace_recursive($defaultData, $profileData);
                     <ul class="space-y-3">
                         <li class="flex items-start gap-3">
                             <span class="text-gray-700 leading-relaxed">
-                            <?= nl2br(htmlspecialchars($visimisi['misi'] ?? '')) ?></span>
+                                <?= nl2br(htmlspecialchars($visimisi['misi'] ?? '')) ?></span>
                     </ul>
                 </div>
             </div>
@@ -197,211 +197,211 @@ $profileData = array_replace_recursive($defaultData, $profileData);
     <div class="container mx-auto px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
-                 <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
                     <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                     </svg>
-                 </div>
-                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Galeri Kegiatan</h2>
-                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">Dokumentasi aktivitas di Lab IVSS</p>
-                 <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Galeri Kegiatan</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Dokumentasi aktivitas di Lab IVSS</p>
+                <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
             </div>
 
             <!-- Swiper -->
             <div class="relative gallery-swiper-container">
-                 <div class="swiper gallerySwiper">
-                      <div class="swiper-wrapper pb-12">
-                           <?php if (!empty($galleryItems)): ?>
-                               <?php foreach ($galleryItems as $item): ?>
-                                   <div class="swiper-slide">
-                                       <div class="rounded-2xl overflow-hidden shadow-lg h-80 relative group cursor-pointer gallery-item"
-                                            data-image="<?= htmlspecialchars($item['image_path']) ?>"
-                                            data-title="<?= htmlspecialchars($item['title'] ?? '') ?>"
-                                            data-description="<?= htmlspecialchars($item['description'] ?? '') ?>">
-                                           <img src="<?= htmlspecialchars($item['image_path']) ?>" alt="<?= htmlspecialchars($item['title']) ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                                           <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 opacity-90 group-hover:opacity-100 transition-opacity">
-                                               <h3 class="text-white font-bold text-xl mb-1"><?= htmlspecialchars($item['title'] ?? '') ?></h3>
-                                               <?php if (!empty($item['description'])): ?>
-                                               <p class="text-gray-200 text-sm line-clamp-2"><?= htmlspecialchars($item['description']) ?></p>
-                                               <?php endif; ?>
-                                           </div>
-                                       </div>
-                                   </div>
-                               <?php endforeach; ?>
-                           <?php else: ?>
-                               <div class="swiper-slide">
-                                   <div class="h-80 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
-                                       Belum ada foto kegiatan.
-                                   </div>
-                               </div>
-                           <?php endif; ?>
-                      </div>
-                      <div class="swiper-pagination"></div>
-                 </div>
+                <div class="swiper gallerySwiper">
+                    <div class="swiper-wrapper pb-12">
+                        <?php if (!empty($galleryItems)): ?>
+                            <?php foreach ($galleryItems as $item): ?>
+                                <div class="swiper-slide">
+                                    <div class="rounded-2xl overflow-hidden shadow-lg h-80 relative group cursor-pointer gallery-item"
+                                        data-image="<?= htmlspecialchars($item['image_path']) ?>"
+                                        data-title="<?= htmlspecialchars($item['title'] ?? '') ?>"
+                                        data-description="<?= htmlspecialchars($item['description'] ?? '') ?>">
+                                        <img src="<?= htmlspecialchars($item['image_path']) ?>" alt="<?= htmlspecialchars($item['title']) ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 opacity-90 group-hover:opacity-100 transition-opacity">
+                                            <h3 class="text-white font-bold text-xl mb-1"><?= htmlspecialchars($item['title'] ?? '') ?></h3>
+                                            <?php if (!empty($item['description'])): ?>
+                                                <p class="text-gray-200 text-sm line-clamp-2"><?= htmlspecialchars($item['description']) ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="swiper-slide">
+                                <div class="h-80 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400">
+                                    Belum ada foto kegiatan.
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Fasilitas Lab Section -->
-      <!-- header sama seperti sekarang -->
-    <div class="container mx-auto px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
-                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Fasilitas Lab</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Fasilitas yang tersedia di Lab IVSS</p>
-                <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+<!-- header sama seperti sekarang -->
+<div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
             </div>
-
-      <!-- Swiper Fasilitas -->
-      <div class="relative fasilitas-swiper-container">
-        <div class="swiper fasilitasSwiper">
-          <div class="swiper-wrapper pb-12">
-            <?php if (!empty($facilities)): ?>
-                <?php foreach ($facilities as $facility): ?>
-                <div class="swiper-slide">
-                  <div class="flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300">
-                    <!-- Bagian atas: background gradien + ikon -->
-                    <div class="relative h-60 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                         <?php if (!empty($facility['image'])): ?>
-                            <img src="<?= htmlspecialchars($facility['image']) ?>" alt="<?= htmlspecialchars($facility['name']) ?>" class="absolute inset-0 w-full h-full object-cover"/>
-                         <?php else: ?>
-                            <img src="assets/images/ralfs-blumbergs--EXF9shcTO0-unsplash.jpg" alt="Facility" class="absolute inset-0 w-full h-full object-cover opacity-50"/>
-                         <?php endif; ?>
-                      <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center relative z-10">
-                        <svg class="w-10 h-10 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                      </div>
-                    </div>
-
-                    <!-- Bagian bawah: konten -->
-                    <div class="p-6 flex flex-col flex-grow">
-                      <h3 class="text-lg font-bold text-gray-900 mb-2"><?= htmlspecialchars($facility['name']) ?></h3>
-                      <p class="text-sm text-gray-600 mb-4">
-                        <?= htmlspecialchars($facility['description']) ?>
-                      </p>
-                      <span class="mt-auto inline-flex items-center text-sm font-semibold text-blue-900">
-                        Lihat Detail
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="swiper-slide">
-                  <div class="flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300">
-                    <div class="relative h-60 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                         <img src="assets/images/ralfs-blumbergs--EXF9shcTO0-unsplash.jpg" alt="Camera DSLR" class="absolute inset-0 w-full h-full object-cover"/>
-                      <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
-                        <svg class="w-10 h-10 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                      <h3 class="text-lg font-bold text-gray-900 mb-2">Fasilitas Lab</h3>
-                      <p class="text-sm text-gray-600 mb-4">
-                        Berbagai fasilitas modern tersedia untuk mendukung riset.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-            <?php endif; ?>
-          </div>
-
-          <div class="swiper-pagination"></div>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Fasilitas Lab</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Fasilitas yang tersedia di Lab IVSS</p>
+            <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
         </div>
-      </div>
+
+        <!-- Swiper Fasilitas -->
+        <div class="relative fasilitas-swiper-container">
+            <div class="swiper fasilitasSwiper">
+                <div class="swiper-wrapper pb-12">
+                    <?php if (!empty($facilities)): ?>
+                        <?php foreach ($facilities as $facility): ?>
+                            <div class="swiper-slide">
+                                <div class="flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300">
+                                    <!-- Bagian atas: background gradien + ikon -->
+                                    <div class="relative h-60 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                        <?php if (!empty($facility['image'])): ?>
+                                            <img src="<?= htmlspecialchars($facility['image']) ?>" alt="<?= htmlspecialchars($facility['name']) ?>" class="absolute inset-0 w-full h-full object-cover" />
+                                        <?php else: ?>
+                                            <img src="assets/images/ralfs-blumbergs--EXF9shcTO0-unsplash.jpg" alt="Facility" class="absolute inset-0 w-full h-full object-cover opacity-50" />
+                                        <?php endif; ?>
+                                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center relative z-10">
+                                            <svg class="w-10 h-10 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Bagian bawah: konten -->
+                                    <div class="p-6 flex flex-col flex-grow">
+                                        <h3 class="text-lg font-bold text-gray-900 mb-2"><?= htmlspecialchars($facility['name']) ?></h3>
+                                        <p class="text-sm text-gray-600 mb-4">
+                                            <?= htmlspecialchars($facility['description']) ?>
+                                        </p>
+                                        <span class="mt-auto inline-flex items-center text-sm font-semibold text-blue-900">
+                                            Lihat Detail
+                                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="swiper-slide">
+                            <div class="flex flex-col h-full rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300">
+                                <div class="relative h-60 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                    <img src="assets/images/ralfs-blumbergs--EXF9shcTO0-unsplash.jpg" alt="Camera DSLR" class="absolute inset-0 w-full h-full object-cover" />
+                                    <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
+                                        <svg class="w-10 h-10 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <h3 class="text-lg font-bold text-gray-900 mb-2">Fasilitas Lab</h3>
+                                    <p class="text-sm text-gray-600 mb-4">
+                                        Berbagai fasilitas modern tersedia untuk mendukung riset.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 </section>
 <br><br><br>
 
 <!-- Daftar Peralatan -->
-    <div class="container mx-auto px-4">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
-                    <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Daftar Peralatan</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Peralatan yang tersedia di Lab IVSS</p>
-                <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+<div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl mb-4">
+                <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
             </div>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Daftar Peralatan</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Peralatan yang tersedia di Lab IVSS</p>
+            <div class="h-1 w-24 bg-blue-900 mx-auto rounded-full mt-4"></div>
+        </div>
 
-            <div class="relative equipment-swiper-container">
-                <div class="swiper equipmentSwiper">
-                    <div class="swiper-wrapper pb-12">
-                        <?php if (!empty($equipmentForLanding) && is_array($equipmentForLanding)): ?>
-                            <?php foreach ($equipmentForLanding as $equip): ?>
-                                <div class="swiper-slide">
-                                    <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col items-center justify-start">
-                                        <div class="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden bg-blue-900 flex items-center justify-center">
-                                            <?php if (!empty($equip['image'])): ?>
-                                                <img src="<?= htmlspecialchars($equip['image']) ?>" alt="<?= htmlspecialchars($equip['name']) ?>" class="w-full h-full object-cover">
-                                            <?php else: ?>
-                                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <h3 class="text-lg font-bold text-gray-900 mb-1">
-                                            <?= htmlspecialchars($equip['name']) ?>
-                                        </h3>
-                                        <p class="text-sm text-gray-600 mb-1">
-                                            <?= htmlspecialchars($equip['category'] ?? '') ?>
-                                            <?php if (!empty($equip['brand'])): ?>
-                                                • <?= htmlspecialchars($equip['brand']) ?>
-                                            <?php endif; ?>
-                                        </p>
-                                        <p class="text-xs text-gray-500 mb-1">
-                                            Qty: <?= (int)($equip['quantity'] ?? 0) ?>
-                                        </p>
-                                        <?php if (!empty($equip['condition'])): ?>
-                                            <p class="text-xs text-gray-500 mb-1">
-                                                Kondisi: <?= htmlspecialchars($equip['condition']) ?>
-                                            </p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($equip['location'])): ?>
-                                            <p class="text-xs text-gray-500">
-                                                Lokasi: <?= htmlspecialchars($equip['location']) ?>
-                                            </p>
+        <div class="relative equipment-swiper-container">
+            <div class="swiper equipmentSwiper">
+                <div class="swiper-wrapper pb-12">
+                    <?php if (!empty($equipmentForLanding) && is_array($equipmentForLanding)): ?>
+                        <?php foreach ($equipmentForLanding as $equip): ?>
+                            <div class="swiper-slide">
+                                <div class="bg-blue-50 rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full flex flex-col items-center justify-start">
+                                    <div class="w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden bg-blue-900 flex items-center justify-center">
+                                        <?php if (!empty($equip['image'])): ?>
+                                            <img src="<?= htmlspecialchars($equip['image']) ?>" alt="<?= htmlspecialchars($equip['name']) ?>" class="w-full h-full object-cover">
+                                        <?php else: ?>
+                                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
                                         <?php endif; ?>
                                     </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <div class="swiper-slide">
-                                <div class="bg-blue-50 rounded-2xl p-8 text-center text-gray-500">
-                                    Belum ada data peralatan yang ditambahkan.
+
+                                    <h3 class="text-lg font-bold text-gray-900 mb-1">
+                                        <?= htmlspecialchars($equip['name']) ?>
+                                    </h3>
+                                    <p class="text-sm text-gray-600 mb-1">
+                                        <?= htmlspecialchars($equip['category'] ?? '') ?>
+                                        <?php if (!empty($equip['brand'])): ?>
+                                            • <?= htmlspecialchars($equip['brand']) ?>
+                                        <?php endif; ?>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mb-1">
+                                        Qty: <?= (int)($equip['quantity'] ?? 0) ?>
+                                    </p>
+                                    <?php if (!empty($equip['condition'])): ?>
+                                        <p class="text-xs text-gray-500 mb-1">
+                                            Kondisi: <?= htmlspecialchars($equip['condition']) ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    <?php if (!empty($equip['location'])): ?>
+                                        <p class="text-xs text-gray-500">
+                                            Lokasi: <?= htmlspecialchars($equip['location']) ?>
+                                        </p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <div class="swiper-pagination"></div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="swiper-slide">
+                            <div class="bg-blue-50 rounded-2xl p-8 text-center text-gray-500">
+                                Belum ada data peralatan yang ditambahkan.
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
+
+                <div class="swiper-pagination"></div>
             </div>
         </div>
     </div>
+</div>
 
 <br><br><br>
 
@@ -449,62 +449,62 @@ $profileData = array_replace_recursive($defaultData, $profileData);
                                 // Determine publication venue (journal or conference)
                                 $venue = !empty($pub['journal']) ? $pub['journal'] : ($pub['conference'] ?? 'Conference');
                         ?>
-                        <div class="swiper-slide">
-                            <div class="group relative bg-blue-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-                                <!-- Featured Badge (jika featured dan citation tinggi) -->
-                                <?php if($pub['citations'] > 20): ?>
-                                <div class="absolute top-4 right-4 w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                    </svg>
-                                </div>
-                                <?php endif; ?>
-                                
-                                <div class="mb-4">
-                                    <span class="inline-block px-3 py-1 bg-blue-900 text-white text-xs font-semibold rounded-full"><?= $pub['year'] ?></span>
-                                    <span class="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full ml-2"><?= ucfirst($pub['type']) ?></span>
-                                </div>
-                                
-                                <h3 class="text-xl font-bold text-gray-900 mb-3 <?= $pub['citations'] > 20 ? 'pr-12' : '' ?>"><?= htmlspecialchars($pub['title']) ?></h3>
-                                
-                                <p class="text-xs text-gray-500 mb-2">
-                                    <strong>Authors:</strong> <?= htmlspecialchars($pub['authors']) ?>
-                                </p>
-                                
-                                <p class="text-xs text-blue-800 font-medium mb-3"><?= htmlspecialchars($venue) ?></p>
-                                
-                                <p class="text-gray-600 text-sm mb-4 flex-grow"><?= htmlspecialchars($excerpt) ?></p>
-                                
-                                <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                                    <div class="flex items-center gap-2 text-sm text-gray-500">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 005.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
-                                    </div>
-                                    
-                                    <?php if(!empty($pub['doi'])): ?>
-                                    <a href="https://doi.org/<?= htmlspecialchars($pub['doi']) ?>" target="_blank" class="inline-flex items-center gap-2 text-blue-900 font-semibold hover:gap-3 transition-all text-sm">
-                                        DOI
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                        </svg>
-                                    </a>
-                                    <?php endif; ?>
+                                <div class="swiper-slide">
+                                    <div class="group relative bg-blue-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
+                                        <!-- Featured Badge (jika featured dan citation tinggi) -->
+                                        <?php if ($pub['citations'] > 20): ?>
+                                            <div class="absolute top-4 right-4 w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center">
+                                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                </svg>
+                                            </div>
+                                        <?php endif; ?>
 
-                                    <?php if(!empty($pub['file_path'])): ?>
-                                    <a href="<?= htmlspecialchars($pub['file_path']) ?>" target="_blank" class="inline-flex items-center gap-2 text-green-700 font-semibold hover:gap-3 transition-all text-sm ml-4">
-                                        PDF
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                        </svg>
-                                    </a>
-                                    <?php endif; ?>
+                                        <div class="mb-4">
+                                            <span class="inline-block px-3 py-1 bg-blue-900 text-white text-xs font-semibold rounded-full"><?= $pub['year'] ?></span>
+                                            <span class="inline-block px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full ml-2"><?= ucfirst($pub['type']) ?></span>
+                                        </div>
+
+                                        <h3 class="text-xl font-bold text-gray-900 mb-3 <?= $pub['citations'] > 20 ? 'pr-12' : '' ?>"><?= htmlspecialchars($pub['title']) ?></h3>
+
+                                        <p class="text-xs text-gray-500 mb-2">
+                                            <strong>Authors:</strong> <?= htmlspecialchars($pub['authors']) ?>
+                                        </p>
+
+                                        <p class="text-xs text-blue-800 font-medium mb-3"><?= htmlspecialchars($venue) ?></p>
+
+                                        <p class="text-gray-600 text-sm mb-4 flex-grow"><?= htmlspecialchars($excerpt) ?></p>
+
+                                        <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 005.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
+                                            </div>
+
+                                            <?php if (!empty($pub['doi'])): ?>
+                                                <a href="https://doi.org/<?= htmlspecialchars($pub['doi']) ?>" target="_blank" class="inline-flex items-center gap-2 text-blue-900 font-semibold hover:gap-3 transition-all text-sm">
+                                                    DOI
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                    </svg>
+                                                </a>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($pub['file_path'])): ?>
+                                                <a href="<?= htmlspecialchars($pub['file_path']) ?>" target="_blank" class="inline-flex items-center gap-2 text-green-700 font-semibold hover:gap-3 transition-all text-sm ml-4">
+                                                    PDF
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                                    </svg>
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <?php 
+                            <?php
                             endforeach;
                         else:
-                        ?>
+                            ?>
                             <div class="swiper-slide">
                                 <div class="bg-blue-50 rounded-2xl p-8 text-center">
                                     <p class="text-gray-600">Belum ada publikasi tersedia.</p>
@@ -565,81 +565,81 @@ $profileData = array_replace_recursive($defaultData, $profileData);
                                     ? date('d M Y', strtotime($news['published_at']))
                                     : date('d M Y', strtotime($news['created_at']));
                         ?>
-                            <div class="swiper-slide">
-                                <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
-                                    <!-- Image -->
-                                    <div class="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
-                                        <?php if (!empty($news['image_url'])): ?>
-                                            <img src="<?= htmlspecialchars($news['image_url']) ?>"
-                                                 alt="<?= htmlspecialchars($news['title']) ?>"
-                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                        <?php else: ?>
-                                            <div class="w-full h-full flex items-center justify-center">
-                                                <svg class="w-20 h-20 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                                                </svg>
-                                            </div>
-                                        <?php endif; ?>
+                                <div class="swiper-slide">
+                                    <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
+                                        <!-- Image -->
+                                        <div class="relative h-48 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
+                                            <?php if (!empty($news['image_url'])): ?>
+                                                <img src="<?= htmlspecialchars($news['image_url']) ?>"
+                                                    alt="<?= htmlspecialchars($news['title']) ?>"
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                            <?php else: ?>
+                                                <div class="w-full h-full flex items-center justify-center">
+                                                    <svg class="w-20 h-20 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                                                    </svg>
+                                                </div>
+                                            <?php endif; ?>
 
-                                        <!-- Overlay Gradient -->
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                    </div>
-
-                                    <!-- Content -->
-                                    <div class="p-6 flex flex-col flex-grow">
-                                        <!-- Meta Info -->
-                                        <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
-                                                <span><?= $publishDate ?></span>
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                </svg>
-                                                <span><?= number_format($news['views'] ?? 0) ?> views</span>
-                                            </div>
+                                            <!-- Overlay Gradient -->
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                         </div>
 
-                                        <!-- Title -->
-                                        <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
-                                            <?= htmlspecialchars($news['title']) ?>
-                                        </h3>
+                                        <!-- Content -->
+                                        <div class="p-6 flex flex-col flex-grow">
+                                            <!-- Meta Info -->
+                                            <div class="flex items-center gap-4 text-xs text-gray-500 mb-3">
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                    <span><?= $publishDate ?></span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                    </svg>
+                                                    <span><?= number_format($news['views'] ?? 0) ?> views</span>
+                                                </div>
+                                            </div>
 
-                                        <!-- Excerpt -->
-                                        <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
-                                            <?= htmlspecialchars($excerpt) ?>
-                                        </p>
+                                            <!-- Title -->
+                                            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
+                                                <?= htmlspecialchars($news['title']) ?>
+                                            </h3>
 
-                                        <!-- Read More Button -->
-                                        <!-- Read More or Download Button -->
-                                        <?php if (!empty($news['file_path'])): ?>
-                                        <a href="<?= htmlspecialchars($news['file_path']) ?>" target="_blank" download
-                                           class="inline-flex items-center gap-2 text-green-700 font-semibold text-sm hover:gap-3 transition-all mt-auto">
-                                            Download Selengkapnya
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                            </svg>
-                                        </a>
-                                        <?php else: ?>
-                                        <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>"
-                                           class="inline-flex items-center gap-2 text-blue-900 font-semibold text-sm hover:gap-3 transition-all mt-auto">
-                                            Baca Selengkapnya
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                            </svg>
-                                        </a>
-                                        <?php endif; ?>
+                                            <!-- Excerpt -->
+                                            <p class="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
+                                                <?= htmlspecialchars($excerpt) ?>
+                                            </p>
+
+                                            <!-- Read More Button -->
+                                            <!-- Read More or Download Button -->
+                                            <?php if (!empty($news['file_path'])): ?>
+                                                <a href="<?= htmlspecialchars($news['file_path']) ?>" target="_blank" download
+                                                    class="inline-flex items-center gap-2 text-green-700 font-semibold text-sm hover:gap-3 transition-all mt-auto">
+                                                    Download Selengkapnya
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                                    </svg>
+                                                </a>
+                                            <?php else: ?>
+                                                <a href="index.php?page=news&slug=<?= htmlspecialchars($news['slug']) ?>"
+                                                    class="inline-flex items-center gap-2 text-blue-900 font-semibold text-sm hover:gap-3 transition-all mt-auto">
+                                                    Baca Selengkapnya
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                                    </svg>
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        <?php
+                            <?php
                             endforeach;
                         else:
-                        ?>
+                            ?>
                             <div class="swiper-slide">
                                 <div class="bg-white rounded-2xl p-12 text-center">
                                     <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -660,7 +660,7 @@ $profileData = array_replace_recursive($defaultData, $profileData);
             <!-- View All Button -->
             <div class="text-center mt-12">
                 <a href="index.php?page=news"
-                   class="inline-flex items-center gap-3 px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                    class="inline-flex items-center gap-3 px-8 py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                     Lihat Semua Berita
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
@@ -682,39 +682,39 @@ $profileData = array_replace_recursive($defaultData, $profileData);
 
 <!-- Initialize Swiper & Filter -->
 <script>
-let publicationSwiper = null;
-let newsSwiper = null;
-let fasilitasSwiper = null;
-let equipmentSwiper = null;
-let gallerySwiper = null;
+    let publicationSwiper = null;
+    let newsSwiper = null;
+    let fasilitasSwiper = null;
+    let equipmentSwiper = null;
+    let gallerySwiper = null;
 
-document.addEventListener('DOMContentLoaded', function() {
-  initSwiper();
-  initNewsSwiper();
-  initFasilitasSwiper();
-  initEquipmentSwiper();
-  initGallerySwiper();
-  
-  // Filter buttons functionality
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  filterButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      // Remove active class from all buttons
-      filterButtons.forEach(b => {
-        b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
-        b.classList.add('bg-white', 'border-gray-200', 'text-gray-700');
-      });
-      
-      // Add active class to clicked button
-      this.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
-      this.classList.add('bg-blue-900', 'text-white', 'shadow-md');
-      
-      // Filter publications
-      const filterType = this.getAttribute('data-filter');
-      filterPublications(filterType);
+    document.addEventListener('DOMContentLoaded', function() {
+        initSwiper();
+        initNewsSwiper();
+        initFasilitasSwiper();
+        initEquipmentSwiper();
+        initGallerySwiper();
+
+        // Filter buttons functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-blue-900', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'border-gray-200', 'text-gray-700');
+                });
+
+                // Add active class to clicked button
+                this.classList.remove('bg-white', 'border-gray-200', 'text-gray-700');
+                this.classList.add('bg-blue-900', 'text-white', 'shadow-md');
+
+                // Filter publications
+                const filterType = this.getAttribute('data-filter');
+                filterPublications(filterType);
+            });
+        });
     });
-  });
-});
 
     function initSwiper() {
         publicationSwiper = new Swiper('.publicationSwiper', {
@@ -747,99 +747,129 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-function initNewsSwiper() {
-    newsSwiper = new Swiper('.newsSwiper', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 6000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.newsSwiper .swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 1,
-                spaceBetween: 20,
+    function initNewsSwiper() {
+        newsSwiper = new Swiper('.newsSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 6000,
+                disableOnInteraction: false,
             },
-            768: {
-                slidesPerView: 2,
-                spaceBetween: 30,
+            pagination: {
+                el: '.newsSwiper .swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
             },
-            1024: {
-                slidesPerView: 3,
-                spaceBetween: 30,
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
             },
-        },
-    });
-}
+        });
+    }
 
-function initGallerySwiper() {
-    gallerySwiper = new Swiper('.gallerySwiper', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 4000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.gallerySwiper .swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        breakpoints: {
-            640: { slidesPerView: 1, spaceBetween: 20 },
-            768: { slidesPerView: 2, spaceBetween: 30 },
-            1024: { slidesPerView: 3, spaceBetween: 30 },
-        },
-    });
-}
+    function initGallerySwiper() {
+        gallerySwiper = new Swiper('.gallerySwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.gallerySwiper .swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30
+                },
+            },
+        });
+    }
 
-function initFasilitasSwiper() {
-    fasilitasSwiper = new Swiper('.fasilitasSwiper', {
-        slidesPerView: 1,
-        spaceBetween: 30,
-        loop: true,
-        autoplay: {
-            delay: 5000,
-            disableOnInteraction: false,
-        },
-        pagination: {
-            el: '.fasilitasSwiper .swiper-pagination',
-            clickable: true,
-            dynamicBullets: true,
-        },
-        breakpoints: {
-            640: { slidesPerView: 1, spaceBetween: 20 },
-            768: { slidesPerView: 2, spaceBetween: 30 },
-            1024:{ slidesPerView: 3, spaceBetween: 30 },
-        },
-    });
-}
+    function initFasilitasSwiper() {
+        fasilitasSwiper = new Swiper('.fasilitasSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.fasilitasSwiper .swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30
+                },
+            },
+        });
+    }
 
-function initEquipmentSwiper() {
-  equipmentSwiper = new Swiper('.equipmentSwiper', {
-    slidesPerView: 1,
-    spaceBetween: 30,
-    loop: true,
-    autoplay: { delay: 5000, disableOnInteraction: false },
-    pagination: {
-      el: '.equipmentSwiper .swiper-pagination',
-      clickable: true,
-      dynamicBullets: true,
-    },
-    breakpoints: {
-      640:  { slidesPerView: 1, spaceBetween: 20 },
-      768:  { slidesPerView: 2, spaceBetween: 30 },
-      1024: { slidesPerView: 3, spaceBetween: 30 },
-    },
-  });
-}
+    function initEquipmentSwiper() {
+        equipmentSwiper = new Swiper('.equipmentSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false
+            },
+            pagination: {
+                el: '.equipmentSwiper .swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 20
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 30
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30
+                },
+            },
+        });
+    }
 
     function filterPublications(filterType) {
         let sortedData = [...publicationsData];
@@ -861,18 +891,18 @@ function initEquipmentSwiper() {
         updateSwiperSlides(sortedData);
     }
 
-function updateSwiperSlides(data) {
-    if (!publicationSwiper) return;
-    
-    // Remove all slides
-    publicationSwiper.removeAllSlides();
-    
-    // Add new slides
-    data.forEach(pub => {
-        const excerpt = pub.abstract.length > 150 ? pub.abstract.substring(0, 150) + '...' : pub.abstract;
-        const venue = pub.journal || pub.conference || 'Conference';
-        
-        const slideHTML = `
+    function updateSwiperSlides(data) {
+        if (!publicationSwiper) return;
+
+        // Remove all slides
+        publicationSwiper.removeAllSlides();
+
+        // Add new slides
+        data.forEach(pub => {
+            const excerpt = pub.abstract.length > 150 ? pub.abstract.substring(0, 150) + '...' : pub.abstract;
+            const venue = pub.journal || pub.conference || 'Conference';
+
+            const slideHTML = `
             <div class="swiper-slide">
                 <div class="group relative bg-blue-50 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
                     ${pub.citations > 20 ? `
@@ -916,14 +946,14 @@ function updateSwiperSlides(data) {
                 </div>
             </div>
         `;
-        
-        publicationSwiper.appendSlide(slideHTML);
-    });
-    
-    
-    // Update swiper
-    publicationSwiper.update();
-}
+
+            publicationSwiper.appendSlide(slideHTML);
+        });
+
+
+        // Update swiper
+        publicationSwiper.update();
+    }
 </script>
 
 <style>
@@ -963,20 +993,20 @@ function updateSwiperSlides(data) {
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 <?php if (!empty($teamMembers)): ?>
                     <?php foreach ($teamMembers as $member): ?>
-                    <div class="group text-center">
-                        <div class="relative mb-4 mx-auto w-32 h-32">
-                            <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                            <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-                                <?php if (!empty($member['photo'])): ?>
-                                    <img src="<?= htmlspecialchars($member['photo']) ?>" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-full object-cover">
-                                <?php else: ?>
-                                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($member['name']) ?>&background=1e40af&color=fff&size=256" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-full object-cover">
-                                <?php endif; ?>
+                        <div class="group text-center">
+                            <div class="relative mb-4 mx-auto w-32 h-32">
+                                <div class="absolute inset-0 bg-blue-900 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                                <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                                    <?php if (!empty($member['photo'])): ?>
+                                        <img src="<?= htmlspecialchars($member['photo']) ?>" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-full object-cover">
+                                    <?php else: ?>
+                                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($member['name']) ?>&background=1e40af&color=fff&size=256" alt="<?= htmlspecialchars($member['name']) ?>" class="w-full h-full object-cover">
+                                    <?php endif; ?>
+                                </div>
                             </div>
+                            <h3 class="font-bold text-gray-900 text-sm mb-1"><?= htmlspecialchars($member['name']) ?></h3>
+                            <p class="text-xs <?= $member['position'] === 'Kepala Lab' ? 'text-blue-900' : 'text-gray-700' ?> font-semibold"><?= htmlspecialchars($member['position']) ?></p>
                         </div>
-                        <h3 class="font-bold text-gray-900 text-sm mb-1"><?= htmlspecialchars($member['name']) ?></h3>
-                        <p class="text-xs <?= $member['position'] === 'Kepala Lab' ? 'text-blue-900' : 'text-gray-700' ?> font-semibold"><?= htmlspecialchars($member['position']) ?></p>
-                    </div>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-span-full text-center text-gray-500">Data anggota tim belum tersedia</div>
@@ -1050,17 +1080,17 @@ if (file_exists($dataFile)) {
     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <div class="relative transform overflow-hidden rounded-lg text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-5xl">
-                
+
                 <!-- Close Button -->
                 <button type="button" class="absolute top-0 right-0 z-20 m-4 p-2 rounded-full bg-black/50 text-white hover:bg-white hover:text-black transition-all duration-300 focus:outline-none" onclick="closeGalleryModal()">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                
+
                 <div class="flex flex-col items-center justify-center p-2">
                     <img id="modalImage" src="" alt="Gallery Image" class="max-h-[85vh] w-auto max-w-full object-contain rounded-lg shadow-2xl mb-6">
-                    
+
                     <div class="text-center max-w-2xl px-4 animate-fade-in-up">
                         <h3 id="modalTitle" class="text-2xl font-bold text-white mb-2 tracking-wide"></h3>
                         <p id="modalDescription" class="text-gray-300 text-base leading-relaxed"></p>
@@ -1077,15 +1107,15 @@ if (file_exists($dataFile)) {
         const modalImg = document.getElementById('modalImage');
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDescription');
-        
+
         modalImg.src = image;
         modalTitle.textContent = title;
         modalDesc.textContent = description;
-        
+
         modal.classList.remove('hidden');
         // Add simple fade in effect
         modal.classList.add('animate-fade-in');
-        
+
         document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
 
@@ -1093,13 +1123,13 @@ if (file_exists($dataFile)) {
         const modal = document.getElementById('imageModal');
         modal.classList.add('hidden');
         document.body.style.overflow = ''; // Restore scrolling
-        
+
         // Clear src after closing to ensure next load is fresh
         setTimeout(() => {
             document.getElementById('modalImage').src = '';
         }, 200);
     }
-    
+
     // Event Delegation for Gallery Items (handles Swiper loop clones)
     document.addEventListener('click', function(e) {
         const item = e.target.closest('.gallery-item');

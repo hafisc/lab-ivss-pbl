@@ -568,6 +568,66 @@ INSERT INTO research_members (research_id, user_id, role, status) VALUES
 (3, 6, 'contributor', 'active'),  -- NLP untuk Bahasa Indonesia
 (4, 6, 'member', 'active');       -- IoT-based Smart Room Monitoring
 
+-- ========================================
+-- 13. TABEL PROFIL
+-- Untuk menyimpan profil lab atau profil umum
+-- ========================================
+
+CREATE TABLE profile_lab (
+    id SERIAL PRIMARY KEY,
+    nama_lab VARCHAR(255),
+    singkatan VARCHAR(50),
+    deskripsi_singkat TEXT,
+    lokasi_ruangan VARCHAR(255),
+    riset_fitur_judul VARCHAR(255),
+    riset_fitur_desk TEXT,
+    fasilitas_fitur_judul VARCHAR(255),
+    fasilitas_fitur_desk TEXT,
+    image VARCHAR(255) DEFAULT 'default.png',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+INSERT INTO profile_lab (id, nama_lab, image) VALUES (1, 'Lab IVSS', 'default.jpg');
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- 2. Pasang trigger ke tabel
+CREATE TRIGGER update_profile_lab_modtime
+    BEFORE UPDATE ON profile_lab
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_updated_at_column();
+ALTER TABLE profile_lab RENAME COLUMN last_updated TO updated_at;
+-- ========================================
+-- 14. TABEL VISI MISI
+-- Untuk menyimpan visi dan misi lab
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS visimisi(
+    id SERIAL PRIMARY KEY,
+    visi TEXT NOT NULL,
+    misi TEXT NOT NULL,
+    author_id INTEGER REFERENCES users(id), -- Kolom yang diasumsikan dari visimisi.php
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+); kalau profil bagaimana?
+
+-- Opsional: Menambahkan trigger untuk otomatis mengisi kolom updated_at
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.updated_at = CURRENT_TIMESTAMP; 
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_profil_timestamp
+BEFORE UPDATE ON profil
+FOR EACH ROW EXECUTE FUNCTION update_timestamp();
 
 
 -- ========================================

@@ -10,8 +10,7 @@
         <p class="mt-2 text-gray-600">Perbarui semua informasi yang relevan dengan profil Lab Anda.</p>
     </div>
 
-    <form action="index.php?page=admin-profile-settings&action=edit" method="POST" class="bg-white rounded-lg shadow p-8 space-y-6">
-
+    <form action="index.php?page=admin-profile-settings&action=edit" method="POST" enctype="multipart/form-data">
         <div class="grid md:grid-cols-2 gap-6">
             <div>
                 <label for="nama_lab" class="block text-sm font-medium text-gray-700 mb-1">Nama Laboratorium Lengkap</label>
@@ -58,7 +57,11 @@
                 <input type="text" id="fasilitas_fitur_desk" name="fasilitas_fitur_desk" value="<?= htmlspecialchars($profileData['fasilitas_fitur_desk'] ?? '') ?>" class="w-full border-gray-300 rounded-md shadow-sm p-2">
             </div>
         </div>
-        
+        <div>
+        <label for="image_upload" class="block text-xs font-medium text-slate-700 mb-1.5">Upload Gambar Baru (Maks 2MB)</label>
+        <input id="image_upload" type="file" name="image" accept="image/*"
+            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs text-slate-700">
+    </div>
         <div class="pt-4 flex justify-end gap-3">
             <a href="index.php?page=admin-profile-settings" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition">Batal</a>
             <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-900 rounded-md hover:bg-blue-800 transition shadow-md">
